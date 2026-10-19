@@ -1,0 +1,60 @@
+name: Build and prepare extension
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Enable the pinned pnpm version
+        run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      # Run before a build can overwrite stale or missing committed assets.
+      - name: Check Git installation assets against source
+        run: pnpm verify:release
+      - name: Match release tag to manifest version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: node -e 'const fs = require("node:fs"); const pkg = JSON.parse(fs.readFileSync("package.json", "utf8")); if (process.env.GITHUB_REF_NAME !== `v${pkg.version}`) throw new Error("Release tag must match package.json version");'
+      - name: Test and package fixed outputs
+        run: pnpm package
+      - name: Require committed prebuilt artifacts
+        run: git ls-files --error-unmatch panel/main.js service/main.js THIRD_PARTY_NOTICES.txt && git diff --exit-code -- panel/main.js service/main.js THIRD_PARTY_NOTICES.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: prebuilt-extension
+          path: dist/openchamber-argocd.zip
+          if-no-files-found: error
+
+  draft-release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: prebuilt-extension
+          path: dist
+      - name: Create a draft for human review, not an automatic public release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME" dist/openchamber-argocd.zip
+          --verify-tag --draft --title "$GITHUB_REF_NAME"
+          --notes "Prebuilt OpenChamber extension. See README and validation records for safety and compatibility limits. Remote OpenChamber testing: human-agreed skip, not verified. No separate checksum files are provided."

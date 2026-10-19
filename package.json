@@ -1,0 +1,48 @@
+{
+  "name": "openchamber-argocd",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Read-only Argo CD extension for OpenChamber with context switching, application filtering, deployment and resource inspection, logs, events, and manifest diffs.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "build": "tsx scripts/build.ts",
+    "test:built": "tsx scripts/smoke.ts",
+    "test:package": "tsx scripts/package-smoke.ts",
+    "verify:release": "tsx scripts/verify-prebuilt.ts",
+    "release:prepare": "pnpm check && pnpm verify:release",
+    "package": "pnpm check && tsx scripts/package.ts",
+    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm test:built && pnpm test:package"
+  },
+  "dependencies": { "@openchamber/sdk": "2.2.0", "yaml": "2.8.3" },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "0.28.2",
+    "happy-dom": "21.0.3",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  },
+  "pnpm": { "onlyBuiltDependencies": ["esbuild"] },
+  "openchamber": {
+    "apiVersion": 1,
+    "engines": { "openchamber": ">=2.2.0" },
+    "contributes": {
+      "panel": {
+        "id": "argocd-observer",
+        "name": "Argo CD",
+        "icon": "panel/argocd.svg",
+        "entry": "panel/index.html"
+      },
+      "page": true,
+      "statusSection": { "entry": "panel/index.html", "title": "Argo CD", "height": 240, "defaultExpanded": false },
+      "service": {
+        "entry": "service/main.js",
+        "runtime": "host"
+      }
+    }
+  }
+}

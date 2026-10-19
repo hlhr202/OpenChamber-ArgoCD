@@ -1,0 +1,77 @@
+# Dependencies and local package-manager caches
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/install-state.gz
+.yarn/build-state.yml
+
+# Generated builds, test output and caches
+/.build/
+/dist/
+coverage/
+.nyc_output/
+.cache/
+*.tsbuildinfo
+*.tgz
+
+# Logs and Node.js diagnostic reports
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Local environment files; retain the shareable template
+.env
+.env.*
+!.env.example
+
+# macOS filesystem metadata
+.DS_Store
+._*
+.AppleDouble/
+.LSOverride
+.Spotlight-V100/
+.Trashes/
+.fseventsd/
+.TemporaryItems/
+.VolumeIcon.icns
+.DocumentRevisions-V100/
+
+# Windows filesystem metadata
+[Tt]humbs.db
+[Tt]humbs.db:encryptable
+[Ee]hthumbs.db
+[Ee]hthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux desktop metadata and trash
+.directory
+.Trash-*/
+.nfs*
+
+# Editor-local state and backup files; shared .vscode config stays visible
+.idea/
+*.swp
+*.swo
+*~
+/.vscode/*.local.json
+/.vscode/*.local.code-workspace
+
+# Local assistant state and generated screenshots/assets
+/.openchamber/
+/.gpt-tmp/
+/.grok-tmp/
+
+# Git URL installs consume prebuilt root assets without running a build.
+!panel/main.js
+!service/main.js
+!THIRD_PARTY_NOTICES.txt
+
+# Keep the canonical dependency lockfile under version control.
+!pnpm-lock.yaml
