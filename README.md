@@ -63,6 +63,8 @@ A **read-only Argo CD extension for OpenChamber**. Browse applications, inspect 
 
 No local build or dependency installation is required.
 
+Alternatively, download **openchamber-argocd.zip** from [Releases](https://github.com/hlhr202/OpenChamber-ArgoCD/releases/latest) and add that ZIP in Extensions. Use the attached prebuilt ZIP, not GitHub's **Source code (zip)**. Private repository access is required while this repository remains private.
+
 ## Privacy
 
 - This extension does not collect personal information or report private data to its developers. It contains no telemetry, analytics, or tracking.

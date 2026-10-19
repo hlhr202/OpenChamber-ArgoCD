@@ -63,6 +63,8 @@
 
 无需本地构建或安装依赖。
 
+也可从 [Releases](https://github.com/hlhr202/OpenChamber-ArgoCD/releases/latest) 下载 **openchamber-argocd.zip**，在扩展设置中添加该 ZIP。请选择附件中的预构建包，而非 GitHub 自动生成的 **Source code (zip)**。仓库为私有时，需要已有仓库访问权限。
+
 ## 隐私
 
 - 本扩展不采集个人隐私信息，也不向开发者上报私密数据；不包含遥测、行为分析或追踪。
