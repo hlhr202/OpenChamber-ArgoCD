@@ -2320,8 +2320,49 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
     };
   };
 
+  // src/shared/locales/deployment.ts
+  var deploymentEnglish = Object.fromEntries([
+    "Historical ReplicaSets ({0})",
+    "Current",
+    "Current target unconfirmed",
+    "Application sync retries",
+    "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}",
+    "Desired",
+    "Updated",
+    "Available",
+    "Generation",
+    "Observed generation",
+    "Auto-update resource details",
+    "Include related resource events",
+    "Related resource events"
+  ].map((key) => [key, key]));
+  var deploymentChinese = {
+    "Historical ReplicaSets ({0})": "\u5386\u53F2 ReplicaSets\uFF08{0}\uFF09",
+    "Current": "\u5F53\u524D",
+    "Application sync retries": "\u5E94\u7528\u540C\u6B65\u91CD\u8BD5\u6B21\u6570",
+    "Current target unconfirmed": "\u5F53\u524D\u7248\u672C\u672A\u786E\u8BA4",
+    "Deployment and related resource events": "Deployment \u53CA\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6",
+    "Event queries succeeded: {0} / {1}": "\u4E8B\u4EF6\u67E5\u8BE2\u6210\u529F\uFF1A{0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "\u53D7\u67E5\u8BE2\u4E0A\u9650\u9650\u5236\uFF0C\u672A\u8BFB\u53D6 {0} \u4E2A\u8D44\u6E90\uFF1B\u7ED3\u679C\u4E0D\u5B8C\u6574\u3002",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "\u53D1\u751F\u6B21\u6570\u662F Kubernetes \u805A\u5408\u4E8B\u4EF6\u8BA1\u6570\uFF0C\u4E0D\u662F\u540C\u6B65\u91CD\u8BD5\u6216\u5BB9\u5668\u91CD\u542F\u6B21\u6570\u3002\u4E8B\u4EF6\u53EF\u80FD\u65E9\u4E8E\u672C\u6B21\u53D1\u5E03\uFF0C\u65E0\u6CD5\u8FD8\u539F\u9010\u6B21\u5C1D\u8BD5\u3002",
+    "Occurrences: {0}": "\u4E8B\u4EF6\u53D1\u751F\u6B21\u6570\uFF1A{0}",
+    "Desired": "\u671F\u671B\u526F\u672C",
+    "Updated": "\u5DF2\u66F4\u65B0\u526F\u672C",
+    "Available": "\u53EF\u7528\u526F\u672C",
+    "Generation": "Generation",
+    "Observed generation": "\u5DF2\u89C2\u6D4B Generation",
+    "Auto-update resource details": "\u81EA\u52A8\u66F4\u65B0\u8D44\u6E90\u8BE6\u60C5",
+    "Include related resource events": "\u5305\u542B\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6",
+    "Related resource events": "\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6"
+  };
+
   // src/shared/locales/base.ts
   var english = {
+    ...deploymentEnglish,
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Opening the Logs tab reads a recent fragment; following is off by default.",
     "Reload logs": "Reload logs",
     "Invalid log options. Check the line count and time range.": "Invalid log options. Check the line count and time range.",
@@ -2710,6 +2751,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Summary preview failed or identity/host boundary changed; nothing was added to the composer."
   };
   var chinese = {
+    ...deploymentChinese,
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u6253\u5F00\u65E5\u5FD7\u6807\u7B7E\u540E\u8BFB\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u8FDE\u7EED\u67E5\u770B\u9ED8\u8BA4\u5173\u95ED\u3002",
     "Reload logs": "\u91CD\u65B0\u67E5\u8BE2\u65E5\u5FD7",
     "Invalid log options. Check the line count and time range.": "\u65E5\u5FD7\u53C2\u6570\u65E0\u6548\uFF1B\u8BF7\u68C0\u67E5\u884C\u6570\u548C\u65F6\u95F4\u8303\u56F4\u3002",
@@ -3101,6 +3143,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
   // src/shared/locales/generated.ts
   var translations = {
     "de": {
+      ...deploymentEnglish,
       "Restarts": "Neustarts",
       "Redaction notice": "Hinweis zur Schw\xE4rzung",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Beim \xD6ffnen der Registerkarte \u201EProtokolle\u201C wird ein aktuelles Fragment gelesen. Folgendes ist standardm\xE4\xDFig deaktiviert.",
@@ -3489,6 +3532,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Zusammenfassungsvorschau fehlgeschlagen oder Identit\xE4t/Host-Grenze ge\xE4ndert; Dem Chat-Eingabefeld wurde nichts hinzugef\xFCgt."
     },
     "fr": {
+      ...deploymentEnglish,
       "Restarts": "Red\xE9marrages",
       "Redaction notice": "Avis de masquage",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "L'ouverture de l'onglet Journaux lit un fragment r\xE9cent\xA0; ce qui suit est d\xE9sactiv\xE9 par d\xE9faut.",
@@ -3877,6 +3921,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "L'aper\xE7u r\xE9capitulatif a \xE9chou\xE9 ou la limite identit\xE9/h\xF4te a \xE9t\xE9 modifi\xE9e\xA0; rien n'a \xE9t\xE9 ajout\xE9 \xE0 la zone de saisie du chat."
     },
     "nl": {
+      ...deploymentEnglish,
       "Restarts": "Herstarts",
       "Redaction notice": "Toelichting op afscherming",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Als u het tabblad Logboeken opent, wordt een recent fragment gelezen; volgen is standaard uitgeschakeld.",
@@ -4265,6 +4310,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Samenvattingsvoorbeeld mislukt of identiteit/hostgrens gewijzigd; er is niets toegevoegd aan het chatinvoervak."
     },
     "zh-TW": {
+      ...deploymentEnglish,
       "Restarts": "\u91CD\u65B0\u555F\u52D5\u6B21\u6578",
       "Redaction notice": "\u654F\u611F\u8CC7\u8A0A\u96B1\u85CF\u8AAA\u660E",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u958B\u555F\u65E5\u8A8C\u6A19\u7C64\u5F8C\u8B80\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u9023\u7E8C\u67E5\u770B\u9810\u8A2D\u70BA\u95DC\u9589\u3002",
@@ -4653,6 +4699,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6458\u8981\u9810\u89BD\u5931\u6557\u6216\u8EAB\u5206/\u5BBF\u4E3B\u908A\u754C\u8B8A\u5316\uFF1B\u672A\u5BEB\u5165\u8F38\u5165\u6846\u3002"
     },
     "uk": {
+      ...deploymentEnglish,
       "Restarts": "\u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u043A\u0438",
       "Redaction notice": "\u041F\u0440\u0438\u043C\u0456\u0442\u043A\u0430 \u043F\u0440\u043E \u043F\u0440\u0438\u0445\u043E\u0432\u0443\u0432\u0430\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u0412\u0456\u0434\u043A\u0440\u0438\u0442\u0442\u044F \u0432\u043A\u043B\u0430\u0434\u043A\u0438 \xAB\u0416\u0443\u0440\u043D\u0430\u043B\u0438\xBB \u0447\u0438\u0442\u0430\u0454 \u043E\u0441\u0442\u0430\u043D\u043D\u0456\u0439 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442; \u0437\u0430 \u0443\u043C\u043E\u0432\u0447\u0430\u043D\u043D\u044F\u043C \u0432\u0438\u043C\u043A\u043D\u0435\u043D\u043E.",
@@ -5041,6 +5088,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u043E\u043F\u0435\u0440\u0435\u0434\u043D\u044C\u043E\u0433\u043E \u043F\u0435\u0440\u0435\u0433\u043B\u044F\u0434\u0443 \u0437\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0430\u0431\u043E \u0437\u043C\u0456\u043D\u0435\u043D\u043E \u043C\u0435\u0436\u0443 \u0456\u0434\u0435\u043D\u0442\u0438\u0444\u0456\u043A\u0430\u0442\u043E\u0440\u0430/\u0445\u043E\u0441\u0442\u0443; \u0443 \u043F\u043E\u043B\u0435 \u0432\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0447\u0430\u0442\u0443 \u043D\u0456\u0447\u043E\u0433\u043E \u043D\u0435 \u0434\u043E\u0434\u0430\u043D\u043E."
     },
     "es": {
+      ...deploymentEnglish,
       "Restarts": "Reinicios",
       "Redaction notice": "Aviso de ocultaci\xF3n de datos",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Al abrir la pesta\xF1a Registros se lee un fragmento reciente; Lo siguiente est\xE1 desactivado de forma predeterminada.",
@@ -5429,6 +5477,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Error en la vista previa del resumen o se modific\xF3 el l\xEDmite de identidad/host; no se agreg\xF3 nada al cuadro de entrada del chat."
     },
     "pt-BR": {
+      ...deploymentEnglish,
       "Restarts": "Reinicializa\xE7\xF5es",
       "Redaction notice": "Aviso de oculta\xE7\xE3o de dados",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Abrir a guia Logs l\xEA um fragmento recente; o seguinte est\xE1 desativado por padr\xE3o.",
@@ -5817,6 +5866,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Falha na visualiza\xE7\xE3o do resumo ou limite de identidade/host alterado; nada foi adicionado \xE0 caixa de entrada do chat."
     },
     "ko": {
+      ...deploymentEnglish,
       "Restarts": "\uC7AC\uC2DC\uC791 \uD69F\uC218",
       "Redaction notice": "\uBBFC\uAC10 \uC815\uBCF4 \uC228\uAE40 \uC548\uB0B4",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\uB85C\uADF8 \uD0ED\uC744 \uC5F4\uBA74 \uCD5C\uADFC \uC870\uAC01\uC744 \uC77D\uC2B5\uB2C8\uB2E4. \uB2E4\uC74C\uC740 \uAE30\uBCF8\uC801\uC73C\uB85C \uAEBC\uC838 \uC788\uC2B5\uB2C8\uB2E4.",
@@ -6205,6 +6255,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\uC694\uC57D \uBBF8\uB9AC\uBCF4\uAE30\uAC00 \uC2E4\uD328\uD588\uAC70\uB098 ID/\uD638\uC2A4\uD2B8 \uACBD\uACC4\uAC00 \uBCC0\uACBD\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uCC44\uD305 \uC785\uB825\uCC3D\uC5D0 \uC544\uBB34\uAC83\uB3C4 \uCD94\uAC00\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
     },
     "pl": {
+      ...deploymentEnglish,
       "Restarts": "Ponowne uruchomienia",
       "Redaction notice": "Informacja o ukryciu danych",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Otwarcie zak\u0142adki Logi powoduje odczytanie najnowszego fragmentu; poni\u017Csze jest domy\u015Blnie wy\u0142\u0105czone.",
@@ -6593,6 +6644,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Podgl\u0105d podsumowania nie powi\xF3d\u0142 si\u0119 lub zmieniono granic\u0119 to\u017Csamo\u015Bci/hosta; nic nie zosta\u0142o dodane do pola wprowadzania czatu."
     },
     "ja": {
+      ...deploymentEnglish,
       "Restarts": "\u518D\u8D77\u52D5\u56DE\u6570",
       "Redaction notice": "\u6A5F\u5BC6\u60C5\u5831\u306E\u30DE\u30B9\u30AD\u30F3\u30B0\u306B\u3064\u3044\u3066",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u300C\u30ED\u30B0\u300D\u30BF\u30D6\u3092\u958B\u304F\u3068\u3001\u6700\u8FD1\u306E\u30D5\u30E9\u30B0\u30E1\u30F3\u30C8\u304C\u8AAD\u307F\u53D6\u3089\u308C\u307E\u3059\u3002\u4EE5\u4E0B\u306F\u30C7\u30D5\u30A9\u30EB\u30C8\u3067\u306F\u30AA\u30D5\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002",
@@ -6981,6 +7033,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6982\u8981\u30D7\u30EC\u30D3\u30E5\u30FC\u304C\u5931\u6557\u3057\u305F\u304B\u3001\u30A2\u30A4\u30C7\u30F3\u30C6\u30A3\u30C6\u30A3/\u30DB\u30B9\u30C8\u5883\u754C\u304C\u5909\u66F4\u3055\u308C\u307E\u3057\u305F\u3002\u30C1\u30E3\u30C3\u30C8\u5165\u529B\u30DC\u30C3\u30AF\u30B9\u306B\u306F\u4F55\u3082\u8FFD\u52A0\u3055\u308C\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
     },
     "tr": {
+      ...deploymentEnglish,
       "Restarts": "Yeniden ba\u015Flatmalar",
       "Redaction notice": "Hassas veri gizleme bildirimi",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "G\xFCnl\xFCkler sekmesini a\xE7t\u0131\u011F\u0131n\u0131zda yeni bir par\xE7a okunur; a\u015Fa\u011F\u0131dakiler varsay\u0131lan olarak kapal\u0131d\u0131r.",
@@ -7369,6 +7422,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\xD6zet \xF6nizlemesi ba\u015Far\u0131s\u0131z oldu veya kimlik/ana bilgisayar s\u0131n\u0131r\u0131 de\u011Fi\u015Fti; sohbet giri\u015F kutusuna hi\xE7bir \u015Fey eklenmedi."
     },
     "ar": {
+      ...deploymentEnglish,
       "Restarts": "\u0645\u0631\u0627\u062A \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u062A\u0634\u063A\u064A\u0644",
       "Redaction notice": "\u0625\u0634\u0639\u0627\u0631 \u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u062D\u0633\u0627\u0633\u0629",
       "Opening the Logs tab reads a recent fragment; following is off by default.": '\u064A\u0624\u062F\u064A \u0641\u062A\u062D \u0639\u0644\u0627\u0645\u0629 \u0627\u0644\u062A\u0628\u0648\u064A\u0628 "\u0627\u0644\u0633\u062C\u0644\u0627\u062A" \u0625\u0644\u0649 \u0642\u0631\u0627\u0621\u0629 \u062C\u0632\u0621 \u062D\u062F\u064A\u062B\u061B \u064A\u062A\u0645 \u0625\u064A\u0642\u0627\u0641 \u062A\u0634\u063A\u064A\u0644 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0628\u0634\u0643\u0644 \u0627\u0641\u062A\u0631\u0627\u0636\u064A.',
@@ -7757,6 +7811,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u0641\u0634\u0644\u062A \u0645\u0639\u0627\u064A\u0646\u0629 \u0627\u0644\u0645\u0644\u062E\u0635 \u0623\u0648 \u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u062D\u062F\u0648\u062F \u0627\u0644\u0647\u0648\u064A\u0629/\u0627\u0644\u0645\u0636\u064A\u0641\u061B \u0644\u0645 \u062A\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 \u0623\u064A \u0634\u064A\u0621 \u0625\u0644\u0649 \u0645\u0631\u0628\u0639 \u0625\u062F\u062E\u0627\u0644 \u0627\u0644\u062F\u0631\u062F\u0634\u0629."
     },
     "he": {
+      ...deploymentEnglish,
       "Restarts": "\u05D4\u05E4\u05E2\u05DC\u05D5\u05EA \u05DE\u05D7\u05D3\u05E9",
       "Redaction notice": "\u05D4\u05D5\u05D3\u05E2\u05D4 \u05E2\u05DC \u05D4\u05E1\u05EA\u05E8\u05EA \u05DE\u05D9\u05D3\u05E2 \u05E8\u05D2\u05D9\u05E9",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05D9\u05D4 \u05D9\u05D5\u05DE\u05E0\u05D9\u05DD \u05E7\u05D5\u05E8\u05D0\u05EA \u05E7\u05D8\u05E2 \u05D0\u05D7\u05E8\u05D5\u05DF; \u05D4\u05D1\u05D0 \u05DB\u05D1\u05D5\u05D9 \u05DB\u05D1\u05E8\u05D9\u05E8\u05EA \u05DE\u05D7\u05D3\u05DC.",
@@ -8870,10 +8925,33 @@ ${content}`;
   }
 
   // src/panel/resource-navigation.ts
+  function compareReplicaSets(a, b, nodes) {
+    const troubled = (node) => anomalous(node) || node.children.some((id2) => {
+      const child = nodes?.get(id2);
+      return child && anomalous(child);
+    });
+    const rank = (node) => node.replicaSet?.current ? 0 : node.children.length || (node.replicaSet?.desired ?? 0) > 0 || (node.replicaSet?.replicas ?? 0) > 0 ? troubled(node) ? 1 : 2 : 3;
+    return rank(a) - rank(b) || (b.replicaSet?.revision ?? -1) - (a.replicaSet?.revision ?? -1) || (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
+  }
   function navigationRows(tree) {
-    const nodes = new Map(tree.nodes.map((node) => [node.id, node]));
+    const nodes = new Map(tree.nodes.map((node) => [node.id, { ...node, children: [...node.children] }]));
     const seen = /* @__PURE__ */ new Set();
     const rows = [];
+    const historyGroups = /* @__PURE__ */ new Set();
+    for (const parent of [...nodes.values()]) {
+      if (parent.kind !== "Deployment" || parent.group !== "apps") continue;
+      const sets = parent.children.map((id2) => nodes.get(id2)).filter((node) => !!node && node.kind === "ReplicaSet" && node.group === "apps").sort((a, b) => compareReplicaSets(a, b, nodes));
+      const historical = sets.filter((node) => node.parents.length === 1 && node.replicaSet?.current === false && node.replicaSet.desired === 0 && node.replicaSet.replicas === 0 && !node.children.length && node.health === "Healthy");
+      const hidden = new Set(historical.map((node) => node.id));
+      let next = 0;
+      parent.children = parent.children.map((id2) => sets.some((node) => node.id === id2) ? sets[next++].id : id2).filter((id2) => !hidden.has(id2));
+      if (historical.length) {
+        const id2 = `history:${parent.id}`;
+        historyGroups.add(id2);
+        nodes.set(id2, { ...parent, id: id2, kind: "HistoricalReplicaSets", name: t`Historical ReplicaSets (${historical.length})`, parents: [parent.id], children: historical.map((node) => node.id), health: "Healthy", healthMessage: "" });
+        parent.children.push(id2);
+      }
+    }
     for (const root2 of [...tree.roots, ...tree.nodes.map((node) => node.id)]) {
       const stack = [{ id: root2, depth: 0, parent: null }];
       while (stack.length) {
@@ -8883,7 +8961,7 @@ ${content}`;
         const parent = item.parent ? nodes.get(item.parent) : void 0;
         if (parent && parent.orphaned !== node.orphaned) continue;
         seen.add(item.id);
-        rows.push({ node, depth: item.depth, parent: item.parent, children: [] });
+        rows.push({ node, depth: item.depth, parent: item.parent, children: [], ...historyGroups.has(node.id) ? { historicalGroup: true } : {} });
         for (const child of [...node.children].reverse()) stack.push({ id: child, depth: item.depth + 1, parent: node.id });
       }
     }
@@ -8989,7 +9067,7 @@ ${content}`;
       const include = /* @__PURE__ */ new Set();
       if (filterChanged) filterCollapsed.clear();
       const needle = query.trim().toLowerCase();
-      for (const { node } of rows) if ((!onlyAnomalies || anomalous(node)) && `${node.kind} ${node.name} ${node.namespace} ${node.health} ${node.orphaned ? "orphaned" : ""}`.toLowerCase().includes(needle)) {
+      for (const { node, historicalGroup } of rows) if (!historicalGroup && (!onlyAnomalies || anomalous(node)) && `${node.kind} ${node.name} ${node.namespace} ${node.health} ${node.orphaned ? "orphaned" : ""}`.toLowerCase().includes(needle)) {
         include.add(node.id);
         ancestors(node.id, (id2) => include.add(id2));
       }
@@ -9056,6 +9134,12 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
           name.className = "resource-tree-name";
           name.textContent = node.name;
           row.append(name);
+          if (node.kind === "ReplicaSet") {
+            const badge = document2.createElement("span");
+            badge.className = "resource-tree-linked";
+            badge.textContent = [node.replicaSet?.revision != null ? `r${node.replicaSet.revision}` : "", node.replicaSet?.current ? t("Current") : node.replicaSet?.current !== false ? t("Current target unconfirmed") : ""].filter(Boolean).join(" \xB7 ");
+            if (badge.textContent) row.append(badge);
+          }
           if (node.parents.length > 1 || node.unresolvedParents) {
             const linked = document2.createElement("span");
             linked.className = "resource-tree-linked";
@@ -9086,7 +9170,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
       if (!row) return;
       const id2 = row.dataset.resourceId;
       focused = id2;
-      if (target.closest("[data-toggle]")) {
+      if (target.closest("[data-toggle]") || indexed.get(id2)?.historicalGroup) {
         if (query.trim() || onlyAnomalies) {
           if (filterCollapsed.has(id2)) filterCollapsed.delete(id2);
           else filterCollapsed.add(id2);
@@ -9110,8 +9194,18 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
       const close = rtl ? "ArrowRight" : "ArrowLeft";
       if (["ArrowDown", "ArrowUp", "Home", "End", open, close, "Enter", " "].includes(event.key)) event.preventDefault();
       else return;
-      if (event.key === "Enter" || event.key === " ") select2(id2);
-      else if (event.key === open) {
+      if (event.key === "Enter" || event.key === " ") {
+        if (row.historicalGroup) {
+          if (expanded.has(id2)) expanded.delete(id2);
+          else expanded.add(id2);
+          if (query.trim() || onlyAnomalies) {
+            if (filterCollapsed.has(id2)) filterCollapsed.delete(id2);
+            else filterCollapsed.add(id2);
+          }
+          paint();
+          focus2(id2);
+        } else select2(id2);
+      } else if (event.key === open) {
         if (row.children.length && item.getAttribute("aria-expanded") !== "true") {
           expanded.add(id2);
           filterCollapsed.delete(id2);
@@ -9141,6 +9235,10 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
         for (const id2 of filterCollapsed) if (!indexed.has(id2)) filterCollapsed.delete(id2);
         if (selected && !indexed.has(selected)) selected = "";
         for (const row of rows) if (anomalous(row.node) && !previous.has(row.node.id)) ancestors(row.node.id, (id2) => expanded.add(id2));
+        if (selected) ancestors(selected, (id2) => {
+          expanded.add(id2);
+          filterCollapsed.delete(id2);
+        });
         paint();
       },
       clear() {
@@ -9403,17 +9501,52 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
     }
   }
   function renderEvents(root2, value) {
-    element2(root2, "p", t`${t(value.scope === "application-set" ? "ApplicationSet events (bodies withheld)" : value.scope === "application" ? "Application events (not all child-resource events)" : value.instanceScoped ? "Events scoped to resource UID" : "Resource events (not UID-scoped)")}; subject to server retention and permissions.`);
+    element2(root2, "p", t`${t(value.scope === "related" ? "Deployment and related resource events" : value.scope === "application-set" ? "ApplicationSet events (bodies withheld)" : value.scope === "application" ? "Application events (not all child-resource events)" : value.instanceScoped ? "Events scoped to resource UID" : "Resource events (not UID-scoped)")}; subject to server retention and permissions.`).className = "description";
+    if (value.related) {
+      const { resources, total, omitted } = value.related;
+      element2(root2, "p", t`Event queries succeeded: ${resources.filter((item) => !item.eventsError).length} / ${total}`).className = resources.some((item) => item.eventsError) || omitted ? "snapshot-stale" : "description";
+      if (omitted) element2(root2, "p", t`${omitted} resources omitted by the query limit; results are incomplete.`);
+      for (const item of resources) {
+        if (item.eventsError || item.liveError) element2(root2, "p").textContent = `${item.resource.kind} ${item.resource.namespace}/${item.resource.name} \xB7 events: ${item.eventsError ?? "OK"} \xB7 live: ${item.liveError ?? "OK"}`;
+        if (item.pod) {
+          const section = element2(root2, "section");
+          section.className = "related-pod-status";
+          element2(section, "strong").textContent = `Pod ${item.resource.name} \xB7 ${item.pod.phase}`;
+          if (item.pod.reason || item.pod.message) element2(section, "pre", `${item.pod.reason} ${item.pod.message}`);
+          for (const container of item.pod.containers) element2(section, "p", t`${container.name} · ${container.image} · ${container.phase} · Ready ${container.ready ?? t("Unknown")} · Restarts ${container.restarts ?? t("Unknown")} · ${container.reason} ${container.message}`);
+        }
+      }
+    }
+    element2(root2, "p", "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.").className = "description";
     if (value.excludedCount) element2(root2, "p", t`Excluded ${value.excludedCount} events with a different resource identity.`);
     if (!value.items.length) element2(root2, "p", "No events in the current query scope; this does not prove there were no incidents.");
     for (const event of value.items) {
       const section = element2(root2, "section");
-      element2(section, "h4", `${event.type} \xB7 ${event.reason || t("Reason unknown")} \xB7 ${event.resource.kind} ${event.resource.namespace || "(cluster)"}/${event.resource.name}`);
+      section.className = "resource-event";
+      section.dataset.type = event.type;
+      element2(section, "h4").textContent = `${event.type} \xB7 ${event.reason || t("Reason unknown")} \xB7 ${event.resource.kind} ${event.resource.namespace || "(cluster)"}/${event.resource.name}`;
+      element2(section, "strong", t`Occurrences: ${event.count ?? t("Unknown")}`).className = "event-count";
       element2(section, "p", t`First ${event.firstTime || t("Unknown")} · Last ${event.lastTime || t("Unknown")} · Count ${event.count ?? t("Unknown")} · Source ${event.source || t("Unknown")}`);
       element2(section, "pre", value.scope === "application-set" ? t(event.message) : event.message);
     }
   }
   function renderPodOverview(root2, value) {
+    if (value.workload) {
+      const workload = value.workload;
+      const facts = element2(root2, "dl");
+      facts.className = "resource-facts";
+      for (const [label, number] of [["Desired", workload.desired], ["Ready", workload.ready], ["Updated", workload.updated], ["Available", workload.available], ["Generation", workload.generation], ["Observed generation", workload.observedGeneration]]) {
+        const field = element2(facts, "div");
+        element2(field, "dt", label);
+        element2(field, "dd", String(number ?? t("Unknown")));
+      }
+      for (const condition of workload.conditions) {
+        const section = element2(root2, "section");
+        section.className = "resource-problem";
+        element2(section, "strong").textContent = `${condition.type} \xB7 ${condition.status} \xB7 ${condition.reason}`;
+        element2(section, "pre", condition.message);
+      }
+    }
     const pod = value.pod;
     if (pod) {
       const problems = pod.containers.filter((container) => container.reason || container.message);
@@ -9474,6 +9607,9 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
     let detailTabs;
     let logView;
     const detailDisposers = [];
+    let includeRelated = true;
+    let automatic = false;
+    let lastUpdate = 0;
     const actions = element2(root2, "div");
     actions.className = "resource-toolbar";
     const nav = element2(actions, "nav");
@@ -9502,6 +9638,11 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
     const refresh = mountIconButton(actions, { icon: "reload", label: "Reload", onClick: () => {
       if (section === "tree") void loadTree();
       else void loadExtra(true);
+    } });
+    const auto = mountIconButton(actions, { icon: "clock", label: "Auto-update resource details", tooltip: "Update every 15 seconds (visible only)", pressed: false, onClick: () => {
+      automatic = !automatic;
+      lastUpdate = Date.now();
+      auto.update({ pressed: automatic });
     } });
     const tabs = mountSections(nav, [{ id: "tree", label: "Application resource tree", pane: treePane }, { id: "events", label: "Application events", pane: appEventsRoot }, { id: "monitoring", label: "Orphaned", pane: monitorStatus }], section, (id2) => {
       section = id2;
@@ -9606,6 +9747,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
             options.changed?.();
           }
         }
+        if (selected) void activateDetail();
       } catch {
         if (usable() && version === generation && !controller.signal.aborted) {
           treeStatus.replaceChildren();
@@ -9684,6 +9826,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
       detailTab = restore?.detailTab ?? "overview";
       navigation.select(id2);
       split2.openDetail();
+      includeRelated = true;
       if (restore) split2.restoreState(restore.split);
       columns.dataset.selected = "true";
       const path = element2(selection2, "div");
@@ -9720,6 +9863,15 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
         else void activateDetail(true);
       } });
       detailDisposers.push(() => reload.dispose());
+      if (node.kind === "Deployment" && node.group === "apps") {
+        const toggle = mountSwitch2(metadata, { label: "Include related resource events", checked: true, onChange: (value) => {
+          includeRelated = value;
+          toggle.update({ checked: value });
+          events = void 0;
+          void activateDetail(true);
+        } });
+        detailDisposers.push(() => toggle.dispose());
+      }
       selection2.append(metadata);
       detailTabs = mountSections(detailNav, [{ id: "overview", label: "Overview", pane: overview }, { id: "events", label: "Resource events", pane: eventPane }, { id: "manifest", label: "Manifest", pane: manifest }, { id: "logs", label: "Logs", pane: logs }], detailTab, (id3) => {
         detailTab = id3;
@@ -9739,6 +9891,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
       const version = selectionVersion;
       await loadSelected("resource", force);
       if (version !== selectionVersion) return;
+      if (detailTab === "overview" && selected?.kind === "Deployment" && selected.group === "apps") await loadSelected("events", force);
       showLogs();
     }
     function showLogs() {
@@ -9785,7 +9938,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
       parent.replaceChildren();
       element2(parent, "p", operation === "resource" ? "Reading Live details\u2026" : "Reading resource events\u2026");
       try {
-        const response2 = operation === "resource" ? await queryTask(request, { operation, context, ...app, resource: reference(node) }, controller.signal) : await queryTask(request, { operation, context, ...app, resource: reference(node) }, controller.signal);
+        const response2 = operation === "resource" ? await queryTask(request, { operation, context, ...app, resource: reference(node) }, controller.signal) : await queryTask(request, { operation: includeRelated && node.kind === "Deployment" && node.group === "apps" ? "relatedEvents" : "events", context, ...app, resource: reference(node) }, controller.signal);
         if (!usable() || controller.signal.aborted || version !== selectionVersion) return;
         parent.replaceChildren();
         if (!response2.ok) {
@@ -9810,6 +9963,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
           options.evidence?.live(live);
           const value = live.data;
           renderPodOverview(parent, value);
+          if (node.kind === "Deployment" && events) showDeploymentEvents();
           manifest.replaceChildren();
           element2(manifest, "p", value.redactionNotice);
           element2(manifest, "pre", JSON.stringify(value.manifest, null, 2));
@@ -9835,11 +9989,29 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
           }
         }
       } finally {
+        if (operation === "events" && version === selectionVersion && !controller.signal.aborted && overview && node.kind === "Deployment") {
+          showDeploymentEvents();
+        }
         if (operation === "resource" && liveController === controller) liveController = void 0;
         if (operation === "events" && eventController === controller) eventController = void 0;
       }
     }
-    const ticker = setInterval(() => paintAges(root2, visible), 1e3);
+    function showDeploymentEvents() {
+      if (!overview || !eventPane) return;
+      overview.querySelector(".deployment-events")?.remove();
+      const summary = element2(overview, "details");
+      summary.className = "deployment-events";
+      summary.open = true;
+      element2(summary, "summary", "Related resource events");
+      summary.append(...[...eventPane.childNodes].map((node) => node.cloneNode(true)));
+    }
+    const ticker = setInterval(() => {
+      paintAges(root2, visible);
+      if (automatic && usable() && !(section === "tree" && detailTab === "logs") && Date.now() - lastUpdate >= 15e3 && !treeController && !liveController && !eventController && !extraController) {
+        lastUpdate = Date.now();
+        activate();
+      }
+    }, 1e3);
     return {
       captureNavigation() {
         return { selected: selected ? reference(selected) : pendingState?.selected ?? null, section, detailTab: pendingState?.detailTab ?? (detailTab === "logs" ? "overview" : detailTab), split: split2.captureState() };
@@ -9874,6 +10046,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
         split2.dispose();
         tabs.dispose();
         refresh.dispose();
+        auto.dispose();
         root2.replaceChildren();
       }
     };
@@ -10640,9 +10813,9 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     if (app.operation && app.operation.phase !== "Succeeded") {
       const alert = element5("section", "", root2);
       alert.className = "application-operation-alert";
-      fields(alert, { "Phase": app.operation.phase });
+      fields(alert, { "Phase": app.operation.phase, "Application sync retries": String(app.operation.retryCount) });
       element5("pre", app.operation.message, alert);
-    }
+    } else if (app.operation) fields(root2, { "Application sync retries": String(app.operation.retryCount) });
     element5("h3", `Conditions \xB7 ${app.conditions.length}`, root2);
     if (!app.conditions.length) element5("p", "No reported Conditions; this does not prove the application is healthy.", root2);
     for (const condition of app.conditions) {

@@ -5,6 +5,7 @@ export interface ResourceReference {
 export interface ResourceNode extends ResourceReference {
   id: string; parents: string[]; children: string[]; unresolvedParents: number;
   orphaned: boolean; health: string; healthMessage: string; createdAt: string; images: string[];
+  replicaSet?: { revision: number | null; desired: number | null; replicas: number | null; current: boolean | null };
 }
 export interface ResourceTree {
   nodes: ResourceNode[]; roots: string[]; warnings: string[];
@@ -15,10 +16,16 @@ export interface LiveResource {
   reference: ResourceReference;
   manifest: Record<string, unknown>;
   redactionNotice: string;
+  workload?: WorkloadStatus;
   pod: null | {
     phase: string; reason: string; message: string;
     containers: Array<{ name: string; image: string; ready: boolean | null; restarts: number | null; phase: string; reason: string; message: string }>;
   };
+}
+export interface WorkloadStatus {
+  desired: number | null; replicas: number | null; ready: number | null; updated: number | null; available: number | null;
+  generation: number | null; observedGeneration: number | null;
+  conditions: Array<{ type: string; status: string; reason: string; message: string }>;
 }
 export interface ResourceEvent {
   id: string; namespace: string; type: string; reason: string; message: string;
@@ -26,7 +33,8 @@ export interface ResourceEvent {
   resource: ResourceReference;
 }
 export interface EventList {
-  items: ResourceEvent[]; excludedCount: number; instanceScoped: boolean; scope: 'application' | 'resource' | 'application-set';
+  items: ResourceEvent[]; excludedCount: number; instanceScoped: boolean; scope: 'application' | 'resource' | 'application-set' | 'related';
+  related?: { total: number; omitted: number; resources: Array<{ resource: ResourceReference; eventsError?: string; liveError?: string; pod?: LiveResource['pod'] }> };
 }
 
 export function resourceCoordinate(ref: Pick<ResourceReference, 'group' | 'kind' | 'namespace' | 'name'>): string {

@@ -65,8 +65,9 @@ export function renderApplicationDetail(root: HTMLElement, app: ApplicationDetai
   });
   if (app.operation && app.operation.phase !== 'Succeeded') {
     const alert = element('section', '', root); alert.className = 'application-operation-alert';
-    fields(alert, { "Phase": app.operation.phase }); element('pre', app.operation.message, alert);
+    fields(alert, { "Phase": app.operation.phase, "Application sync retries": String(app.operation.retryCount) }); element('pre', app.operation.message, alert);
   }
+  else if (app.operation) fields(root, { "Application sync retries": String(app.operation.retryCount) });
   element('h3', `Conditions · ${app.conditions.length}`, root);
   if (!app.conditions.length) element('p', "No reported Conditions; this does not prove the application is healthy.", root);
   for (const condition of app.conditions) {

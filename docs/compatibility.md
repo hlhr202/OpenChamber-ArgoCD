@@ -2,7 +2,7 @@
 
 ## Declared scope
 
-Current development baseline: Node 22+, pnpm 10.30.3, pinned `@openchamber/sdk` 2.2.0. OpenChamber `>=2.2.0` is a provisional install floor, not proof that all later versions or remote platforms work. Package `openchamber-argocd` is version `1.1.0` with `private: false`; the metadata change does not establish production compatibility or imply npm publication.
+Current development baseline: Node 22+, pnpm 10.30.3, pinned `@openchamber/sdk` 2.2.0. OpenChamber `>=2.2.0` is a provisional install floor, not proof that all later versions or remote platforms work. Package `openchamber-argocd` is version `1.2.0` with `private: false`; the metadata change does not establish production compatibility or imply npm publication.
 
 The user explicitly agreed to skip remote OpenChamber tests. Their status is **human-agreed skip, not verified**, not passed. A separately authorized local read-only preflight passed using existing CLI/current-context credentials without deployment/configuration changes, login, or renewal. Results do not extend to other contexts or authentication methods.
 

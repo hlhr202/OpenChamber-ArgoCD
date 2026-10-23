@@ -1,5 +1,7 @@
 /** Authored English message keys. Resource values and logs are never catalog keys. */
+import { deploymentEnglish, deploymentChinese } from './deployment.js';
 export const english: Record<string, string> = {
+  ...deploymentEnglish,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "Opening the Logs tab reads a recent fragment; following is off by default.",
   "Reload logs": "Reload logs",
   "Invalid log options. Check the line count and time range.": "Invalid log options. Check the line count and time range.",
@@ -388,6 +390,7 @@ export const english: Record<string, string> = {
   "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Summary preview failed or identity/host boundary changed; nothing was added to the composer."
 };
 export const chinese: Record<string, string> = {
+  ...deploymentChinese,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "打开日志标签后读取近期片段；连续查看默认关闭。",
   "Reload logs": "重新查询日志",
   "Invalid log options. Check the line count and time range.": "日志参数无效；请检查行数和时间范围。",

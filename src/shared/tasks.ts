@@ -11,6 +11,7 @@ export type TaskCommand =
   | { operation: 'resourceTree'; context: string; name: string; appNamespace: string }
   | { operation: 'resource'; context: string; name: string; appNamespace: string; resource: ResourceReference }
   | { operation: 'events'; context: string; name: string; appNamespace: string; resource?: ResourceReference }
+  | { operation: 'relatedEvents'; context: string; name: string; appNamespace: string; resource: ResourceReference }
   | { operation: 'manifests'; context: string; name: string; appNamespace: string; selection: ManifestSelection }
   | { operation: 'comparison'; context: string; name: string; appNamespace: string };
 

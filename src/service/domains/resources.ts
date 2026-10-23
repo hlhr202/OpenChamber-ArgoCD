@@ -75,6 +75,31 @@ function podStatus(manifest: Record<string, unknown>): LiveResource['pod'] {
   return { phase: text(status.phase) || 'Unknown', reason: text(status.reason), message: text(status.message), containers };
 }
 
+const optionalNumber = (value: unknown): number | null => value == null ? null : number(value);
+export function workloadStatus(manifest: Record<string, unknown>): LiveResource['workload'] {
+  if (!['Deployment', 'ReplicaSet'].includes(String(manifest.kind))) return undefined;
+  const spec = optionalObject(manifest.spec); const status = optionalObject(manifest.status); const metadata = optionalObject(manifest.metadata);
+  return { desired: optionalNumber(spec.replicas), replicas: optionalNumber(status.replicas), ready: optionalNumber(status.readyReplicas), updated: optionalNumber(status.updatedReplicas), available: optionalNumber(status.availableReplicas), generation: optionalNumber(metadata.generation), observedGeneration: optionalNumber(status.observedGeneration),
+    conditions: array(status.conditions).map((value) => { const item = object(value); return { type: text(item.type), status: text(item.status), reason: text(item.reason), message: text(item.message) }; }) };
+}
+
+/** Canonical template comparison must happen before annotation/env redaction. Only a
+ * keyed digest leaves this projection; raw templates never enter navigation data. */
+export function navigationWorkload(value: unknown, expected: ResourceReference, fingerprint: (value: string) => string) {
+  const live = liveResource(value, expected);
+  const manifest = object(JSON.parse(object(value).manifest as string)); const spec = optionalObject(manifest.spec);
+  const metadata = optionalObject(manifest.metadata); const annotations = optionalObject(metadata.annotations);
+  const template = optionalObject(spec.template); const templateMetadata = optionalObject(template.metadata); const labels = { ...optionalObject(templateMetadata.labels) }; delete labels['pod-template-hash'];
+  let visited = 0;
+  const stable = (value: unknown, depth = 0): unknown => {
+    if (++visited > 10_000 || depth > 20) throw new ServiceError('RESPONSE_TOO_LARGE', 413);
+    return Array.isArray(value) ? value.map((item) => stable(item, depth + 1)) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, stable(item, depth + 1)])) : value;
+  };
+  const revision = annotations['deployment.kubernetes.io/revision'];
+  return { workload: live.workload, revision: typeof revision === 'string' && /^\d+$/.test(revision) && Number.isSafeInteger(Number(revision)) ? Number(revision) : null,
+    templateKey: spec.template ? fingerprint(JSON.stringify(stable({ ...template, metadata: { ...templateMetadata, labels } }))) : null };
+}
+
 export function liveResource(value: unknown, expected: ResourceReference): LiveResource {
   const input = object(value);
   if (typeof input.manifest !== 'string') throw new ServiceError('UPSTREAM_INVALID', 502);
@@ -83,9 +108,10 @@ export function liveResource(value: unknown, expected: ResourceReference): LiveR
   const metadata = object(manifest.metadata);
   if (manifest.kind !== expected.kind || text(metadata.name) !== expected.name || text(metadata.namespace) !== expected.namespace || text(manifest.apiVersion) !== (expected.group ? `${expected.group}/${expected.version}` : expected.version)) throw new ServiceError('UPSTREAM_INVALID', 502);
   if (expected.uid && metadata.uid !== expected.uid) throw new ServiceError('RESOURCE_CHANGED', 409);
+  const workload = workloadStatus(manifest);
   return {
     reference: { ...expected, uid: text(metadata.uid) },
-    pod: podStatus(manifest), manifest: sanitizeKubernetes(manifest),
+    pod: podStatus(manifest), manifest: sanitizeKubernetes(manifest), ...(workload ? { workload } : {}),
     redactionNotice: "Secret contents, annotation values, literal environment values and command/args are withheld. Other custom fields receive best-effort redaction; not all secrets can be detected.",
   };
 }
@@ -101,9 +127,9 @@ export function resourceEvents(value: unknown, expected?: ResourceReference): Ev
     return {
       id: text(metadata.uid) || JSON.stringify([namespace, name]), namespace, resource,
       type: text(item.type) || 'Unknown', reason: text(item.reason), message: text(item.message ?? item.note),
-      firstTime: text(item.firstTimestamp ?? item.eventTime), lastTime: text(series.lastObservedTime ?? item.lastTimestamp ?? item.eventTime),
-      count: series.count != null ? number(series.count) : item.count != null ? number(item.count) : null,
-      source: text(item.reportingComponent ?? source.component),
+      firstTime: text(item.firstTimestamp || item.eventTime || item.deprecatedFirstTimestamp), lastTime: text(series.lastObservedTime || item.lastTimestamp || item.eventTime || item.deprecatedLastTimestamp),
+      count: series.count != null ? number(series.count) : item.count != null ? number(item.count) : item.deprecatedCount != null ? number(item.deprecatedCount) : null,
+      source: text(item.reportingController || item.reportingComponent || source.component || optionalObject(item.deprecatedSource).component),
     };
   });
   const items = expected ? all.filter((event) => resourceCoordinate(event.resource) === resourceCoordinate(expected) && (!expected.uid || event.resource.uid === expected.uid)) : all;

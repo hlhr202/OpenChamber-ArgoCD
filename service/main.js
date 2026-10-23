@@ -7807,14 +7807,19 @@ function parseTaskCommand(value) {
   if (typeof input.operation === "string" && isManagement({ operation: input.operation })) return parseManagementCommand(input);
   const valid = (value2) => typeof value2 === "string" && value2.length > 0 && value2.length <= 512 && !/[\u0000-\u001f\u007f]/.test(value2);
   if (!valid(input.context)) throw bad();
-  if (typeof input.operation === "string" && ["application", "resourceTree", "resource", "events", "manifests", "comparison"].includes(input.operation)) {
+  if (typeof input.operation === "string" && ["application", "resourceTree", "resource", "events", "relatedEvents", "manifests", "comparison"].includes(input.operation)) {
     const operation = input.operation;
-    const allowed = ["context", "operation", "name", "appNamespace", ...["resource", "events"].includes(operation) ? ["resource"] : [], ...operation === "manifests" ? ["selection"] : []];
+    const allowed = ["context", "operation", "name", "appNamespace", ...["resource", "events", "relatedEvents"].includes(operation) ? ["resource"] : [], ...operation === "manifests" ? ["selection"] : []];
     if (Object.keys(input).some((key) => !allowed.includes(key)) || !valid(input.name) || !valid(input.appNamespace)) throw bad();
     operationUrl("https://validation.invalid", "application", { name: input.name, appNamespace: input.appNamespace });
     const base = { context: input.context, name: input.name, appNamespace: input.appNamespace };
     if (operation === "resource") return { ...base, operation, resource: parseResourceInput(input.resource, "resource") };
     if (operation === "events") return { ...base, operation, ...input.resource !== void 0 ? { resource: parseResourceInput(input.resource, "events") } : {} };
+    if (operation === "relatedEvents") {
+      const resource2 = parseResourceInput(input.resource, "events");
+      if (resource2.group !== "apps" || resource2.kind !== "Deployment") throw bad();
+      return { ...base, operation, resource: resource2 };
+    }
     if (operation === "manifests") return { ...base, operation, selection: parseManifestSelection(input.selection ?? {}) };
     return { ...base, operation };
   }
@@ -7891,6 +7896,8 @@ function executeTask(api, command, signal) {
       return api.resourceSnapshot(command.context, app, command.resource, signal);
     case "events":
       return api.eventsSnapshot(command.context, app, signal, command.resource);
+    case "relatedEvents":
+      return api.relatedEventsSnapshot(command.context, app, signal, command.resource);
     case "manifests":
       return api.manifestsSnapshot(command.context, app, command.selection, signal);
     case "comparison":
@@ -9061,6 +9068,48 @@ function podStatus(manifest) {
   });
   return { phase: text(status.phase) || "Unknown", reason: text(status.reason), message: text(status.message), containers };
 }
+var optionalNumber = (value) => value == null ? null : number(value);
+function workloadStatus(manifest) {
+  if (!["Deployment", "ReplicaSet"].includes(String(manifest.kind))) return void 0;
+  const spec = optionalObject(manifest.spec);
+  const status = optionalObject(manifest.status);
+  const metadata = optionalObject(manifest.metadata);
+  return {
+    desired: optionalNumber(spec.replicas),
+    replicas: optionalNumber(status.replicas),
+    ready: optionalNumber(status.readyReplicas),
+    updated: optionalNumber(status.updatedReplicas),
+    available: optionalNumber(status.availableReplicas),
+    generation: optionalNumber(metadata.generation),
+    observedGeneration: optionalNumber(status.observedGeneration),
+    conditions: array(status.conditions).map((value) => {
+      const item = object(value);
+      return { type: text(item.type), status: text(item.status), reason: text(item.reason), message: text(item.message) };
+    })
+  };
+}
+function navigationWorkload(value, expected, fingerprint) {
+  const live = liveResource(value, expected);
+  const manifest = object(JSON.parse(object(value).manifest));
+  const spec = optionalObject(manifest.spec);
+  const metadata = optionalObject(manifest.metadata);
+  const annotations = optionalObject(metadata.annotations);
+  const template = optionalObject(spec.template);
+  const templateMetadata = optionalObject(template.metadata);
+  const labels = { ...optionalObject(templateMetadata.labels) };
+  delete labels["pod-template-hash"];
+  let visited = 0;
+  const stable = (value2, depth = 0) => {
+    if (++visited > 1e4 || depth > 20) throw new ServiceError("RESPONSE_TOO_LARGE", 413);
+    return Array.isArray(value2) ? value2.map((item) => stable(item, depth + 1)) : value2 && typeof value2 === "object" ? Object.fromEntries(Object.entries(value2).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, stable(item, depth + 1)])) : value2;
+  };
+  const revision = annotations["deployment.kubernetes.io/revision"];
+  return {
+    workload: live.workload,
+    revision: typeof revision === "string" && /^\d+$/.test(revision) && Number.isSafeInteger(Number(revision)) ? Number(revision) : null,
+    templateKey: spec.template ? fingerprint(JSON.stringify(stable({ ...template, metadata: { ...templateMetadata, labels } }))) : null
+  };
+}
 function liveResource(value, expected) {
   const input = object(value);
   if (typeof input.manifest !== "string") throw new ServiceError("UPSTREAM_INVALID", 502);
@@ -9073,10 +9122,12 @@ function liveResource(value, expected) {
   const metadata = object(manifest.metadata);
   if (manifest.kind !== expected.kind || text(metadata.name) !== expected.name || text(metadata.namespace) !== expected.namespace || text(manifest.apiVersion) !== (expected.group ? `${expected.group}/${expected.version}` : expected.version)) throw new ServiceError("UPSTREAM_INVALID", 502);
   if (expected.uid && metadata.uid !== expected.uid) throw new ServiceError("RESOURCE_CHANGED", 409);
+  const workload = workloadStatus(manifest);
   return {
     reference: { ...expected, uid: text(metadata.uid) },
     pod: podStatus(manifest),
     manifest: sanitizeKubernetes(manifest),
+    ...workload ? { workload } : {},
     redactionNotice: "Secret contents, annotation values, literal environment values and command/args are withheld. Other custom fields receive best-effort redaction; not all secrets can be detected."
   };
 }
@@ -9099,10 +9150,10 @@ function resourceEvents(value, expected) {
       type: text(item.type) || "Unknown",
       reason: text(item.reason),
       message: text(item.message ?? item.note),
-      firstTime: text(item.firstTimestamp ?? item.eventTime),
-      lastTime: text(series.lastObservedTime ?? item.lastTimestamp ?? item.eventTime),
-      count: series.count != null ? number(series.count) : item.count != null ? number(item.count) : null,
-      source: text(item.reportingComponent ?? source.component)
+      firstTime: text(item.firstTimestamp || item.eventTime || item.deprecatedFirstTimestamp),
+      lastTime: text(series.lastObservedTime || item.lastTimestamp || item.eventTime || item.deprecatedLastTimestamp),
+      count: series.count != null ? number(series.count) : item.count != null ? number(item.count) : item.deprecatedCount != null ? number(item.deprecatedCount) : null,
+      source: text(item.reportingController || item.reportingComponent || source.component || optionalObject(item.deprecatedSource).component)
     };
   });
   const items2 = expected ? all.filter((event) => resourceCoordinate(event.resource) === resourceCoordinate(expected) && (!expected.uid || event.resource.uid === expected.uid)) : all;
@@ -9568,8 +9619,49 @@ function applicationSetEvents(value, expected) {
 // src/shared/summary.ts
 var SUMMARY_KINDS = ["application", "conditions", "resources", "events", "diff", "logs"];
 
+// src/shared/locales/deployment.ts
+var deploymentEnglish = Object.fromEntries([
+  "Historical ReplicaSets ({0})",
+  "Current",
+  "Current target unconfirmed",
+  "Application sync retries",
+  "Deployment and related resource events",
+  "Event queries succeeded: {0} / {1}",
+  "{0} resources omitted by the query limit; results are incomplete.",
+  "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+  "Occurrences: {0}",
+  "Desired",
+  "Updated",
+  "Available",
+  "Generation",
+  "Observed generation",
+  "Auto-update resource details",
+  "Include related resource events",
+  "Related resource events"
+].map((key) => [key, key]));
+var deploymentChinese = {
+  "Historical ReplicaSets ({0})": "\u5386\u53F2 ReplicaSets\uFF08{0}\uFF09",
+  "Current": "\u5F53\u524D",
+  "Application sync retries": "\u5E94\u7528\u540C\u6B65\u91CD\u8BD5\u6B21\u6570",
+  "Current target unconfirmed": "\u5F53\u524D\u7248\u672C\u672A\u786E\u8BA4",
+  "Deployment and related resource events": "Deployment \u53CA\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6",
+  "Event queries succeeded: {0} / {1}": "\u4E8B\u4EF6\u67E5\u8BE2\u6210\u529F\uFF1A{0} / {1}",
+  "{0} resources omitted by the query limit; results are incomplete.": "\u53D7\u67E5\u8BE2\u4E0A\u9650\u9650\u5236\uFF0C\u672A\u8BFB\u53D6 {0} \u4E2A\u8D44\u6E90\uFF1B\u7ED3\u679C\u4E0D\u5B8C\u6574\u3002",
+  "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "\u53D1\u751F\u6B21\u6570\u662F Kubernetes \u805A\u5408\u4E8B\u4EF6\u8BA1\u6570\uFF0C\u4E0D\u662F\u540C\u6B65\u91CD\u8BD5\u6216\u5BB9\u5668\u91CD\u542F\u6B21\u6570\u3002\u4E8B\u4EF6\u53EF\u80FD\u65E9\u4E8E\u672C\u6B21\u53D1\u5E03\uFF0C\u65E0\u6CD5\u8FD8\u539F\u9010\u6B21\u5C1D\u8BD5\u3002",
+  "Occurrences: {0}": "\u4E8B\u4EF6\u53D1\u751F\u6B21\u6570\uFF1A{0}",
+  "Desired": "\u671F\u671B\u526F\u672C",
+  "Updated": "\u5DF2\u66F4\u65B0\u526F\u672C",
+  "Available": "\u53EF\u7528\u526F\u672C",
+  "Generation": "Generation",
+  "Observed generation": "\u5DF2\u89C2\u6D4B Generation",
+  "Auto-update resource details": "\u81EA\u52A8\u66F4\u65B0\u8D44\u6E90\u8BE6\u60C5",
+  "Include related resource events": "\u5305\u542B\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6",
+  "Related resource events": "\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6"
+};
+
 // src/shared/locales/base.ts
 var english = {
+  ...deploymentEnglish,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "Opening the Logs tab reads a recent fragment; following is off by default.",
   "Reload logs": "Reload logs",
   "Invalid log options. Check the line count and time range.": "Invalid log options. Check the line count and time range.",
@@ -9958,6 +10050,7 @@ var english = {
   "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Summary preview failed or identity/host boundary changed; nothing was added to the composer."
 };
 var chinese = {
+  ...deploymentChinese,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "\u6253\u5F00\u65E5\u5FD7\u6807\u7B7E\u540E\u8BFB\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u8FDE\u7EED\u67E5\u770B\u9ED8\u8BA4\u5173\u95ED\u3002",
   "Reload logs": "\u91CD\u65B0\u67E5\u8BE2\u65E5\u5FD7",
   "Invalid log options. Check the line count and time range.": "\u65E5\u5FD7\u53C2\u6570\u65E0\u6548\uFF1B\u8BF7\u68C0\u67E5\u884C\u6570\u548C\u65F6\u95F4\u8303\u56F4\u3002",
@@ -10349,6 +10442,7 @@ var chinese = {
 // src/shared/locales/generated.ts
 var translations = {
   "de": {
+    ...deploymentEnglish,
     "Restarts": "Neustarts",
     "Redaction notice": "Hinweis zur Schw\xE4rzung",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Beim \xD6ffnen der Registerkarte \u201EProtokolle\u201C wird ein aktuelles Fragment gelesen. Folgendes ist standardm\xE4\xDFig deaktiviert.",
@@ -10737,6 +10831,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Zusammenfassungsvorschau fehlgeschlagen oder Identit\xE4t/Host-Grenze ge\xE4ndert; Dem Chat-Eingabefeld wurde nichts hinzugef\xFCgt."
   },
   "fr": {
+    ...deploymentEnglish,
     "Restarts": "Red\xE9marrages",
     "Redaction notice": "Avis de masquage",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "L'ouverture de l'onglet Journaux lit un fragment r\xE9cent\xA0; ce qui suit est d\xE9sactiv\xE9 par d\xE9faut.",
@@ -11125,6 +11220,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "L'aper\xE7u r\xE9capitulatif a \xE9chou\xE9 ou la limite identit\xE9/h\xF4te a \xE9t\xE9 modifi\xE9e\xA0; rien n'a \xE9t\xE9 ajout\xE9 \xE0 la zone de saisie du chat."
   },
   "nl": {
+    ...deploymentEnglish,
     "Restarts": "Herstarts",
     "Redaction notice": "Toelichting op afscherming",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Als u het tabblad Logboeken opent, wordt een recent fragment gelezen; volgen is standaard uitgeschakeld.",
@@ -11513,6 +11609,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Samenvattingsvoorbeeld mislukt of identiteit/hostgrens gewijzigd; er is niets toegevoegd aan het chatinvoervak."
   },
   "zh-TW": {
+    ...deploymentEnglish,
     "Restarts": "\u91CD\u65B0\u555F\u52D5\u6B21\u6578",
     "Redaction notice": "\u654F\u611F\u8CC7\u8A0A\u96B1\u85CF\u8AAA\u660E",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u958B\u555F\u65E5\u8A8C\u6A19\u7C64\u5F8C\u8B80\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u9023\u7E8C\u67E5\u770B\u9810\u8A2D\u70BA\u95DC\u9589\u3002",
@@ -11901,6 +11998,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6458\u8981\u9810\u89BD\u5931\u6557\u6216\u8EAB\u5206/\u5BBF\u4E3B\u908A\u754C\u8B8A\u5316\uFF1B\u672A\u5BEB\u5165\u8F38\u5165\u6846\u3002"
   },
   "uk": {
+    ...deploymentEnglish,
     "Restarts": "\u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u043A\u0438",
     "Redaction notice": "\u041F\u0440\u0438\u043C\u0456\u0442\u043A\u0430 \u043F\u0440\u043E \u043F\u0440\u0438\u0445\u043E\u0432\u0443\u0432\u0430\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u0412\u0456\u0434\u043A\u0440\u0438\u0442\u0442\u044F \u0432\u043A\u043B\u0430\u0434\u043A\u0438 \xAB\u0416\u0443\u0440\u043D\u0430\u043B\u0438\xBB \u0447\u0438\u0442\u0430\u0454 \u043E\u0441\u0442\u0430\u043D\u043D\u0456\u0439 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442; \u0437\u0430 \u0443\u043C\u043E\u0432\u0447\u0430\u043D\u043D\u044F\u043C \u0432\u0438\u043C\u043A\u043D\u0435\u043D\u043E.",
@@ -12289,6 +12387,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u043E\u043F\u0435\u0440\u0435\u0434\u043D\u044C\u043E\u0433\u043E \u043F\u0435\u0440\u0435\u0433\u043B\u044F\u0434\u0443 \u0437\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0430\u0431\u043E \u0437\u043C\u0456\u043D\u0435\u043D\u043E \u043C\u0435\u0436\u0443 \u0456\u0434\u0435\u043D\u0442\u0438\u0444\u0456\u043A\u0430\u0442\u043E\u0440\u0430/\u0445\u043E\u0441\u0442\u0443; \u0443 \u043F\u043E\u043B\u0435 \u0432\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0447\u0430\u0442\u0443 \u043D\u0456\u0447\u043E\u0433\u043E \u043D\u0435 \u0434\u043E\u0434\u0430\u043D\u043E."
   },
   "es": {
+    ...deploymentEnglish,
     "Restarts": "Reinicios",
     "Redaction notice": "Aviso de ocultaci\xF3n de datos",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Al abrir la pesta\xF1a Registros se lee un fragmento reciente; Lo siguiente est\xE1 desactivado de forma predeterminada.",
@@ -12677,6 +12776,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Error en la vista previa del resumen o se modific\xF3 el l\xEDmite de identidad/host; no se agreg\xF3 nada al cuadro de entrada del chat."
   },
   "pt-BR": {
+    ...deploymentEnglish,
     "Restarts": "Reinicializa\xE7\xF5es",
     "Redaction notice": "Aviso de oculta\xE7\xE3o de dados",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Abrir a guia Logs l\xEA um fragmento recente; o seguinte est\xE1 desativado por padr\xE3o.",
@@ -13065,6 +13165,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Falha na visualiza\xE7\xE3o do resumo ou limite de identidade/host alterado; nada foi adicionado \xE0 caixa de entrada do chat."
   },
   "ko": {
+    ...deploymentEnglish,
     "Restarts": "\uC7AC\uC2DC\uC791 \uD69F\uC218",
     "Redaction notice": "\uBBFC\uAC10 \uC815\uBCF4 \uC228\uAE40 \uC548\uB0B4",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\uB85C\uADF8 \uD0ED\uC744 \uC5F4\uBA74 \uCD5C\uADFC \uC870\uAC01\uC744 \uC77D\uC2B5\uB2C8\uB2E4. \uB2E4\uC74C\uC740 \uAE30\uBCF8\uC801\uC73C\uB85C \uAEBC\uC838 \uC788\uC2B5\uB2C8\uB2E4.",
@@ -13453,6 +13554,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\uC694\uC57D \uBBF8\uB9AC\uBCF4\uAE30\uAC00 \uC2E4\uD328\uD588\uAC70\uB098 ID/\uD638\uC2A4\uD2B8 \uACBD\uACC4\uAC00 \uBCC0\uACBD\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uCC44\uD305 \uC785\uB825\uCC3D\uC5D0 \uC544\uBB34\uAC83\uB3C4 \uCD94\uAC00\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
   },
   "pl": {
+    ...deploymentEnglish,
     "Restarts": "Ponowne uruchomienia",
     "Redaction notice": "Informacja o ukryciu danych",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Otwarcie zak\u0142adki Logi powoduje odczytanie najnowszego fragmentu; poni\u017Csze jest domy\u015Blnie wy\u0142\u0105czone.",
@@ -13841,6 +13943,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Podgl\u0105d podsumowania nie powi\xF3d\u0142 si\u0119 lub zmieniono granic\u0119 to\u017Csamo\u015Bci/hosta; nic nie zosta\u0142o dodane do pola wprowadzania czatu."
   },
   "ja": {
+    ...deploymentEnglish,
     "Restarts": "\u518D\u8D77\u52D5\u56DE\u6570",
     "Redaction notice": "\u6A5F\u5BC6\u60C5\u5831\u306E\u30DE\u30B9\u30AD\u30F3\u30B0\u306B\u3064\u3044\u3066",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u300C\u30ED\u30B0\u300D\u30BF\u30D6\u3092\u958B\u304F\u3068\u3001\u6700\u8FD1\u306E\u30D5\u30E9\u30B0\u30E1\u30F3\u30C8\u304C\u8AAD\u307F\u53D6\u3089\u308C\u307E\u3059\u3002\u4EE5\u4E0B\u306F\u30C7\u30D5\u30A9\u30EB\u30C8\u3067\u306F\u30AA\u30D5\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002",
@@ -14229,6 +14332,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6982\u8981\u30D7\u30EC\u30D3\u30E5\u30FC\u304C\u5931\u6557\u3057\u305F\u304B\u3001\u30A2\u30A4\u30C7\u30F3\u30C6\u30A3\u30C6\u30A3/\u30DB\u30B9\u30C8\u5883\u754C\u304C\u5909\u66F4\u3055\u308C\u307E\u3057\u305F\u3002\u30C1\u30E3\u30C3\u30C8\u5165\u529B\u30DC\u30C3\u30AF\u30B9\u306B\u306F\u4F55\u3082\u8FFD\u52A0\u3055\u308C\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
   },
   "tr": {
+    ...deploymentEnglish,
     "Restarts": "Yeniden ba\u015Flatmalar",
     "Redaction notice": "Hassas veri gizleme bildirimi",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "G\xFCnl\xFCkler sekmesini a\xE7t\u0131\u011F\u0131n\u0131zda yeni bir par\xE7a okunur; a\u015Fa\u011F\u0131dakiler varsay\u0131lan olarak kapal\u0131d\u0131r.",
@@ -14617,6 +14721,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\xD6zet \xF6nizlemesi ba\u015Far\u0131s\u0131z oldu veya kimlik/ana bilgisayar s\u0131n\u0131r\u0131 de\u011Fi\u015Fti; sohbet giri\u015F kutusuna hi\xE7bir \u015Fey eklenmedi."
   },
   "ar": {
+    ...deploymentEnglish,
     "Restarts": "\u0645\u0631\u0627\u062A \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u062A\u0634\u063A\u064A\u0644",
     "Redaction notice": "\u0625\u0634\u0639\u0627\u0631 \u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u062D\u0633\u0627\u0633\u0629",
     "Opening the Logs tab reads a recent fragment; following is off by default.": '\u064A\u0624\u062F\u064A \u0641\u062A\u062D \u0639\u0644\u0627\u0645\u0629 \u0627\u0644\u062A\u0628\u0648\u064A\u0628 "\u0627\u0644\u0633\u062C\u0644\u0627\u062A" \u0625\u0644\u0649 \u0642\u0631\u0627\u0621\u0629 \u062C\u0632\u0621 \u062D\u062F\u064A\u062B\u061B \u064A\u062A\u0645 \u0625\u064A\u0642\u0627\u0641 \u062A\u0634\u063A\u064A\u0644 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0628\u0634\u0643\u0644 \u0627\u0641\u062A\u0631\u0627\u0636\u064A.',
@@ -15005,6 +15110,7 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u0641\u0634\u0644\u062A \u0645\u0639\u0627\u064A\u0646\u0629 \u0627\u0644\u0645\u0644\u062E\u0635 \u0623\u0648 \u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u062D\u062F\u0648\u062F \u0627\u0644\u0647\u0648\u064A\u0629/\u0627\u0644\u0645\u0636\u064A\u0641\u061B \u0644\u0645 \u062A\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 \u0623\u064A \u0634\u064A\u0621 \u0625\u0644\u0649 \u0645\u0631\u0628\u0639 \u0625\u062F\u062E\u0627\u0644 \u0627\u0644\u062F\u0631\u062F\u0634\u0629."
   },
   "he": {
+    ...deploymentEnglish,
     "Restarts": "\u05D4\u05E4\u05E2\u05DC\u05D5\u05EA \u05DE\u05D7\u05D3\u05E9",
     "Redaction notice": "\u05D4\u05D5\u05D3\u05E2\u05D4 \u05E2\u05DC \u05D4\u05E1\u05EA\u05E8\u05EA \u05DE\u05D9\u05D3\u05E2 \u05E8\u05D2\u05D9\u05E9",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05D9\u05D4 \u05D9\u05D5\u05DE\u05E0\u05D9\u05DD \u05E7\u05D5\u05E8\u05D0\u05EA \u05E7\u05D8\u05E2 \u05D0\u05D7\u05E8\u05D5\u05DF; \u05D4\u05D1\u05D0 \u05DB\u05D1\u05D5\u05D9 \u05DB\u05D1\u05E8\u05D9\u05E8\u05EA \u05DE\u05D7\u05D3\u05DC.",
@@ -15686,10 +15792,73 @@ var ArgoClient = class {
     return snapshot;
   }
   async resourceTreeSnapshot(context, app, signal) {
+    const scope = await this.scope(context);
+    const snapshot = await this.baseTree(context, app, signal);
+    const candidates = snapshot.data.nodes.filter((node) => node.group === "apps" && ["Deployment", "ReplicaSet"].includes(node.kind));
+    const facts = /* @__PURE__ */ new Map();
+    await this.bounded(candidates.slice(0, 64), signal, async (node) => {
+      try {
+        const result = await this.navigationFacts(context, app, node, signal);
+        facts.set(node.id, result.data);
+        this.mergeAge(snapshot, result);
+      } catch (error) {
+        this.checkFatal(error, signal);
+        snapshot.data.warnings.push(`WORKLOAD_DETAILS_UNAVAILABLE:${node.kind}/${node.name}`);
+      }
+    });
+    if (candidates.length > 64) snapshot.data.warnings.push("WORKLOAD_DETAILS_LIMIT");
+    for (const deployment of candidates.filter((node) => node.kind === "Deployment")) {
+      const target = facts.get(deployment.id)?.templateKey;
+      const sets = candidates.filter((node) => node.kind === "ReplicaSet" && node.parents.includes(deployment.id));
+      const matching = sets.filter((node) => target && facts.get(node.id)?.templateKey === target).sort((a, b) => (Date.parse(a.createdAt) || 0) - (Date.parse(b.createdAt) || 0) || a.name.localeCompare(b.name));
+      for (const node of sets) {
+        const detail = facts.get(node.id);
+        if (!detail) continue;
+        node.replicaSet = { revision: detail.revision, desired: detail.workload?.desired ?? null, replicas: detail.workload?.replicas ?? null, current: target && detail.templateKey && matching.length && sets.every((node2) => facts.get(node2.id)?.templateKey) ? matching[0]?.id === node.id : null };
+      }
+    }
+    if (scope !== await this.scope(context)) throw new ServiceError("AUTH_REQUIRED", 401);
+    return snapshot;
+  }
+  baseTree(context, app, signal) {
     return this.snapshot(context, "resourceTree", signal, resourceTree, { ...app });
   }
+  navigationFacts(context, app, resource2, signal) {
+    return this.snapshot(
+      context,
+      "resource",
+      signal,
+      (value) => navigationWorkload(value, resource2, (text2) => createHmac2("sha256", this.epochKey).update(text2).digest("hex")),
+      { ...app, group: resource2.group, version: resource2.version, kind: resource2.kind, namespace: resource2.namespace, resourceName: resource2.name },
+      `navigation:${resource2.uid}`
+    );
+  }
+  async bounded(items2, signal, work) {
+    let next = 0;
+    let failed = false;
+    await Promise.all(Array.from({ length: Math.min(4, items2.length) }, async () => {
+      while (!failed && next < items2.length) {
+        if (signal.aborted) throw new ServiceError("CANCELLED", 499);
+        const item = items2[next++];
+        try {
+          await work(item);
+        } catch (error) {
+          failed = true;
+          throw error;
+        }
+      }
+    }));
+  }
+  checkFatal(error, signal) {
+    if (signal.aborted || error instanceof ServiceError && ["AUTH_REQUIRED", "NETWORK_DISABLED", "CONTEXT_NOT_FOUND", "CANCELLED"].includes(error.code)) throw error;
+  }
+  mergeAge(target, source) {
+    if (source.sampledAt < target.sampledAt) target.sampledAt = source.sampledAt;
+    if (source.expiresAt < target.expiresAt) target.expiresAt = source.expiresAt;
+    target.stale ||= source.stale;
+  }
   async verifyResource(context, app, resource2, signal) {
-    const tree = await this.resourceTreeSnapshot(context, app, signal);
+    const tree = await this.baseTree(context, app, signal);
     const matching = tree.data.nodes.filter((node) => resourceCoordinate(node) === resourceCoordinate(resource2) && (!resource2.uid || node.uid === resource2.uid));
     if (matching.length !== 1) throw new ServiceError("RESOURCE_CHANGED", 409);
   }
@@ -15704,6 +15873,56 @@ var ArgoClient = class {
     operationUrl("https://validation.invalid", "events", parameters);
     if (resource2) await this.verifyResource(context, app, resource2, signal);
     return this.snapshot(context, "events", signal, (value) => resourceEvents(value, resource2), parameters, JSON.stringify(resource2 ?? null));
+  }
+  async relatedEventsSnapshot(context, app, signal, resource2) {
+    if (resource2.group !== "apps" || resource2.kind !== "Deployment" || !resource2.uid) throw new ServiceError("BAD_REQUEST", 400);
+    const scope = await this.scope(context);
+    const tree = await this.baseTree(context, app, signal);
+    const nodes = new Map(tree.data.nodes.map((node) => [node.id, node]));
+    const root = nodes.get(resourceId(resource2));
+    if (!root) throw new ServiceError("RESOURCE_CHANGED", 409);
+    const seen = /* @__PURE__ */ new Set();
+    const pending = [root.id];
+    const members = [];
+    while (pending.length) {
+      const id = pending.shift();
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const node = nodes.get(id);
+      if (!node || node.orphaned !== root.orphaned) continue;
+      members.push(node);
+      pending.push(...node.children);
+    }
+    const data = { scope: "related", instanceScoped: true, excludedCount: 0, items: [], related: { total: members.length, omitted: Math.max(0, members.length - 64), resources: [] } };
+    const result = { ...tree, data };
+    const events = /* @__PURE__ */ new Map();
+    await this.bounded(members.slice(0, 64), signal, async (node) => {
+      const entry = { resource: { group: node.group, version: node.version, kind: node.kind, namespace: node.namespace, name: node.name, uid: node.uid } };
+      try {
+        const sample = await this.eventsSnapshot(context, app, signal, entry.resource);
+        this.mergeAge(result, sample);
+        data.excludedCount += sample.data.excludedCount;
+        for (const event of sample.data.items) events.set(JSON.stringify([event.namespace, event.id]), event);
+      } catch (error) {
+        this.checkFatal(error, signal);
+        entry.eventsError = error instanceof ServiceError ? error.code : "UPSTREAM_INVALID";
+      }
+      if (node.kind === "Pod" && node.group === "") {
+        try {
+          const sample = await this.resourceSnapshot(context, app, entry.resource, signal);
+          this.mergeAge(result, sample);
+          entry.pod = sample.data.pod;
+        } catch (error) {
+          this.checkFatal(error, signal);
+          entry.liveError = error instanceof ServiceError ? error.code : "UPSTREAM_INVALID";
+        }
+      }
+      data.related.resources.push(entry);
+    });
+    data.items = [...events.values()].sort((a, b) => (Date.parse(b.lastTime) || 0) - (Date.parse(a.lastTime) || 0));
+    data.related.resources.sort((a, b) => resourceId(a.resource).localeCompare(resourceId(b.resource)));
+    if (scope !== await this.scope(context)) throw new ServiceError("AUTH_REQUIRED", 401);
+    return result;
   }
   async orphanedMonitoringSnapshot(context, project2, signal) {
     return this.snapshot(context, "orphanedMonitoring", signal, orphanedMonitoring, { project: project2 });

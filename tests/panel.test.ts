@@ -43,6 +43,7 @@ import { mountResourceNavigation, navigationRows } from '../src/panel/resource-n
 import { deploymentRef } from './resource-fixtures.js';
 import { navigationKey } from '../src/panel/navigation-state.js';
 import { savedNavigation } from './navigation-fixtures.js';
+import { rolloutFixture } from './deployment-fixtures.js';
 import { chinese } from '../src/shared/locales/base.js';
 
 const cleanups = new WeakMap<HTMLElement, Array<() => void>>();
@@ -482,6 +483,50 @@ test('tree navigation is cycle-safe, preserves all DAG links and separates orpha
   assert.match(root.querySelector('.resource-tree-linked')!.textContent!, /↗2/); assert.match(root.querySelector('.resource-tree-group')!.textContent!, /孤立资源/);
   assert.equal(root.querySelectorAll('.resource-health-dot[data-tone="success"]').length, 0);
   assert.equal(root.querySelectorAll('[role="treeitem"]').length, 4); assert.equal(root.querySelectorAll('[role="treeitem"][tabindex="0"]').length, 1);
+});
+
+test('ReplicaSets put rollback target first and fold only confirmed empty historical sets with searchable keyboard navigation', (t) => {
+  const root = dom(t); const f = rolloutFixture(); const data = resourceTree(f.raw);
+  for (const node of data.nodes) if (node.kind === 'ReplicaSet') node.replicaSet = { current: node.uid === f.current.uid, desired: node.uid === f.historical.uid ? 0 : 1, replicas: node.uid === f.historical.uid ? 0 : 1, revision: node.uid === f.current.uid ? 3 : 2 };
+  const original = JSON.stringify(data); const rows = navigationRows(data);
+  assert.equal(JSON.stringify(data), original);
+  assert.equal(rows.filter((row) => row.parent === data.nodes[0]!.id)[0]?.node.uid, f.current.uid);
+  assert.equal(rows.find((row) => row.node.uid === f.historical.uid && !row.historicalGroup)?.parent, `history:${data.nodes[0]!.id}`);
+  const picks: string[] = []; const nav = mountResourceNavigation(root, (id) => { picks.push(id); nav.select(id); }, () => {}); cleanup(root, () => nav.dispose()); nav.setTree(data);
+  assert.equal(root.querySelectorAll('[data-kind="ReplicaSet"]').length, 2);
+  const history = root.querySelector<HTMLElement>('[data-kind="HistoricalReplicaSets"]')!;
+  assert.equal(history.getAttribute('aria-expanded'), 'false'); history.click(); assert.equal(picks.length, 0);
+  assert.equal(root.querySelectorAll('[data-kind="ReplicaSet"]').length, 3);
+  const historicalRow = [...root.querySelectorAll<HTMLElement>('[data-kind="ReplicaSet"]')].find((node) => node.textContent?.includes(f.historical.name))!;
+  historicalRow.click(); nav.setTree(data); assert.ok(root.querySelector('[aria-selected="true"]')?.textContent?.includes(f.historical.name));
+  const search = root.querySelector('input')!; search.value = f.historical.name; search.dispatchEvent(new Event('input', { bubbles: true }));
+  assert.equal(root.querySelectorAll('[data-kind="ReplicaSet"]').length, 1);
+  root.querySelector<HTMLElement>('[data-kind="HistoricalReplicaSets"]')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  assert.equal(root.querySelectorAll('[data-kind="ReplicaSet"]').length, 0);
+  nav.select(data.nodes.find((node) => node.uid === f.historical.uid)!.id); assert.equal(root.querySelectorAll('[data-kind="ReplicaSet"]').length, 3);
+  // An unconfirmed current identity must not silently disappear into history.
+  data.nodes.find((node) => node.uid === f.historical.uid)!.replicaSet!.current = null; nav.setTree(data);
+  assert.equal(root.querySelector('[data-kind="HistoricalReplicaSets"]'), null);
+});
+
+test('Deployment overview loads related events without translation, retains diagnostics across tabs, and supports own-event scope', async (t) => {
+  const root = dom(t); const f = rolloutFixture(); const commands: string[] = [];
+  const request: PanelRequest = async <T>(_path: string, _query?: Record<string, string>, options?: { body?: unknown }) => {
+    const command = options?.body as TaskCommand; commands.push(command.operation);
+    if (command.operation === 'resourceTree') return taskSuccess(resourceTree(f.raw) as T);
+    if (command.operation === 'resource') return taskSuccess(liveResource({ manifest: JSON.stringify(f.manifests.get(deploymentRef.uid)) }, deploymentRef) as T);
+    const result = resourceEvents({ items: [{ ...rawEvent(), reason: 'Read only', message: 'Read only', type: 'FutureType' }] }, podRef);
+    return taskSuccess({ ...result, scope: command.operation === 'relatedEvents' ? 'related' : 'resource', related: { total: 2, omitted: 0, resources: [{ resource: podRef, eventsError: 'FORBIDDEN' }] } } as T);
+  };
+  const view = mountResources(root, request, 'primary', { name: 'demo', appNamespace: 'argocd' }, 'default'); cleanup(root, () => view.dispose()); view.setVisible(true); await setImmediate();
+  root.querySelector<HTMLElement>('[data-kind="Deployment"]')!.click(); await setImmediate(); await setImmediate();
+  assert.deepEqual(commands, ['resourceTree', 'resource', 'relatedEvents']);
+  assert.match(root.querySelector('.deployment-events')!.textContent!, /FutureType · Read only/);
+  assert.equal(root.querySelector('.deployment-events pre')?.textContent, 'Read only'); assert.match(root.querySelector('.deployment-events')!.textContent!, /FORBIDDEN/);
+  resourceButton(root, '资源事件').click(); await setImmediate(); resourceButton(root, '概览').click(); await setImmediate();
+  assert.ok(root.querySelector('.deployment-events')); assert.equal(commands.length, 3);
+  root.querySelector<HTMLButtonElement>('[role="switch"]')!.click(); await setImmediate(); await setImmediate();
+  assert.ok(commands.includes('events')); assert.equal(root.querySelector('img'), null);
 });
 
 test('resource detail is one returnable level and retains selection, tab and scroll when returning to its tree', async (t) => {

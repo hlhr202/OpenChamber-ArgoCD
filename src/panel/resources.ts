@@ -1,4 +1,4 @@
-import { mountButton } from './ui.js';
+import { mountButton, mountSwitch } from './ui.js';
 import { t, formatTime } from './i18n.js';
 import type { Envelope } from '../shared/contracts.js';
 import type { ApplicationReference, EventList, LiveResource, OrphanedMonitoring, ResourceNode, ResourceReference, ResourceTree } from '../shared/resources.js';
@@ -32,12 +32,28 @@ function paintAges(root: HTMLElement, visible: boolean): void {
   }
 }
 export function renderEvents(root: HTMLElement, value: EventList): void {
-  element(root, 'p', t`${t(value.scope === 'application-set' ? "ApplicationSet events (bodies withheld)" : value.scope === 'application' ? "Application events (not all child-resource events)" : value.instanceScoped ? "Events scoped to resource UID" : "Resource events (not UID-scoped)")}; subject to server retention and permissions.`);
+  element(root, 'p', t`${t(value.scope === 'related' ? "Deployment and related resource events" : value.scope === 'application-set' ? "ApplicationSet events (bodies withheld)" : value.scope === 'application' ? "Application events (not all child-resource events)" : value.instanceScoped ? "Events scoped to resource UID" : "Resource events (not UID-scoped)")}; subject to server retention and permissions.`).className = 'description';
+  if (value.related) {
+    const { resources, total, omitted } = value.related;
+    element(root, 'p', t`Event queries succeeded: ${resources.filter((item) => !item.eventsError).length} / ${total}`).className = resources.some((item) => item.eventsError) || omitted ? 'snapshot-stale' : 'description';
+    if (omitted) element(root, 'p', t`${omitted} resources omitted by the query limit; results are incomplete.`);
+    for (const item of resources) {
+      if (item.eventsError || item.liveError) element(root, 'p').textContent = `${item.resource.kind} ${item.resource.namespace}/${item.resource.name} · events: ${item.eventsError ?? 'OK'} · live: ${item.liveError ?? 'OK'}`;
+      if (item.pod) {
+        const section = element(root, 'section'); section.className = 'related-pod-status';
+        element(section, 'strong').textContent = `Pod ${item.resource.name} · ${item.pod.phase}`;
+        if (item.pod.reason || item.pod.message) element(section, 'pre', `${item.pod.reason} ${item.pod.message}`);
+        for (const container of item.pod.containers) element(section, 'p', t`${container.name} · ${container.image} · ${container.phase} · Ready ${container.ready ?? t('Unknown')} · Restarts ${container.restarts ?? t('Unknown')} · ${container.reason} ${container.message}`);
+      }
+    }
+  }
+  element(root, 'p', 'Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.').className = 'description';
   if (value.excludedCount) element(root, 'p', t`Excluded ${value.excludedCount} events with a different resource identity.`);
   if (!value.items.length) element(root, 'p', "No events in the current query scope; this does not prove there were no incidents.");
   for (const event of value.items) {
-    const section = element(root, 'section');
-    element(section, 'h4', `${event.type} · ${event.reason || t("Reason unknown")} · ${event.resource.kind} ${event.resource.namespace || '(cluster)'}/${event.resource.name}`);
+    const section = element(root, 'section'); section.className = 'resource-event'; section.dataset.type = event.type;
+    element(section, 'h4').textContent = `${event.type} · ${event.reason || t("Reason unknown")} · ${event.resource.kind} ${event.resource.namespace || '(cluster)'}/${event.resource.name}`;
+    element(section, 'strong', t`Occurrences: ${event.count ?? t('Unknown')}`).className = 'event-count';
     element(section, 'p', t`First ${event.firstTime || t("Unknown")} · Last ${event.lastTime || t("Unknown")} · Count ${event.count ?? t("Unknown")} · Source ${event.source || t("Unknown")}`);
     element(section, 'pre', value.scope === 'application-set' ? t(event.message) : event.message);
   }
@@ -52,6 +68,13 @@ export function renderLiveResource(root: HTMLElement, value: LiveResource): void
 }
 
 function renderPodOverview(root: HTMLElement, value: LiveResource): void {
+  if (value.workload) {
+    const workload = value.workload; const facts = element(root, 'dl'); facts.className = 'resource-facts';
+    for (const [label, number] of [['Desired', workload.desired], ['Ready', workload.ready], ['Updated', workload.updated], ['Available', workload.available], ['Generation', workload.generation], ['Observed generation', workload.observedGeneration]] as const) {
+      const field = element(facts, 'div'); element(field, 'dt', label); element(field, 'dd', String(number ?? t('Unknown')));
+    }
+    for (const condition of workload.conditions) { const section = element(root, 'section'); section.className = 'resource-problem'; element(section, 'strong').textContent = `${condition.type} · ${condition.status} · ${condition.reason}`; element(section, 'pre', condition.message); }
+  }
   const pod = value.pod;
   if (pod) {
     const problems = pod.containers.filter((container) => container.reason || container.message);
@@ -76,7 +99,7 @@ function renderPodOverview(root: HTMLElement, value: LiveResource): void {
 }
 
 /** Lazy, bounded resource browser. No requests at mount; entering a tab is the
- * read action. Only selected resources are inspected, never all tree nodes. */
+ * read action. Deployment diagnostics inspect a bounded descendant subtree. */
 export function mountResources(root: HTMLElement, request: PanelRequest, context: string, app: ApplicationReference, project: string, options: { copy?: (text: string) => Promise<void>; evidence?: EvidenceStore; initialState?: ResourceNavigationState; changed?: () => void } = {}) {
   const document = root.ownerDocument; root.classList.add('resource-workspace');
   let disposed = false; let visible = false; let generation = 0; let selectionVersion = 0; let section = 'tree'; let detailTab = 'overview';
@@ -88,6 +111,7 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
   let appEvents: Extract<Envelope<EventList>, { ok: true }> | undefined; let monitoring: Extract<Envelope<OrphanedMonitoring>, { ok: true }> | undefined;
   let detailTabs: ReturnType<typeof mountSections> | undefined; let logView: ReturnType<typeof mountLogs> | undefined;
   const detailDisposers: Array<() => void> = [];
+  let includeRelated = true; let automatic = false; let lastUpdate = 0;
   const actions = element(root, 'div'); actions.className = 'resource-toolbar'; const nav = element(actions, 'nav');
   const treePane = element(root, 'section'); const appEventsRoot = element(root, 'section'); appEventsRoot.setAttribute('aria-label', t("Application events"));
   treePane.className = 'resource-tree-pane';
@@ -99,6 +123,7 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
   const navigation = mountResourceNavigation(split.list, select, () => { clearSelection(); options.changed?.(); });
   let overview: HTMLElement | undefined; let eventPane: HTMLElement | undefined; let manifest: HTMLElement | undefined; let logs: HTMLElement | undefined;
   const refresh = mountIconButton(actions, { icon: 'reload', label: "Reload", onClick: () => { if (section === 'tree') void loadTree(); else void loadExtra(true); } });
+  const auto = mountIconButton(actions, { icon: 'clock', label: 'Auto-update resource details', tooltip: 'Update every 15 seconds (visible only)', pressed: false, onClick: () => { automatic = !automatic; lastUpdate = Date.now(); auto.update({ pressed: automatic }); } });
   const tabs = mountSections(nav, [{ id: 'tree', label: "Application resource tree", pane: treePane }, { id: 'events', label: "Application events", pane: appEventsRoot }, { id: 'monitoring', label: "Orphaned", pane: monitorStatus }], section, (id) => {
     section = id; extraController?.abort(); extraController = undefined; refresh.update({ loading: false });
     if (id !== 'tree') { treeController?.abort(); treeController = undefined; if (!tree) treeStarted = false; cancelSelected(); }
@@ -142,6 +167,7 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
         const node = tree.nodes.find((node) => state.selected && node.group === state.selected.group && node.kind === state.selected.kind && node.namespace === state.selected.namespace && node.name === state.selected.name && node.uid === state.selected.uid);
         if (node) { select(node.id, state); } else { split.restoreState({ ...state.split, detailOpen: false, collapsed: false }); options.changed?.(); }
       }
+      if (selected) void activateDetail();
     } catch { if (usable() && version === generation && !controller.signal.aborted) { treeStatus.replaceChildren(); element(treeStatus, 'p', "Resource-tree query failed; this is not an empty result."); } }
     finally { if (treeController === controller) { treeController = undefined; refresh.update({ loading: false }); } }
   }
@@ -169,6 +195,7 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
     const node = tree?.nodes.find((node) => node.id === id); if (!node || !usable()) return;
     if (selected?.id === id) { split.openDetail(); void activateDetail(); options.changed?.(); return; }
     pendingState = undefined; clearSelection(); selected = node; detailTab = restore?.detailTab ?? 'overview'; navigation.select(id); split.openDetail();
+    includeRelated = true;
     if (restore) split.restoreState(restore.split);
     columns.dataset.selected = 'true';
     const path = element(selection, 'div'); path.className = 'resource-return-path'; split.setHeader(path); element(path, 'span', `${app.appNamespace}/${app.name}`);
@@ -182,6 +209,9 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
     eventPane = element(selection, 'section'); eventPane.setAttribute('aria-label', t("Resource events"));
     manifest = element(selection, 'section'); manifest.setAttribute('aria-label', 'Live Manifest'); logs = element(selection, 'section');
     const reload = mountIconButton(identity, { icon: 'reload', label: "Reload resource details", onClick: () => { if (detailTab === 'logs') logView?.reload(); else void activateDetail(true); } }); detailDisposers.push(() => reload.dispose());
+    if (node.kind === 'Deployment' && node.group === 'apps') {
+      const toggle = mountSwitch(metadata, { label: 'Include related resource events', checked: true, onChange: (value) => { includeRelated = value; toggle.update({ checked: value }); events = undefined; void activateDetail(true); } }); detailDisposers.push(() => toggle.dispose());
+    }
     selection.append(metadata);
     detailTabs = mountSections(detailNav, [{ id: 'overview', label: "Overview", pane: overview }, { id: 'events', label: "Resource events", pane: eventPane }, { id: 'manifest', label: 'Manifest', pane: manifest }, { id: 'logs', label: "Logs", pane: logs }], detailTab, (id) => { detailTab = id; logView?.setVisible(id === 'logs' && usable()); void activateDetail(); options.changed?.(); });
     void activateDetail();
@@ -193,6 +223,7 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
     const version = selectionVersion;
     await loadSelected('resource', force);
     if (version !== selectionVersion) return;
+    if (detailTab === 'overview' && selected?.kind === 'Deployment' && selected.group === 'apps') await loadSelected('events', force);
     showLogs();
   }
   function showLogs(): void {
@@ -218,13 +249,14 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
     }
     parent.replaceChildren(); element(parent, 'p', operation === 'resource' ? "Reading Live details…" : "Reading resource events…");
     try {
-      const response = operation === 'resource' ? await queryTask<LiveResource>(request, { operation, context, ...app, resource: reference(node) }, controller.signal) : await queryTask<EventList>(request, { operation, context, ...app, resource: reference(node) }, controller.signal);
+      const response = operation === 'resource' ? await queryTask<LiveResource>(request, { operation, context, ...app, resource: reference(node) }, controller.signal) : await queryTask<EventList>(request, { operation: includeRelated && node.kind === 'Deployment' && node.group === 'apps' ? 'relatedEvents' : 'events', context, ...app, resource: reference(node) }, controller.signal);
       if (!usable() || controller.signal.aborted || version !== selectionVersion) return;
       parent.replaceChildren(); if (!response.ok) { error(parent, response); if (operation === 'resource') { live = undefined; manifest.replaceChildren(); error(manifest, response); if (detailTab === 'logs' && logs) { logs.replaceChildren(); error(logs, response); } } return; }
       if (operation === 'events') { events = response as Extract<Envelope<EventList>, { ok: true }>; renderEvents(parent, events.data); options.evidence?.events(events); }
       else {
         live = response as Extract<Envelope<LiveResource>, { ok: true }>; options.evidence?.live(live);
         const value = live.data; renderPodOverview(parent, value);
+        if (node.kind === 'Deployment' && events) showDeploymentEvents();
         manifest.replaceChildren(); element(manifest, 'p', value.redactionNotice); element(manifest, 'pre', JSON.stringify(value.manifest, null, 2)); age(manifest, live);
         logView?.dispose(); logView = undefined;
         if (detailTab === 'logs') queueMicrotask(() => { if (!disposed && version === selectionVersion) showLogs(); });
@@ -234,9 +266,22 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
       parent.replaceChildren(); element(parent, 'p', "This section failed to load; other successful sections do not prove this one succeeded.");
       if (operation === 'resource') { manifest.replaceChildren(); element(manifest, 'p', "This section failed to load; other successful sections do not prove this one succeeded."); if (detailTab === 'logs' && logs) { logs.replaceChildren(); element(logs, 'p', "This section failed to load; other successful sections do not prove this one succeeded."); } }
     } }
-    finally { if (operation === 'resource' && liveController === controller) liveController = undefined; if (operation === 'events' && eventController === controller) eventController = undefined; }
+    finally {
+      if (operation === 'events' && version === selectionVersion && !controller.signal.aborted && overview && node.kind === 'Deployment') {
+        showDeploymentEvents();
+      }
+      if (operation === 'resource' && liveController === controller) liveController = undefined; if (operation === 'events' && eventController === controller) eventController = undefined;
+    }
   }
-  const ticker = setInterval(() => paintAges(root, visible), 1000);
+  function showDeploymentEvents(): void {
+    if (!overview || !eventPane) return;
+    overview.querySelector('.deployment-events')?.remove(); const summary = element(overview, 'details'); summary.className = 'deployment-events'; summary.open = true; element(summary, 'summary', 'Related resource events');
+    summary.append(...[...eventPane.childNodes].map((node) => node.cloneNode(true)));
+  }
+  const ticker = setInterval(() => {
+    paintAges(root, visible);
+    if (automatic && usable() && !(section === 'tree' && detailTab === 'logs') && Date.now() - lastUpdate >= 15_000 && !treeController && !liveController && !eventController && !extraController) { lastUpdate = Date.now(); activate(); }
+  }, 1000);
   return {
     captureNavigation(): ResourceNavigationState {
       return { selected: selected ? reference(selected) : pendingState?.selected ?? null, section: section as ResourceNavigationState['section'], detailTab: (pendingState?.detailTab ?? (detailTab === 'logs' ? 'overview' : detailTab)) as ResourceNavigationState['detailTab'], split: split.captureState() };
@@ -246,6 +291,6 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
       if (!value) { generation++; selectionVersion++; treeController?.abort(); treeController = undefined; if (!tree) treeStarted = false; extraController?.abort(); extraController = undefined; cancelSelected(); split.stopResize(); refresh.update({ loading: false }); paintAges(root, false); }
       else activate();
     },
-    dispose(): void { if (disposed) return; visible = false; generation++; treeController?.abort(); extraController?.abort(); clearSelection(); disposed = true; clearInterval(ticker); navigation.dispose(); split.dispose(); tabs.dispose(); refresh.dispose(); root.replaceChildren(); },
+    dispose(): void { if (disposed) return; visible = false; generation++; treeController?.abort(); extraController?.abort(); clearSelection(); disposed = true; clearInterval(ticker); navigation.dispose(); split.dispose(); tabs.dispose(); refresh.dispose(); auto.dispose(); root.replaceChildren(); },
   };
 }

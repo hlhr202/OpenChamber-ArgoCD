@@ -250,6 +250,13 @@ button:focus-visible, summary:focus-visible, [role="tabpanel"]:focus-visible { o
 .resource-detail-tabs { margin-block: 12px; }
 .resource-problem { padding: 10px; border-radius: var(--oc-radius, 6px); background: color-mix(in srgb, var(--oc-warning-text) 8%, transparent); }
 .resource-problem strong { display: block; font-size: 12px; font-weight: 500; }
+.resource-event { margin-block: 8px; padding: 10px; border-radius: var(--oc-radius, 6px); background: color-mix(in srgb, var(--oc-fg) 4%, transparent); }
+.resource-event h4 { margin-block: 0 6px; }
+.resource-event[data-type="Warning"] h4 { color: var(--oc-warning-text); }
+.resource-event .event-count { font-size: 12px; font-variant-numeric: tabular-nums; }
+.resource-event p, .related-pod-status p { font-size: 11px; color: var(--oc-muted); }
+.resource-event pre { margin-block: 6px 0; }
+.related-pod-status { margin-block: 10px; padding-block: 8px; border-bottom: 1px solid var(--oc-border); font-size: 12px; }
 .resource-problem pre { margin-block: 4px; font-size: 11px; }
 .resource-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding-block: 12px; margin: 0; }
 .resource-facts dt { font-size: 10px; }

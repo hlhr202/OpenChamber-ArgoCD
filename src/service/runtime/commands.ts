@@ -12,6 +12,7 @@ export function executeTask(api: ArgoClient, command: TaskCommand, signal: Abort
     case 'resourceTree': return api.resourceTreeSnapshot(command.context, app, signal);
     case 'resource': return api.resourceSnapshot(command.context, app, command.resource, signal);
     case 'events': return api.eventsSnapshot(command.context, app, signal, command.resource);
+    case 'relatedEvents': return api.relatedEventsSnapshot(command.context, app, signal, command.resource);
     case 'manifests': return api.manifestsSnapshot(command.context, app, command.selection, signal);
     case 'comparison': return api.comparisonSnapshot(command.context, app, signal);
   }

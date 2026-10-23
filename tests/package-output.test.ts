@@ -92,7 +92,7 @@ test('Git publishing validates committed assets before rebuilding and only prepa
 test('release preserves public package identity, version, description and stable extension panel ID', async () => {
   const { files, basename } = await assembleRelease(); const root = JSON.parse(await readFile('package.json', 'utf8'));
   const packaged = JSON.parse(files.get('package.json')!.toString());
-  assert.equal(basename, 'openchamber-argocd'); assert.equal(root.name, basename); assert.equal(root.version, '1.1.0'); assert.equal(root.private, false);
+  assert.equal(basename, 'openchamber-argocd'); assert.equal(root.name, basename); assert.equal(root.version, '1.2.0'); assert.equal(root.private, false);
   for (const key of ['name', 'version', 'private', 'description', 'license']) assert.deepEqual(packaged[key], root[key]);
   assert.match(root.description, /context switching.*application filtering.*logs.*events.*diffs/);
   assert.equal(packaged.openchamber.contributes.panel.id, 'argocd-observer');

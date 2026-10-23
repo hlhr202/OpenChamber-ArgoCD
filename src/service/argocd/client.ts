@@ -10,8 +10,8 @@ import { operationUrl, requestJson, type ReadOperation, type ReadParameters } fr
 import { applicationCounts, applicationDetail, applicationSummaries } from '../domains/applications.js';
 import { QueryCoordinator } from '../runtime/queries.js';
 import type { ApplicationReference, EventList, LiveResource, OrphanedMonitoring, ResourceReference, ResourceTree } from '../../shared/resources.js';
-import { resourceCoordinate } from '../../shared/resources.js';
-import { liveResource, orphanedMonitoring, resourceEvents, resourceTree } from '../domains/resources.js';
+import { resourceCoordinate, resourceId } from '../../shared/resources.js';
+import { liveResource, navigationWorkload, orphanedMonitoring, resourceEvents, resourceTree } from '../domains/resources.js';
 import type { ComparisonList, ManifestList, ManifestSelection } from '../../shared/manifests.js';
 import { comparisonBlocked, managedResources, manifests, supportsSourceRevisions } from '../domains/manifests.js';
 import { parseManifestSelection } from '../runtime/manifest-input.js';
@@ -166,11 +166,54 @@ export class ArgoClient {
   }
 
   async resourceTreeSnapshot(context: string, app: ApplicationReference, signal: AbortSignal): Promise<QuerySnapshot<ResourceTree>> {
+    const scope = await this.scope(context); const snapshot = await this.baseTree(context, app, signal);
+    const candidates = snapshot.data.nodes.filter((node) => node.group === 'apps' && ['Deployment', 'ReplicaSet'].includes(node.kind));
+    const facts = new Map<string, Awaited<ReturnType<typeof this.navigationFacts>>['data']>();
+    await this.bounded(candidates.slice(0, 64), signal, async (node) => {
+      try { const result = await this.navigationFacts(context, app, node, signal); facts.set(node.id, result.data); this.mergeAge(snapshot, result); }
+      catch (error) { this.checkFatal(error, signal); snapshot.data.warnings.push(`WORKLOAD_DETAILS_UNAVAILABLE:${node.kind}/${node.name}`); }
+    });
+    if (candidates.length > 64) snapshot.data.warnings.push('WORKLOAD_DETAILS_LIMIT');
+    for (const deployment of candidates.filter((node) => node.kind === 'Deployment')) {
+      const target = facts.get(deployment.id)?.templateKey;
+      const sets = candidates.filter((node) => node.kind === 'ReplicaSet' && node.parents.includes(deployment.id));
+      const matching = sets.filter((node) => target && facts.get(node.id)?.templateKey === target).sort((a, b) => (Date.parse(a.createdAt) || 0) - (Date.parse(b.createdAt) || 0) || a.name.localeCompare(b.name));
+      for (const node of sets) { const detail = facts.get(node.id); if (!detail) continue;
+        node.replicaSet = { revision: detail.revision, desired: detail.workload?.desired ?? null, replicas: detail.workload?.replicas ?? null, current: target && detail.templateKey && matching.length && sets.every((node) => facts.get(node.id)?.templateKey) ? matching[0]?.id === node.id : null };
+      }
+    }
+    if (scope !== await this.scope(context)) throw new ServiceError('AUTH_REQUIRED', 401);
+    return snapshot;
+  }
+
+  private baseTree(context: string, app: ApplicationReference, signal: AbortSignal) {
     return this.snapshot(context, 'resourceTree', signal, resourceTree, { ...app });
+  }
+  private navigationFacts(context: string, app: ApplicationReference, resource: ResourceReference, signal: AbortSignal) {
+    return this.snapshot(context, 'resource', signal, (value) => navigationWorkload(value, resource, (text) => createHmac('sha256', this.epochKey).update(text).digest('hex')),
+      { ...app, group: resource.group, version: resource.version, kind: resource.kind, namespace: resource.namespace, resourceName: resource.name }, `navigation:${resource.uid}`);
+  }
+  private async bounded<T>(items: T[], signal: AbortSignal, work: (item: T) => Promise<void>) {
+    let next = 0; let failed = false;
+    await Promise.all(Array.from({ length: Math.min(4, items.length) }, async () => {
+      while (!failed && next < items.length) {
+        if (signal.aborted) throw new ServiceError('CANCELLED', 499);
+        const item = items[next++]!;
+        try { await work(item); } catch (error) { failed = true; throw error; }
+      }
+    }));
+  }
+  private checkFatal(error: unknown, signal: AbortSignal) {
+    if (signal.aborted || error instanceof ServiceError && ['AUTH_REQUIRED', 'NETWORK_DISABLED', 'CONTEXT_NOT_FOUND', 'CANCELLED'].includes(error.code)) throw error;
+  }
+  private mergeAge(target: QuerySnapshot<unknown>, source: QuerySnapshot<unknown>) {
+    if (source.sampledAt < target.sampledAt) target.sampledAt = source.sampledAt;
+    if (source.expiresAt < target.expiresAt) target.expiresAt = source.expiresAt;
+    target.stale ||= source.stale;
   }
 
   private async verifyResource(context: string, app: ApplicationReference, resource: ResourceReference, signal: AbortSignal): Promise<void> {
-    const tree = await this.resourceTreeSnapshot(context, app, signal);
+    const tree = await this.baseTree(context, app, signal);
     const matching = tree.data.nodes.filter((node) => resourceCoordinate(node) === resourceCoordinate(resource) && (!resource.uid || node.uid === resource.uid));
     if (matching.length !== 1) throw new ServiceError('RESOURCE_CHANGED', 409);
   }
@@ -187,6 +230,31 @@ export class ArgoClient {
     operationUrl('https://validation.invalid', 'events', parameters);
     if (resource) await this.verifyResource(context, app, resource, signal);
     return this.snapshot(context, 'events', signal, (value) => resourceEvents(value, resource), parameters, JSON.stringify(resource ?? null));
+  }
+
+  async relatedEventsSnapshot(context: string, app: ApplicationReference, signal: AbortSignal, resource: ResourceReference): Promise<QuerySnapshot<EventList>> {
+    if (resource.group !== 'apps' || resource.kind !== 'Deployment' || !resource.uid) throw new ServiceError('BAD_REQUEST', 400);
+    const scope = await this.scope(context); const tree = await this.baseTree(context, app, signal);
+    const nodes = new Map(tree.data.nodes.map((node) => [node.id, node])); const root = nodes.get(resourceId(resource));
+    if (!root) throw new ServiceError('RESOURCE_CHANGED', 409);
+    const seen = new Set<string>(); const pending = [root.id]; const members: typeof tree.data.nodes = [];
+    while (pending.length) { const id = pending.shift()!; if (seen.has(id)) continue; seen.add(id); const node = nodes.get(id); if (!node || node.orphaned !== root.orphaned) continue; members.push(node); pending.push(...node.children); }
+    const data: EventList = { scope: 'related', instanceScoped: true, excludedCount: 0, items: [], related: { total: members.length, omitted: Math.max(0, members.length - 64), resources: [] } };
+    const result: QuerySnapshot<EventList> = { ...tree, data }; const events = new Map<string, EventList['items'][number]>();
+    await this.bounded(members.slice(0, 64), signal, async (node) => {
+      const entry: NonNullable<EventList['related']>['resources'][number] = { resource: { group: node.group, version: node.version, kind: node.kind, namespace: node.namespace, name: node.name, uid: node.uid } };
+      try { const sample = await this.eventsSnapshot(context, app, signal, entry.resource); this.mergeAge(result, sample); data.excludedCount += sample.data.excludedCount; for (const event of sample.data.items) events.set(JSON.stringify([event.namespace, event.id]), event); }
+      catch (error) { this.checkFatal(error, signal); entry.eventsError = error instanceof ServiceError ? error.code : 'UPSTREAM_INVALID'; }
+      if (node.kind === 'Pod' && node.group === '') {
+        try { const sample = await this.resourceSnapshot(context, app, entry.resource, signal); this.mergeAge(result, sample); entry.pod = sample.data.pod; }
+        catch (error) { this.checkFatal(error, signal); entry.liveError = error instanceof ServiceError ? error.code : 'UPSTREAM_INVALID'; }
+      }
+      data.related!.resources.push(entry);
+    });
+    data.items = [...events.values()].sort((a, b) => (Date.parse(b.lastTime) || 0) - (Date.parse(a.lastTime) || 0));
+    data.related!.resources.sort((a, b) => resourceId(a.resource).localeCompare(resourceId(b.resource)));
+    if (scope !== await this.scope(context)) throw new ServiceError('AUTH_REQUIRED', 401);
+    return result;
   }
 
   async orphanedMonitoringSnapshot(context: string, project: string, signal: AbortSignal): Promise<QuerySnapshot<OrphanedMonitoring>> {

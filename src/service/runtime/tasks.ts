@@ -130,14 +130,19 @@ export function parseTaskCommand(value: unknown): TaskCommand {
   if (typeof input.operation === 'string' && isManagement({ operation: input.operation })) return parseManagementCommand(input);
   const valid = (value: unknown): value is string => typeof value === 'string' && value.length > 0 && value.length <= 512 && !/[\u0000-\u001f\u007f]/.test(value);
   if (!valid(input.context)) throw bad();
-  if (typeof input.operation === 'string' && ['application', 'resourceTree', 'resource', 'events', 'manifests', 'comparison'].includes(input.operation)) {
-    const operation = input.operation as 'application' | 'resourceTree' | 'resource' | 'events' | 'manifests' | 'comparison';
-    const allowed = ['context', 'operation', 'name', 'appNamespace', ...(['resource', 'events'].includes(operation) ? ['resource'] : []), ...(operation === 'manifests' ? ['selection'] : [])];
+  if (typeof input.operation === 'string' && ['application', 'resourceTree', 'resource', 'events', 'relatedEvents', 'manifests', 'comparison'].includes(input.operation)) {
+    const operation = input.operation as 'application' | 'resourceTree' | 'resource' | 'events' | 'relatedEvents' | 'manifests' | 'comparison';
+    const allowed = ['context', 'operation', 'name', 'appNamespace', ...(['resource', 'events', 'relatedEvents'].includes(operation) ? ['resource'] : []), ...(operation === 'manifests' ? ['selection'] : [])];
     if (Object.keys(input).some((key) => !allowed.includes(key)) || !valid(input.name) || !valid(input.appNamespace)) throw bad();
     operationUrl('https://validation.invalid', 'application', { name: input.name, appNamespace: input.appNamespace });
     const base = { context: input.context, name: input.name, appNamespace: input.appNamespace };
     if (operation === 'resource') return { ...base, operation, resource: parseResourceInput(input.resource, 'resource') };
     if (operation === 'events') return { ...base, operation, ...(input.resource !== undefined ? { resource: parseResourceInput(input.resource, 'events') } : {}) };
+    if (operation === 'relatedEvents') {
+      const resource = parseResourceInput(input.resource, 'events');
+      if (resource.group !== 'apps' || resource.kind !== 'Deployment') throw bad();
+      return { ...base, operation, resource };
+    }
     if (operation === 'manifests') return { ...base, operation, selection: parseManifestSelection(input.selection ?? {}) };
     return { ...base, operation };
   }
