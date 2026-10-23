@@ -1,6 +1,6 @@
 # OpenChamber Argo CD Observer
 
-[English](README.md) | 简体中文
+[English](../README.md) | 简体中文 | [العربية](README.ar.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [עברית](README.he.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Português (Brasil)](README.pt-BR.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [繁體中文](README.zh-TW.md)
 
 一个 **OpenChamber 的只读 Argo CD 扩展**。无需离开工作区，即可浏览应用、查看部署详情，以及读取资源日志和事件。
 
@@ -32,11 +32,11 @@
 
 **大屏 — 应用列表与概览**
 
-![大屏下的 Argo CD 应用列表与概览](docs/applications-desktop.png)
+![大屏下的 Argo CD 应用列表与概览](applications-desktop.png)
 
 **小屏 — 应用列表**
 
-![小屏下的 Argo CD 应用列表](docs/applications-mobile.png)
+![小屏下的 Argo CD 应用列表](applications-mobile.png)
 
 ## 功能
 
@@ -57,4 +57,4 @@
 
 ## 许可证
 
-[MIT](LICENSE)。捆绑依赖和 Argo 图标保留各自的许可证，详见[第三方许可证通知](THIRD_PARTY_NOTICES.txt)。
+[MIT](../LICENSE)。捆绑依赖和 Argo 图标保留各自的许可证，详见[第三方许可证通知](../THIRD_PARTY_NOTICES.txt)。

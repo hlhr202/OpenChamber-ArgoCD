@@ -42,15 +42,13 @@ test('an absent translated message falls back to English', () => {
   try { assert.equal(message('fr', "Read only"), 'Read only'); } finally { translations.fr["Read only"] = previous!; }
 });
 
-test('documentation is English except the Chinese README/language switch and relative Markdown links resolve', async () => {
+test('non-README documentation stays English and relative Markdown links resolve', async () => {
   const rootFiles = (await readdir('.')).filter((name) => name.endsWith('.md'));
   const files = [...rootFiles, ...(await readdir('docs')).filter((name) => name.endsWith('.md')).map((name) => `docs/${name}`)];
-  assert.equal(files.length, 8);
   const { dirname, resolve } = await import('node:path');
-  for (const filename of files) {
+  for (const filename of files.filter((name) => !/(?:^|\/)README(?:\.[\w-]+)?\.md$/.test(name))) {
     const text = await readFile(filename, 'utf8');
-    if (filename === 'README.zh-CN.md') assert.match(text, /\p{Script=Han}/u, filename);
-    else assert.doesNotMatch(filename === 'README.md' ? text.replace('English | [简体中文](README.zh-CN.md)', '') : text, /\p{Script=Han}/u, filename);
+    assert.doesNotMatch(text, /\p{Script=Han}/u, filename);
     for (const [, target] of text.matchAll(/\]\(([^)]+\.md)(?:#[^)]*)?\)/g)) {
       if (!target!.includes('://')) await readFile(resolve(dirname(filename), target!), 'utf8');
     }

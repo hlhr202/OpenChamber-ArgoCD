@@ -3,7 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { parseManifestJson } from '@openchamber/sdk/schemas';
 import { zipFiles, readReleaseZip } from './archive.js';
 
-export const RELEASE_FILES = ['README.md', 'README.zh-CN.md', 'LICENSE', 'plan.md', 'roadmap.md', 'docs/applications-desktop.png', 'docs/applications-mobile.png', 'docs/validation.md', 'docs/diff-semantics.md', 'docs/operations.md', 'docs/compatibility.md', 'panel/index.html', 'panel/argocd.svg', 'panel/style.css', 'panel/main.js', 'service/main.js', 'THIRD_PARTY_NOTICES.txt'] as const;
+export const RELEASE_FILES = ['README.md', 'docs/README.de.md', 'docs/README.fr.md', 'docs/README.nl.md', 'docs/README.zh-CN.md', 'docs/README.zh-TW.md', 'docs/README.uk.md', 'docs/README.es.md', 'docs/README.pt-BR.md', 'docs/README.ko.md', 'docs/README.pl.md', 'docs/README.ja.md', 'docs/README.tr.md', 'docs/README.ar.md', 'docs/README.he.md', 'LICENSE', 'plan.md', 'roadmap.md', 'docs/applications-desktop.png', 'docs/applications-mobile.png', 'docs/validation.md', 'docs/diff-semantics.md', 'docs/operations.md', 'docs/compatibility.md', 'panel/index.html', 'panel/argocd.svg', 'panel/style.css', 'panel/main.js', 'service/main.js', 'THIRD_PARTY_NOTICES.txt'] as const;
 const forbidden = [/-----BEGIN [^-]*PRIVATE KEY-----/, /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/, /synthetic-original|synthetic-rotated|synthetic-argo-token|synthetic-host|smoke-test-only|hidden-values|hidden-parameter|hidden-inline|private-key-sentinel|secret-data-sentinel/];
 export function scanReleaseFile(name: string, bytes: Buffer): void {
   const text = bytes.toString('utf8');

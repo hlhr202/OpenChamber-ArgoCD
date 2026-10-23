@@ -1,6 +1,6 @@
 # OpenChamber Argo CD Observer
 
-English | [简体中文](README.zh-CN.md)
+English | [简体中文](docs/README.zh-CN.md) | [العربية](docs/README.ar.md) | [Deutsch](docs/README.de.md) | [Español](docs/README.es.md) | [Français](docs/README.fr.md) | [עברית](docs/README.he.md) | [日本語](docs/README.ja.md) | [한국어](docs/README.ko.md) | [Nederlands](docs/README.nl.md) | [Polski](docs/README.pl.md) | [Português (Brasil)](docs/README.pt-BR.md) | [Türkçe](docs/README.tr.md) | [Українська](docs/README.uk.md) | [繁體中文](docs/README.zh-TW.md)
 
 A **read-only Argo CD extension for OpenChamber**. Browse applications, inspect deployments, and read resource logs and events without leaving your workspace.
 

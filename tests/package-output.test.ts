@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { test, type TestContext } from 'node:test';
 import { parse } from 'yaml';
-import { assembleRelease, verifyRelease } from '../scripts/release.js';
+import { assembleRelease, verifyRelease, RELEASE_FILES } from '../scripts/release.js';
 import { publishPackage } from '../scripts/package-output.js';
 import { zipFiles } from '../scripts/archive.js';
 
@@ -14,11 +14,23 @@ async function fixture(t: TestContext) {
   return { directory, dist: join(directory, 'dist'), release: await assembleRelease() };
 }
 
+test('MIT license is declared in both manifests and shipped alongside third-party notices', async () => {
+  const { files } = await assembleRelease();
+  assert.equal(JSON.parse(await readFile('package.json', 'utf8')).license, 'MIT');
+  assert.equal(JSON.parse(files.get('package.json')!.toString()).license, 'MIT');
+  const license = files.get('LICENSE')!.toString();
+  assert.match(license, /^MIT License\n/);
+  assert.match(license, /Copyright \(c\) 2026 OpenChamber Argo CD Observer contributors/);
+  assert.match(license, /Permission is hereby granted, free of charge/);
+  assert.match(license, /THE SOFTWARE IS PROVIDED "AS IS"/);
+  assert.ok(files.has('THIRD_PARTY_NOTICES.txt'));
+});
+
 test('packaging writes only a fixed directory/ZIP and overwrites old contents including stale files', async (t) => {
   const { dist, release } = await fixture(t);
   const first = await publishPackage(dist, release.basename, release.files, release.zip);
   assert.equal(release.basename, 'openchamber-argocd'); assert.deepEqual((await readdir(dist)).sort(), [release.basename, `${release.basename}.zip`]);
-  assert.equal(release.files.size, 18); assert.equal(release.files.has('release.json'), false);
+  assert.deepEqual([...release.files.keys()].sort(), ['package.json', ...RELEASE_FILES].sort()); assert.equal(release.files.has('release.json'), false);
   assert.equal([...release.files.keys()].some((name) => /\.(?:sha256|md5)$/.test(name)), false);
   await writeFile(join(first.folder, 'obsolete.js'), 'old bundled file');
   await writeFile(join(first.folder, 'release.json'), '{"old":"hash inventory"}');
