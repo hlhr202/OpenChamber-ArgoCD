@@ -30,7 +30,7 @@ The Service does **not execute CLI commands, log in, renew credentials, or write
 
 ## Acceptance and authorization
 
-The package is **openchamber-argocd 1.0.0**, with private=false and the MIT license. This metadata does not imply npm publication, real host acceptance or production compatibility. Remote acceptance remains **human-agreed skip, not verified**, retained in these documents. The former release.json hash inventory is no longer generated; removing it does not turn build checks into real host acceptance.
+The package is **openchamber-argocd 1.1.0**, with private=false and the MIT license. This metadata does not imply npm publication, real host acceptance or production compatibility. Remote acceptance remains **human-agreed skip, not verified**, retained in these documents. The former release.json hash inventory is no longer generated; removing it does not turn build checks into real host acceptance.
 
 The user explicitly waived remote OpenChamber installation/update, outer authorization/approval, pause/uninstall, instance switching, and lifecycle acceptance. Record these as **human-agreed skip, not verified** and do not request a remote instance as a blocker. Other uncovered Argo/platform behaviors are not automatically waived.
 
@@ -56,7 +56,7 @@ There is no version/hash suffix, checksum sidecar or release.json hash inventory
 
 Existing hash-named historical directories/ZIPs/checksum files and unrelated dist content are **not** automatically deleted: an installed extension may still reference an old directory. After explicitly replacing that installation, an operator may separately remove unused historical outputs. The new build never creates more of them. Replacing files is not an automatic host re-enable/reinstall or a filesystem-wide atomic transaction.
 
-Exactly 17 allowlisted files ship in the directory/ZIP: minimal manifest, bundled JS, HTML/CSS/Argo SVG, seven English Markdown files, the Simplified Chinese README, screenshot, MIT LICENSE and runtime/icon notices. No source/tests/scripts/node_modules/config/credentials/logs ship in those outputs. Catalogs are bundled into JS. THIRD_PARTY_NOTICES.txt is generated at the repository root as well, so Git URL installs include dependency/icon licenses without a target build. The application's own license is MIT; see the separate LICENSE file.
+Exactly 18 allowlisted files ship in the directory/ZIP: minimal manifest, bundled JS, HTML/CSS/Argo SVG, seven English Markdown files, the Simplified Chinese README, two English application screenshots (desktop and mobile), MIT LICENSE and runtime/icon notices. No source/tests/scripts/node_modules/config/credentials/logs ship in those outputs. Catalogs are bundled into JS. THIRD_PARTY_NOTICES.txt is generated at the repository root as well, so Git URL installs include dependency/icon licenses without a target build. The application's own license is MIT; see the separate LICENSE file.
 
 ## Installation sources
 

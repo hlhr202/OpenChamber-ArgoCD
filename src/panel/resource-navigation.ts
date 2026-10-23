@@ -1,5 +1,5 @@
 import type { ResourceNode, ResourceTree } from '../shared/resources.js';
-import { mountSwitch, mountTextField } from './ui.js';
+import { mountTextField } from './ui.js';
 import { t } from './i18n.js';
 
 export interface NavigationRow { node: ResourceNode; depth: number; parent: string | null; children: string[] }
@@ -27,9 +27,21 @@ export function mountResourceNavigation(root: HTMLElement, select: (id: string) 
   let rows: NavigationRow[] = []; let indexed = new Map<string, NavigationRow>(); let selected = ''; let focused = ''; let query = ''; let onlyAnomalies = false;
   const expanded = new Set<string>(); const filterCollapsed = new Set<string>(); let visibleRows: NavigationRow[] = [];
   const controls = document.createElement('div'); controls.className = 'resource-tree-controls'; root.append(controls);
-  const search = mountTextField(controls, { label: '筛选资源（名称 / Namespace / Kind / Health / orphaned）', placeholder: '搜索资源…', value: '', onChange: (value) => { query = value; search.update({ value }); paint(true); } });
-  const toggle = mountSwitch(controls, { label: '仅看异常', checked: false, onChange: (value) => { onlyAnomalies = value; toggle.update({ checked: value }); paint(true); } });
-  const tree = document.createElement('div'); tree.className = 'resource-tree'; tree.setAttribute('role', 'tree'); tree.setAttribute('aria-label', t('应用资源树')); root.append(tree);
+  const search = mountTextField(controls, { label: "Filter resources (name / Namespace / Kind / Health / orphaned)", placeholder: "Search resources…", value: '', onChange: (value) => { query = value; search.update({ value }); paint(true); } });
+  const menu = document.createElement('details'); menu.className = 'resource-filter-menu'; controls.append(menu);
+  const trigger = document.createElement('summary'); trigger.className = 'resource-filter-trigger'; trigger.setAttribute('aria-label', t("Filter resources (name / Namespace / Kind / Health / orphaned)")); trigger.title = t("Filter resources (name / Namespace / Kind / Health / orphaned)"); menu.append(trigger);
+  const filterIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); filterIcon.setAttribute('viewBox', '0 0 16 16'); filterIcon.setAttribute('aria-hidden', 'true');
+  const filterPath = document.createElementNS(filterIcon.namespaceURI, 'path'); filterPath.setAttribute('d', 'M2 3h12L9.5 8v4l-3 1V8z'); filterIcon.append(filterPath);
+  const indicator = document.createElement('span'); indicator.className = 'resource-filter-indicator'; indicator.textContent = '1'; indicator.hidden = true; trigger.append(filterIcon, indicator);
+  const panel = document.createElement('div'); panel.className = 'resource-filter-panel'; menu.append(panel);
+  const filterLabel = document.createElement('label'); panel.append(filterLabel);
+  const toggle = document.createElement('input'); toggle.type = 'checkbox'; toggle.className = 'resource-anomaly-filter'; filterLabel.append(toggle, document.createTextNode(t("Only anomalies")));
+  function setOnlyAnomalies(value: boolean): void { onlyAnomalies = value; toggle.checked = value; indicator.hidden = !value; trigger.dataset.active = String(value); }
+  const toggleAnomalies = (): void => { setOnlyAnomalies(toggle.checked); paint(true); };
+  const closeFilter = (event: KeyboardEvent): void => { if (event.key === 'Escape' && menu.open) { menu.open = false; trigger.focus(); } };
+  const outsideFilter = (event: Event): void => { if (menu.open && !menu.contains(event.target as Node)) menu.open = false; };
+  setOnlyAnomalies(false); toggle.addEventListener('change', toggleAnomalies); menu.addEventListener('keydown', closeFilter); document.addEventListener('pointerdown', outsideFilter);
+  const tree = document.createElement('div'); tree.className = 'resource-tree'; tree.setAttribute('role', 'tree'); tree.setAttribute('aria-label', t("Application resource tree")); root.append(tree);
   function ancestors(id: string, visit: (id: string) => void): void {
     let parent = indexed.get(id)?.parent;
     while (parent) { visit(parent); parent = indexed.get(parent)?.parent; }
@@ -50,12 +62,12 @@ export function mountResourceNavigation(root: HTMLElement, select: (id: string) 
     tree.replaceChildren();
     for (const orphaned of [false, true]) {
       const group = visibleRows.filter((row) => row.node.orphaned === orphaned); if (!group.length) continue;
-      if (orphaned) { const label = document.createElement('div'); label.className = 'resource-tree-group'; label.textContent = t('孤立资源'); label.setAttribute('role', 'presentation'); tree.append(label); }
+      if (orphaned) { const label = document.createElement('div'); label.className = 'resource-tree-group'; label.textContent = t("Orphaned"); label.setAttribute('role', 'presentation'); tree.append(label); }
       for (const { node, depth, children } of group) {
         const row = document.createElement('div'); row.className = 'resource-tree-row'; row.dataset.resourceId = node.id; row.dataset.kind = node.kind; row.dataset.namespace = node.namespace; row.setAttribute('role', 'treeitem'); row.setAttribute('aria-level', String(depth + 1)); row.setAttribute('aria-selected', String(node.id === selected)); row.tabIndex = node.id === focused ? 0 : -1;
         const hasChildren = children.some((id) => include.has(id)); const isExpanded = needle || onlyAnomalies ? !filterCollapsed.has(node.id) : expanded.has(node.id); if (hasChildren) row.setAttribute('aria-expanded', String(isExpanded));
         row.style.setProperty('--resource-depth', String(Math.min(depth, 8)));
-        row.title = `${node.kind} · ${node.namespace || '(cluster)'}/${node.name} · ${node.health}\n${node.healthMessage}\n${node.parents.length} ${t('关联父资源')}${node.unresolvedParents ? ` · ${t('父引用未解析')}` : ''}`;
+        row.title = `${node.kind} · ${node.namespace || '(cluster)'}/${node.name} · ${node.health}\n${node.healthMessage}\n${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` · ${t("Unresolved parent references")}` : ''}`;
         row.setAttribute('aria-label', row.title);
         const arrow = document.createElement('span'); arrow.className = 'resource-tree-arrow'; arrow.setAttribute('aria-hidden', 'true'); if (hasChildren) { arrow.textContent = isExpanded ? '▾' : '▸'; arrow.dataset.toggle = 'true'; } row.append(arrow);
         const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); icon.setAttribute('viewBox', '0 0 16 16'); icon.setAttribute('aria-hidden', 'true'); icon.classList.add('resource-kind-icon');
@@ -67,7 +79,7 @@ export function mountResourceNavigation(root: HTMLElement, select: (id: string) 
         const status = document.createElement('span'); status.className = 'resource-health-dot'; status.dataset.health = node.health; status.dataset.tone = node.health === 'Healthy' ? 'success' : ['Degraded', 'Missing'].includes(node.health) ? 'error' : node.health === 'Progressing' || node.health === 'Suspended' ? 'warning' : 'unknown'; status.setAttribute('aria-hidden', 'true'); row.append(status); tree.append(row);
       }
     }
-    if (!visibleRows.length) { const empty = document.createElement('p'); empty.className = 'description'; empty.textContent = t('当前快照没有匹配资源；不等于集群中没有资源'); tree.append(empty); }
+    if (!visibleRows.length) { const empty = document.createElement('p'); empty.className = 'description'; empty.textContent = t("No matching resources in this snapshot; not proof that the cluster has none"); tree.append(empty); }
     if (hadFocus && focused) focus(focused);
   }
   const click = (event: MouseEvent) => {
@@ -87,9 +99,9 @@ export function mountResourceNavigation(root: HTMLElement, select: (id: string) 
   };
   tree.addEventListener('click', click); tree.addEventListener('keydown', key);
   return {
-    setTree(value: ResourceTree): void { rows = navigationRows(value); indexed = new Map(rows.map((row) => [row.node.id, row])); expanded.clear(); filterCollapsed.clear(); for (const row of rows) if (anomalous(row.node)) ancestors(row.node.id, (id) => expanded.add(id)); paint(); },
+    setTree(value: ResourceTree): void { const previous = indexed; rows = navigationRows(value); indexed = new Map(rows.map((row) => [row.node.id, row])); for (const id of expanded) if (!indexed.has(id)) expanded.delete(id); for (const id of filterCollapsed) if (!indexed.has(id)) filterCollapsed.delete(id); if (selected && !indexed.has(selected)) selected = ''; for (const row of rows) if (anomalous(row.node) && !previous.has(row.node.id)) ancestors(row.node.id, (id) => expanded.add(id)); paint(); },
     clear(): void { rows = []; indexed.clear(); selected = ''; focused = ''; expanded.clear(); filterCollapsed.clear(); paint(); },
-    select(id: string): void { if (!visibleRows.some((row) => row.node.id === id)) { query = ''; onlyAnomalies = false; search.update({ value: '' }); toggle.update({ checked: false }); } selected = id; focused = id; ancestors(id, (parent) => { expanded.add(parent); filterCollapsed.delete(parent); }); paint(); },
-    dispose(): void { tree.removeEventListener('click', click); tree.removeEventListener('keydown', key); search.dispose(); toggle.dispose(); root.replaceChildren(); },
+    select(id: string): void { if (!visibleRows.some((row) => row.node.id === id)) { query = ''; setOnlyAnomalies(false); search.update({ value: '' }); } selected = id; focused = id; ancestors(id, (parent) => { expanded.add(parent); filterCollapsed.delete(parent); }); paint(); },
+    dispose(): void { tree.removeEventListener('click', click); tree.removeEventListener('keydown', key); search.dispose(); toggle.removeEventListener('change', toggleAnomalies); menu.removeEventListener('keydown', closeFilter); document.removeEventListener('pointerdown', outsideFilter); root.replaceChildren(); },
   };
 }

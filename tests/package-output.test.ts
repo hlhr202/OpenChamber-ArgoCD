@@ -18,7 +18,7 @@ test('packaging writes only a fixed directory/ZIP and overwrites old contents in
   const { dist, release } = await fixture(t);
   const first = await publishPackage(dist, release.basename, release.files, release.zip);
   assert.equal(release.basename, 'openchamber-argocd'); assert.deepEqual((await readdir(dist)).sort(), [release.basename, `${release.basename}.zip`]);
-  assert.equal(release.files.size, 17); assert.equal(release.files.has('release.json'), false);
+  assert.equal(release.files.size, 18); assert.equal(release.files.has('release.json'), false);
   assert.equal([...release.files.keys()].some((name) => /\.(?:sha256|md5)$/.test(name)), false);
   await writeFile(join(first.folder, 'obsolete.js'), 'old bundled file');
   await writeFile(join(first.folder, 'release.json'), '{"old":"hash inventory"}');
@@ -92,7 +92,7 @@ test('Git publishing validates committed assets before rebuilding and only prepa
 test('release preserves public package identity, version, description and stable extension panel ID', async () => {
   const { files, basename } = await assembleRelease(); const root = JSON.parse(await readFile('package.json', 'utf8'));
   const packaged = JSON.parse(files.get('package.json')!.toString());
-  assert.equal(basename, 'openchamber-argocd'); assert.equal(root.name, basename); assert.equal(root.version, '1.0.0'); assert.equal(root.private, false);
+  assert.equal(basename, 'openchamber-argocd'); assert.equal(root.name, basename); assert.equal(root.version, '1.1.0'); assert.equal(root.private, false);
   for (const key of ['name', 'version', 'private', 'description', 'license']) assert.deepEqual(packaged[key], root[key]);
   assert.match(root.description, /context switching.*application filtering.*logs.*events.*diffs/);
   assert.equal(packaged.openchamber.contributes.panel.id, 'argocd-observer');

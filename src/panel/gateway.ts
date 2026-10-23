@@ -16,7 +16,7 @@ export class ServiceGateway {
       const result = await this.transport<T>(path, query, options);
       if (generation !== this.generation) throw new Error('Retired response');
       if (!result.serviceInstance || !/^[a-f0-9-]{36}$/.test(result.serviceInstance)) {
-        this.invalidate(); this.boundary('Service 缺少实例标识，请重启/更新扩展后重新加载。'); throw new Error('Unidentified Service');
+        this.invalidate(); this.boundary("Service instance ID missing. Restart/update the extension and reload."); throw new Error('Unidentified Service');
       }
       const context = query?.context ?? (options?.body && typeof options.body === 'object' ? (options.body as { context?: string }).context : undefined);
       const changed = this.instance && this.instance !== result.serviceInstance;
@@ -26,7 +26,7 @@ export class ServiceGateway {
       const sensitive = errorCode && ['UNAUTHORIZED', 'AUTH_REQUIRED', 'CONFIG_MISSING', 'CONFIG_INVALID', 'CONTEXT_NOT_FOUND', 'NETWORK_DISABLED'].includes(errorCode);
       if (changed || epochChanged || sensitive) {
         this.invalidate(); this.instance = result.serviceInstance;
-        this.boundary(changed ? 'Service 实例/进程已变化；请重新加载 contexts。' : errorCode === 'AUTH_REQUIRED' ? '现有 Argo CD 登录态已过期或无效；扩展不会登录或自动续期。请检查已有 CLI 登录态后重新加载 contexts。' : '身份/授权边界已变化或不可用；请重新加载 contexts。');
+        this.boundary(changed ? "Service instance/process changed. Reload contexts." : errorCode === 'AUTH_REQUIRED' ? "Existing Argo CD credentials expired or are invalid. The extension will not log in or renew them. Check the existing CLI credentials, then reload contexts." : "Identity/authorization changed or is unavailable. Reload contexts.");
         throw new Error('Observation boundary changed');
       }
       this.instance = result.serviceInstance;

@@ -4,51 +4,6 @@ English | [简体中文](README.zh-CN.md)
 
 A **read-only Argo CD extension for OpenChamber**. Browse applications, inspect deployments, and read resource logs and events without leaving your workspace.
 
-## Screenshot
-
-![Argo CD Observer panel in OpenChamber](docs/screenshot.png)
-
-## Features
-
-### Contexts and applications
-
-- Load existing Argo CD CLI contexts, with the current context selected by default.
-- Switch contexts to load applications automatically, without changing the CLI's current context.
-- Filter applications by name, Project, cluster, application/destination Namespace, repository, Sync, Health, and labels.
-
-### Application configuration and deployments
-
-- Inspect source and destination metadata, including single-source and multi-source configuration overviews.
-- Check Sync, Health, Conditions, and the latest operation's status and resource results.
-- Browse server-retained deployment history and revision information.
-- Read desired Manifests and server-cached Argo Diff results, with sensitive fields hidden.
-
-### Resources and workload details
-
-- Explore a searchable resource tree, filter anomalous resources, and inspect their relationships.
-- Select a resource to read its live details and Live Manifest.
-- Inspect workload status, Pod readiness, restart counts, and failure reasons.
-
-### Logs and events
-
-- Read Application events and events for the selected resource.
-- View Pod/container logs with container selection, time filters, and line limits.
-- Start log following explicitly; by default, only a bounded historical fragment is read.
-
-### Read-only access and integration
-
-- Reuse the Argo CD CLI credentials and permissions of the OpenChamber Server's OS user.
-- No Sync, rollback, deletion, login, credential renewal, or CLI configuration changes.
-- Follow OpenChamber's language and theme, with 15 bundled UI languages.
-- Restore project-scoped browsing selections, application filters, tabs, and list layout after panel reloads; switching chats in the same project shares this state.
-- Preview and confirm before copying content or adding a summary to chat; no automatic model requests.
-
-## Prerequisites
-
-- **OpenChamber with extension support**, introduced in [v1.24.0](https://github.com/openchamber/openchamber/releases/tag/v1.24.0). This build currently declares **v2.2.0 or later** as its installation minimum; older-version compatibility is not verified.
-- **Argo CD CLI installed and already configured** for the OS user running OpenChamber Server, with valid credentials and permission to read the required applications, resources, logs, and events. The extension reads this existing configuration; it does not execute the CLI or sign in separately.
-- OpenChamber Server must be able to reach the configured Argo CD API.
-
 ## Installation
 
 1. Open **Settings → Extensions** in OpenChamber.
@@ -63,7 +18,33 @@ A **read-only Argo CD extension for OpenChamber**. Browse applications, inspect 
 
 No local build or dependency installation is required.
 
-Alternatively, download **openchamber-argocd.zip** from [Releases](https://github.com/hlhr202/OpenChamber-ArgoCD/releases/latest) and add that ZIP in Extensions. Use the attached prebuilt ZIP, not GitHub's **Source code (zip)**. Private repository access is required while this repository remains private.
+Alternatively, download **openchamber-argocd.zip** from [Releases](https://github.com/hlhr202/OpenChamber-ArgoCD/releases/latest) and add that ZIP in Extensions. Use the attached prebuilt ZIP, not GitHub's **Source code (zip)**.
+
+## Prerequisites
+
+- **OpenChamber with extension support**, introduced in [v1.24.0](https://github.com/openchamber/openchamber/releases/tag/v1.24.0). This build currently declares **v2.2.0 or later** as its installation minimum; older-version compatibility is not verified.
+- **Argo CD CLI installed and already configured** for the OS user running OpenChamber Server, with valid credentials and permission to read the required applications, resources, logs, and events. The extension reads this existing configuration; it does not execute the CLI or sign in separately.
+- OpenChamber Server must be able to reach the configured Argo CD API.
+
+## Screenshots
+
+English UI with sample data.
+
+**Desktop — application list and overview**
+
+![Argo CD application list and overview on desktop](docs/applications-desktop.png)
+
+**Mobile — application list**
+
+![Argo CD application list on mobile](docs/applications-mobile.png)
+
+## Features
+
+- Switch Argo CD contexts and search or filter applications.
+- Inspect application configuration, status, deployment history, and resource trees.
+- Read Pod/container logs, events, Manifests, and Diffs.
+- Preview troubleshooting summaries and confirm before adding them to chat.
+- Read-only by design, following OpenChamber's language and theme.
 
 ## Privacy
 

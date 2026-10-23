@@ -22,6 +22,6 @@ const disposers = [host.onReady((context) => {
   else { workspace.setSession(context.session); workspace.setHostLocale(context.locale); }
 }), host.onDirectory((directory) => {
   if (!ready || ready.directory === directory) return;
-  gateway.invalidate(); workspace?.dispose(); ready = { ...ready, directory }; workspace = mountWorkspace(root, gateway.bind(), host, ready, '宿主项目/目录变化，旧数据与预览已清除。');
+  gateway.invalidate(); workspace?.dispose(); ready = { ...ready, directory }; workspace = mountWorkspace(root, gateway.bind(), host, ready, "Host project/directory changed. Previous data and previews were cleared.");
 }), host.onSession((session) => { if (ready) ready = { ...ready, session }; workspace?.setSession(session); })];
 window.addEventListener('pagehide', () => { workspace?.dispose(); gateway.invalidate(); for (const dispose of disposers) dispose(); host.dispose(); }, { once: true });

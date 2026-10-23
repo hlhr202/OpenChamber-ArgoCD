@@ -43,6 +43,7 @@ import { mountResourceNavigation, navigationRows } from '../src/panel/resource-n
 import { deploymentRef } from './resource-fixtures.js';
 import { navigationKey } from '../src/panel/navigation-state.js';
 import { savedNavigation } from './navigation-fixtures.js';
+import { chinese } from '../src/shared/locales/base.js';
 
 const cleanups = new WeakMap<HTMLElement, Array<() => void>>();
 function cleanup(root: HTMLElement, dispose: () => void): void { cleanups.get(root)!.push(dispose); }
@@ -80,6 +81,119 @@ function listData() {
   const items = [applicationSummary(rawApplication()), applicationSummary(rawApplication('same', 'team-b'))];
   return { items, totals: applicationCounts(items), matched: applicationCounts(items) };
 }
+
+test('pointer selection synchronizes keyboard activity, repeated selection is a no-op and refresh keeps mounted details', async (t) => {
+  const root = dom(t); let reads = 0; let release!: (value: Envelope<unknown>) => void; let lists = 0;
+  const request: PanelRequest = async <T>(path: string, query?: Record<string, string>) => {
+    if (path === '/v1/applications') { if (++lists > 1) return new Promise<Envelope<T>>((done) => { release = done as typeof release; }); return success(listData() as T); }
+    reads++; return success(applicationDetail(rawApplication(query!.name, query!.appNamespace)) as T);
+  };
+  const browser = mountApplications(root, request); cleanup(root, () => browser.dispose()); browser.setConnection('primary', true, true); await setImmediate();
+  const rows = [...root.querySelectorAll<HTMLElement>('[role="option"]')]; rows[0]!.click(); await setImmediate(); rows[1]!.click(); await setImmediate();
+  assert.equal(root.querySelector('[data-active="true"]')!.getAttribute('aria-selected'), 'true');
+  root.querySelector('[role="listbox"]')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); await setImmediate(); assert.equal(reads, 2);
+  const detail = root.querySelector('[aria-label="应用排障视图"]'); const selected = browser.captureNavigation().selected;
+  queryButton(root).click(); assert.deepEqual(browser.captureNavigation().selected, selected); assert.equal(root.querySelector('[aria-label="应用排障视图"]'), detail);
+  release(success(listData())); await setImmediate(); assert.equal(root.querySelector('[role="option"]'), rows[0]); assert.equal(root.querySelector('[aria-label="应用排障视图"]'), detail);
+  assert.equal(root.querySelector('[aria-selected="true"][role="option"]')!.getAttribute('data-application-id'), 'team-b/same');
+  queryButton(root).click(); release({ ok: false, sampledAt: new Date().toISOString(), error: { code: 'UPSTREAM_UNAVAILABLE', message: 'Offline' } }); await setImmediate();
+  assert.equal(root.querySelector('[aria-label="应用排障视图"]'), detail); assert.equal(root.dataset.stale, 'true');
+  queryButton(root).click(); release(success({ items: [], totals: applicationCounts([]), matched: applicationCounts([]) })); await setImmediate();
+  assert.equal(browser.captureNavigation().selected, null); assert.equal(root.querySelector('[aria-label="应用排障视图"]'), null);
+});
+
+test('list polling reconciles the latest user selection and does not close an app hidden by a changed health filter', async (t) => {
+  const root = dom(t); let release!: (value: Envelope<unknown>) => void; let lists = 0;
+  const request: PanelRequest = async <T>(path: string, query?: Record<string, string>) => {
+    if (path === '/v1/applications') { if (++lists > 1) return new Promise<Envelope<T>>((done) => { release = done as typeof release; }); return success(listData() as T); }
+    return success(applicationDetail(rawApplication(query!.name, query!.appNamespace)) as T);
+  };
+  const browser = mountApplications(root, request); cleanup(root, () => browser.dispose()); browser.setConnection('primary', true, true); await setImmediate();
+  selectTrigger(root, 'Health').click(); selectOptions().find((item) => item.textContent === 'Degraded')!.click();
+  root.querySelector<HTMLElement>('[role="option"]')!.click(); await setImmediate(); queryButton(root).click();
+  root.querySelectorAll<HTMLElement>('[role="option"]')[1]!.click(); await setImmediate(); const detail = root.querySelector('[aria-label="应用排障视图"]');
+  const next = listData(); next.items[1]!.health = 'Healthy'; release(success(next)); await setImmediate();
+  assert.equal(browser.captureNavigation().selected?.appNamespace, 'team-b'); assert.equal(root.querySelector('[aria-label="应用排障视图"]'), detail);
+  assert.equal(root.querySelectorAll('[role="option"]').length, 1);
+});
+
+test('resource-tree reload keeps the selected inspector until a successful snapshot proves a UID change', async (t) => {
+  const root = dom(t); let changed = false;
+  const request: PanelRequest = async <T>(_path: string, _query?: Record<string, string>, options?: PanelRequestOptions) => {
+    const command = options!.body as TaskCommand;
+    return taskSuccess((command.operation === 'resourceTree' ? resourceTree(changed ? { nodes: [{ ...podRef, uid: 'replacement' }] } : rawTree()) : liveResource({ manifest: JSON.stringify(rawPod()) }, podRef)) as T);
+  };
+  const view = mountResources(root, request, 'primary', { name: 'demo', appNamespace: 'argocd' }, 'platform'); cleanup(root, () => view.dispose()); view.setVisible(true); await setImmediate();
+  root.querySelector<HTMLElement>('[role="treeitem"][data-kind="Pod"][data-namespace="team-a"]')!.click(); await setImmediate();
+  const inspector = root.querySelector('[aria-label="Live 资源"]'); resourceButton(root, '重新查询').click();
+  assert.equal(root.querySelector('[aria-label="Live 资源"]'), inspector); await setImmediate(); assert.equal(root.querySelector('[aria-label="Live 资源"]'), inspector); assert.equal(view.captureNavigation().selected?.uid, podRef.uid);
+  changed = true; resourceButton(root, '重新查询').click(); await setImmediate(); assert.equal(view.captureNavigation().selected, null); assert.equal(root.querySelector('[aria-label="Live 资源"]'), null);
+});
+
+test('automatic refresh preserves selection and reverse-order application detail responses cannot switch it back', async (t) => {
+  const root = dom(t); let now = Date.now(); let lists = 0; const pending = new Map<string, (value: Envelope<unknown>) => void>();
+  const request: PanelRequest = async <T>(path: string, query?: Record<string, string>) => {
+    if (path === '/v1/applications') { lists++; return success(listData() as T); }
+    return new Promise<Envelope<T>>((done) => pending.set(query!.name!, done as (value: Envelope<unknown>) => void));
+  };
+  const browser = mountApplications(root, request, { now: () => now, tickMs: 5, refreshMs: 10 }); cleanup(root, () => browser.dispose()); browser.setConnection('primary', true, true); await setImmediate();
+  const rows = root.querySelectorAll<HTMLElement>('[role="option"]'); rows[0]!.click(); rows[1]!.click();
+  pending.get('same')!(success(applicationDetail(rawApplication('same', 'team-b')))); await setImmediate();
+  pending.get('demo')!(success(applicationDetail(rawApplication()))); await setImmediate();
+  assert.equal(browser.captureNavigation().selected?.name, 'same'); assert.match(root.querySelector('[aria-label="应用详情"]')!.textContent!, /team-b\/same/);
+  const detail = root.querySelector('[aria-label="应用排障视图"]'); root.querySelector<HTMLButtonElement>('[role="switch"]')!.click(); now += 11; await delay(20);
+  assert.equal(lists, 2); assert.equal(root.querySelector('[aria-label="应用排障视图"]'), detail); assert.equal(root.querySelector('[role="option"][aria-selected="true"]')!.getAttribute('data-application-id'), 'team-b/same');
+});
+
+test('application overview prioritizes conditions and unsuccessful operations while retaining collapsed configuration and history', (t) => {
+  const root = dom(t); renderApplicationDetail(root, applicationDetail(rawApplication()));
+  const disclosures = [...root.querySelectorAll<HTMLDetailsElement>(':scope > .application-disclosure')];
+  assert.equal(disclosures.length, 3); assert.ok(disclosures.every((node) => !node.open));
+  assert.match(disclosures[0]!.querySelector('summary')!.textContent!, /来源与配置/);
+  assert.match(disclosures[2]!.textContent!, /previous-commit/);
+  assert.match(root.querySelector('.application-operation-alert')!.textContent!, /Failed.*resource sync failed/s);
+  const children = [...root.children]; const conditions = children.findIndex((node) => node.textContent?.startsWith('Conditions'));
+  assert.ok(conditions >= 0 && conditions < children.indexOf(disclosures[0]!));
+  assert.doesNotMatch(root.textContent!, /hidden-|repository-password/);
+  const healthy = applicationDetail(rawApplication()); healthy.operation!.phase = 'Succeeded'; renderApplicationDetail(root, healthy);
+  assert.equal(root.querySelector('.application-operation-alert'), null);
+});
+
+test('resource drill-down replaces only the outer sidebar and returning keeps cached resource navigation and user layout', async (t) => {
+  const root = dom(t); const calls: string[] = [];
+  const request: PanelRequest = async <T>(path: string, _query?: Record<string, string>, options?: PanelRequestOptions) => {
+    calls.push(path);
+    if (path === '/v1/applications') return success(listData() as T);
+    if (path === '/v1/application') return success(applicationDetail(rawApplication()) as T);
+    const command = options!.body as TaskCommand;
+    return taskSuccess((command.operation === 'resourceTree' ? resourceTree(rawTree()) : liveResource({ manifest: JSON.stringify(rawPod()) }, podRef)) as T);
+  };
+  const browser = mountApplications(root, request); cleanup(root, () => browser.dispose()); browser.setConnection('primary', true, true); await setImmediate();
+  root.querySelector<HTMLElement>('[role="option"]')!.click(); await setImmediate();
+  const outer = root.querySelector<HTMLElement>('.application-columns')!; const layout = browser.captureNavigation().split;
+  const resourcesTab = () => root.querySelector<HTMLElement>('[aria-label="应用排障视图"] [data-id="resources"]')!;
+  resourcesTab().click(); await setImmediate(); assert.equal(outer.dataset.detailOnly, 'true');
+  assert.equal(root.dataset.resourceFocus, 'true');
+  assert.equal(outer.dataset.listCollapsed, String(layout.collapsed));
+  assert.equal(root.querySelectorAll('.application-current-title').length, 1);
+  const heading = root.querySelector('.application-detail-header')!;
+  assert.ok(heading.contains(resourceButton(root, '展开应用列表'))); assert.ok(heading.contains(root.querySelector('.application-current-title')));
+  assert.equal(root.querySelector('.resource-columns')!.nextElementSibling, root.querySelector('.resource-tree-status'));
+  const sample = root.querySelector<HTMLElement>('.resource-tree-status [data-resource-sample]')!;
+  assert.ok(sample.title.includes('采样')); assert.doesNotMatch(sample.textContent!, /2026-|argo-api/);
+  root.querySelector<HTMLElement>('[role="treeitem"][data-kind="Pod"][data-namespace="team-a"]')!.click(); await setImmediate();
+  const inspector = root.querySelector('[aria-label="Live 资源"]'); const before = calls.length;
+  assert.ok(inspector!.lastElementChild!.hasAttribute('data-resource-sample'));
+  resourceButton(root, '展开应用列表').click(); await setImmediate();
+  assert.equal(outer.dataset.detailOnly, 'false'); assert.equal(outer.dataset.detailOpen, 'false');
+  assert.equal(root.dataset.resourceFocus, 'false');
+  assert.equal(browser.captureNavigation().selected?.name, 'demo'); assert.equal(document.activeElement?.getAttribute('role'), 'listbox');
+  resourcesTab().click(); await setImmediate();
+  assert.equal(outer.dataset.detailOnly, 'true'); assert.equal(root.querySelector('[aria-label="Live 资源"]'), inspector); assert.equal(calls.length, before);
+  assert.equal(browser.captureNavigation().resources?.selected?.uid, podRef.uid);
+  browser.setConnection('secondary', true); assert.equal(outer.dataset.detailOnly, 'false'); assert.equal(root.querySelector('.application-current-title'), null);
+  assert.ok(root.querySelector('.application-detail-toolbar')!.contains(resourceButton(root, '展开应用列表')));
+});
 
 test('application browser is manually triggered and network-disabled contexts cannot query', async (t) => {
   const root = dom(t);
@@ -243,7 +357,10 @@ test('an explicit query works outside the viewport without a false page-hidden m
 
 function resourceButton(root: HTMLElement, label: string): HTMLButtonElement {
   const aliases: Record<string, string> = { '摘要预览': 'Summary', '应用 / 排障': 'Applications', '管理域': 'Management' };
-  const button = [...root.querySelectorAll('button')].find((button) => button.textContent === translate(aliases[label] ?? label)); assert.ok(button); return button;
+  // Most tests assert Chinese visible labels; resolve those to the same English
+  // key when exercising another host locale. This is test-only, not a runtime alias.
+  const key = aliases[label] ?? Object.entries(chinese).find(([, value]) => value === label)?.[0] ?? label;
+  const button = [...root.querySelectorAll('button')].find((button) => button.textContent === translate(key)); assert.ok(button, label); return button;
 }
 function taskSuccess<T>(data: T): Envelope<T> {
   return success({ id: 'synthetic-id', state: 'succeeded', result: { data, sampledAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 15000).toISOString(), stale: false, source: 'argo-api' } } as T);
@@ -323,7 +440,7 @@ test('late resource response cannot overwrite a newer namespaced node selection'
   root.querySelector<HTMLElement>('[role="treeitem"][data-namespace="team-a"]')!.click(); await setImmediate(); root.querySelector<HTMLElement>('[role="treeitem"][data-namespace="team-b"]')!.click(); await setImmediate();
   resolve(taskSuccess(liveResource({ manifest: JSON.stringify(rawPod()) }, podRef))); await setImmediate();
   const details = root.querySelector('[aria-label="资源详情与事件"]')!;
-  assert.match(details.textContent!, /team-b\/demo/); assert.doesNotMatch(details.textContent!, /team-a/);
+  assert.match(details.querySelector('.resource-coordinate')!.textContent!, /team-b/); assert.match(details.querySelector('.resource-identity')!.textContent!, /Pod · demo/); assert.doesNotMatch(details.textContent!, /team-a/);
 });
 
 test('compact navigation folds healthy branches, opens anomaly paths, keeps ancestors in search and never reads data on expansion', async (t) => {
@@ -340,11 +457,20 @@ test('compact navigation folds healthy branches, opens anomaly paths, keeps ance
   assert.equal(root.querySelectorAll('[role="treeitem"]').length, 2); assert.match(root.textContent!, /healthy-pod/); assert.match(root.textContent!, /healthy/);
   root.querySelector<HTMLElement>('[role="treeitem"][data-kind="Pod"]')!.click(); assert.equal(selected.length, 1);
   search.value = 'broken'; search.dispatchEvent(new Event('input', { bubbles: true })); assert.equal(filtered, 1);
-  search.value = ''; search.dispatchEvent(new Event('input', { bubbles: true })); root.querySelector<HTMLElement>('[role="switch"]')!.click();
+  const anomalyFilter = root.querySelector<HTMLInputElement>('.resource-anomaly-filter')!;
+  const menu = root.querySelector<HTMLDetailsElement>('.resource-filter-menu')!; const trigger = root.querySelector<HTMLElement>('.resource-filter-trigger')!;
+  assert.equal(menu.open, false); assert.equal(anomalyFilter.checked, false); assert.equal(root.querySelector('[role="switch"]'), null);
+  menu.open = true;
+  search.value = ''; search.dispatchEvent(new Event('input', { bubbles: true })); anomalyFilter.click(); assert.equal(anomalyFilter.checked, true); assert.equal(trigger.dataset.active, 'true');
   assert.equal(root.querySelectorAll('[role="treeitem"]').length, 2); assert.doesNotMatch(root.querySelector('[role="tree"]')!.textContent!, /healthy/);
   const first = root.querySelector<HTMLElement>('[role="treeitem"]')!; first.focus(); first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
   assert.equal((document.activeElement as HTMLElement).dataset.kind, 'Pod'); assert.equal(selected.length, 1);
   (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); assert.equal(selected.length, 2);
+  tree.setTree(data); assert.equal(anomalyFilter.checked, true);
+  tree.select(data.nodes.find((node) => node.name === 'healthy-pod')!.id); assert.equal(anomalyFilter.checked, false); assert.equal(root.querySelector<HTMLElement>('.resource-filter-indicator')!.hidden, true);
+  anomalyFilter.click(); anomalyFilter.click(); assert.equal(anomalyFilter.checked, false);
+  menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); assert.equal(menu.open, false); assert.equal(document.activeElement, trigger);
+  menu.open = true; document.body.dispatchEvent(new Event('pointerdown', { bubbles: true })); assert.equal(menu.open, false);
 });
 
 test('tree navigation is cycle-safe, preserves all DAG links and separates orphan nodes without pretending unknown is healthy', async (t) => {
@@ -356,6 +482,34 @@ test('tree navigation is cycle-safe, preserves all DAG links and separates orpha
   assert.match(root.querySelector('.resource-tree-linked')!.textContent!, /↗2/); assert.match(root.querySelector('.resource-tree-group')!.textContent!, /孤立资源/);
   assert.equal(root.querySelectorAll('.resource-health-dot[data-tone="success"]').length, 0);
   assert.equal(root.querySelectorAll('[role="treeitem"]').length, 4); assert.equal(root.querySelectorAll('[role="treeitem"][tabindex="0"]').length, 1);
+});
+
+test('resource detail is one returnable level and retains selection, tab and scroll when returning to its tree', async (t) => {
+  const root = dom(t); let reads = 0; let changes = 0;
+  const request: PanelRequest = async <T>(_path: string, _query?: Record<string, string>, options?: PanelRequestOptions) => {
+    reads++; return taskSuccess(((options!.body as TaskCommand).operation === 'resourceTree' ? resourceTree(rawTree()) : liveResource({ manifest: JSON.stringify(rawPod()) }, podRef)) as T);
+  };
+  const view = mountResources(root, request, 'primary', { name: 'demo', appNamespace: 'argocd' }, 'platform', { changed: () => { changes++; } }); cleanup(root, () => view.dispose()); view.setVisible(true); await setImmediate();
+  const row = () => root.querySelector<HTMLElement>('[role="treeitem"][data-kind="Pod"][data-namespace="team-a"]')!;
+  row().click(); await setImmediate(); const columns = root.querySelector<HTMLElement>('.resource-columns')!;
+  const inspector = root.querySelector('[aria-label="Live 资源"]')!;
+  assert.equal(columns.dataset.selected, 'true'); assert.ok(root.querySelector('.resource-return-path')!.contains(resourceButton(root, '展开资源列表')));
+  assert.deepEqual([...inspector.querySelectorAll('.resource-facts dd')].map((node) => node.textContent), ['Pending', '0 / 1', '3']);
+  assert.match(inspector.querySelector('.resource-problem')!.textContent!, /CrashLoopBackOff/);
+  assert.equal(inspector.querySelector<HTMLDetailsElement>('.resource-redaction')!.open, false);
+  const details = root.querySelector<HTMLElement>('[aria-label="资源详情与事件"]')!; details.scrollTop = 120;
+  resourceButton(root, 'Manifest').click(); await setImmediate(); const before = reads; const changedBefore = changes;
+  resourceButton(root, '展开资源列表').click(); assert.equal(columns.dataset.detailOpen, 'false'); assert.equal(view.captureNavigation().selected?.uid, podRef.uid);
+  row().click(); await setImmediate(); assert.equal(columns.dataset.detailOpen, 'true'); assert.equal(view.captureNavigation().detailTab, 'manifest');
+  assert.equal(root.querySelector('[aria-label="Live 资源"]'), inspector); assert.equal(details.scrollTop, 120); assert.equal(reads, before); assert.ok(changes >= changedBefore + 2);
+});
+
+test('missing container observations remain unknown rather than displaying zero restarts or readiness', async (t) => {
+  const root = dom(t); const pod = rawPod(); pod.status.containerStatuses = [];
+  const request: PanelRequest = async <T>(_path: string, _query?: Record<string, string>, options?: PanelRequestOptions) => taskSuccess(((options!.body as TaskCommand).operation === 'resourceTree' ? resourceTree(rawTree()) : liveResource({ manifest: JSON.stringify(pod) }, podRef)) as T);
+  const view = mountResources(root, request, 'primary', { name: 'demo', appNamespace: 'argocd' }, 'platform'); cleanup(root, () => view.dispose()); view.setVisible(true); await setImmediate();
+  root.querySelector<HTMLElement>('[role="treeitem"][data-kind="Pod"][data-namespace="team-a"]')!.click(); await setImmediate();
+  assert.deepEqual([...root.querySelectorAll('.resource-facts dd')].map((node) => node.textContent), ['Pending', '未知', '未知']);
 });
 
 test('resource tabs reuse valid selected snapshots, defer log sessions and auto-read a changed container with follow off', async (t) => {
@@ -609,7 +763,7 @@ test('management application references open namespaced details without needing 
   const browser = mountApplications(root, request); cleanup(root, () => browser.dispose()); browser.setConnection('primary', true);
   browser.openReference({ name: 'same', appNamespace: 'team-b' }); await setImmediate();
   assert.deepEqual(calls, [{ path: '/v1/application', query: { context: 'primary', name: 'same', appNamespace: 'team-b' } }]);
-  assert.match(root.textContent!, /详情采样时间/); assert.match(root.textContent!, /team-b/);
+  assert.match(root.querySelector('.application-detail-age')!.getAttribute('title')!, /详情采样时间/); assert.match(root.textContent!, /team-b/);
 });
 
 test('management filter navigation updates controls and performs one ordinary application query', async (t) => {
@@ -676,6 +830,32 @@ function persistentHost(initial?: unknown) {
   return { host, values, accesses };
 }
 
+test('normal startup falls back to the CLI current context for missing, empty or unavailable navigation storage', async (t) => {
+  const root = dom(t);
+  for (const mode of ['missing', 'empty', 'failure', 'directoryless']) {
+    const saved = savedNavigation(); saved.context = '';
+    const { host } = persistentHost(mode === 'empty' ? saved : undefined); const calls: Array<{ path: string; context?: string }> = [];
+    if (mode === 'failure') host.storage.get = async () => { throw new Error('Storage unavailable'); };
+    const request: PanelRequest = async <T>(path: string, query?: Record<string, string>) => {
+      calls.push({ path, ...(query?.context ? { context: query.context } : {}) });
+      return success((path === '/v1/contexts' ? { contexts: [{ name: 'first', current: false, core: false }, { name: 'current', current: true, core: false }], networkEnabled: true } : listData()) as T);
+    };
+    const view = mountWorkspace(root, request, host, { ...hostReady(), ...(mode === 'directoryless' ? { directory: null } : {}) }); await setImmediate();
+    assert.deepEqual(calls, [{ path: '/v1/contexts' }, { path: '/v1/applications', context: 'current' }], mode);
+    assert.equal(selectTrigger(root, 'Context').textContent, 'current'); assert.equal(root.querySelector<HTMLDetailsElement>('.workspace-more')!.open, false);
+    view.dispose();
+  }
+});
+
+test('first startup while hidden defers all reads until visible and starts only once', async (t) => {
+  const root = dom(t); const { host } = persistentHost(); const calls: string[] = [];
+  Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+  const request: PanelRequest = async <T>(path: string) => { calls.push(path); return success((path === '/v1/contexts' ? { contexts: [{ name: 'primary', current: true, core: false }], networkEnabled: true } : listData()) as T); };
+  const view = mountWorkspace(root, request, host, hostReady()); cleanup(root, () => view.dispose()); await setImmediate(); assert.deepEqual(calls, []);
+  Object.defineProperty(document, 'hidden', { value: false, configurable: true }); document.dispatchEvent(new Event('visibilitychange')); await setImmediate(); document.dispatchEvent(new Event('visibilitychange')); await setImmediate();
+  assert.deepEqual(calls, ['/v1/contexts', '/v1/applications']);
+});
+
 test('project navigation restores fresh data, selection/tabs/layout, and survives session changes and panel remounts without storing payloads', async (t) => {
   const root = dom(t); const { host, values, accesses } = persistentHost(savedNavigation()); const calls: string[] = [];
   const request: PanelRequest = async <T>(path: string, _query?: Record<string, string>, options?: PanelRequestOptions) => {
@@ -725,13 +905,13 @@ test('saved log tabs restore the Pod overview without starting or reconnecting l
 
 test('navigation storage is directory-isolated, unavailable on status surfaces, and uses instance scope only when device storage is not advertised', async (t) => {
   const root = dom(t); const { host, accesses } = persistentHost(savedNavigation()); let requests = 0;
-  const request: PanelRequest = async <T>() => { requests++; return success({} as T); };
+  const request: PanelRequest = async <T>() => { requests++; return success({ contexts: [], networkEnabled: true } as T); };
   const other = mountWorkspace(root, request, host, { ...hostReady(), directory: '/another-project' }); await setImmediate(); other.dispose();
-  assert.equal(requests, 0); assert.ok(accesses.some((entry) => entry.key === navigationKey('/another-project')));
+  assert.equal(requests, 1); assert.ok(accesses.some((entry) => entry.key === navigationKey('/another-project')));
   accesses.length = 0; const status = mountWorkspace(root, request, host, { ...hostReady(), surface: 'status' }); await setImmediate(); status.dispose(); assert.equal(accesses.length, 0);
   const old = mountWorkspace(root, request, host, { ...hostReady(), directory: '/older-host-project', features: {} }); cleanup(root, () => old.dispose()); await setImmediate();
   root.querySelector('[role="separator"]')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await old.flushPersistence();
-  assert.ok(accesses.every((entry) => entry.scope === 'instance')); assert.equal(requests, 0);
+  assert.ok(accesses.every((entry) => entry.scope === 'instance')); assert.equal(requests, 2);
 });
 
 test('late storage restore cannot overwrite fresh user filters, nor populate a disposed panel', async (t) => {
@@ -739,7 +919,7 @@ test('late storage restore cannot overwrite fresh user filters, nor populate a d
   const { host } = persistentHost(); host.storage.get = async (key) => key === 'observer.view.v1' ? undefined : new Promise((done) => { resolve = done; });
   const request: PanelRequest = async <T>() => { requests++; return success({} as T); };
   const workspace = mountWorkspace(root, request, host, hostReady()); cleanup(root, () => workspace.dispose()); await setImmediate();
-  const input = root.querySelector<HTMLInputElement>('.filter-grid input')!; input.value = 'user-changed'; input.dispatchEvent(new Event('input', { bubbles: true }));
+  const input = root.querySelector<HTMLInputElement>('.application-search input')!; input.value = 'user-changed'; input.dispatchEvent(new Event('input', { bubbles: true }));
   resolve(JSON.parse(JSON.stringify(savedNavigation()))); await setImmediate(); assert.equal(input.value, 'user-changed'); assert.equal(requests, 0);
   workspace.dispose(); const next = mountWorkspace(root, request, host, hostReady()); await setImmediate(); next.dispose(); resolve(JSON.parse(JSON.stringify(savedNavigation()))); await setImmediate(); assert.equal(root.textContent, ''); assert.equal(requests, 0);
 });
@@ -800,7 +980,7 @@ test('workspace preferences are harmless enums and theme reapplication preserves
   const root = dom(t); const writes: JsonValue[] = []; let requests = 0;
   const host: WorkspaceHost = { storage: { get: async () => ({ density: 'comfortable', module: 'management' }), set: async (_key, value) => { writes.push(value); }, delete: async () => {}, keys: async () => [] }, writeClipboard: async () => assert.fail(), compose: async () => assert.fail() };
   const request: PanelRequest = async <T>() => { requests++; return success({} as T); };
-  const ready = hostReady(); applyHostReady(ready, document.documentElement); const workspace = mountWorkspace(root, request, host, ready); cleanup(root, () => workspace.dispose());
+  const ready = hostReady(); applyHostReady(ready, document.documentElement); const workspace = mountWorkspace(root, request, host, ready, '', { autoRestore: false }); cleanup(root, () => workspace.dispose());
   await setImmediate(); assert.equal(root.dataset.density, 'comfortable'); assert.equal(requests, 0); assert.ok(writes.every((value) => Object.keys(value!).every((key) => ['density', 'module'].includes(key))));
   assert.ok([...root.querySelectorAll('input')].every((input) => input.hasAttribute('aria-label')));
   const input = root.querySelector('input')!; input.value = 'keep-user-input'; const buttons = root.querySelectorAll('button').length;
@@ -827,8 +1007,7 @@ test('load contexts selects the CLI current context and shows applications witho
     const items = [applicationSummary(rawApplication('secondary-app'))]; return success({ items, totals: applicationCounts(items), matched: applicationCounts(items) } as T);
   };
   const workspace = mountWorkspace(root, request, host, hostReady()); cleanup(root, () => workspace.dispose()); await setImmediate();
-  assert.equal(calls.length, 0); assert.equal(root.querySelector('[aria-label="Argo CD 主导航"] [aria-selected="true"]')!.textContent, translate('Applications'));
-  resourceButton(root, '加载 contexts').click(); await setImmediate();
+  assert.equal(calls.length, 2); assert.equal(root.querySelector('[aria-label="Argo CD 主导航"] [aria-selected="true"]')!.textContent, translate('Applications'));
   assert.deepEqual(calls, [{ path: '/v1/contexts' }, { path: '/v1/applications', context: 'primary' }]);
   root.querySelector<HTMLButtonElement>('[aria-label="Argo CD 连接"] button[aria-haspopup="listbox"]')!.click();
   [...document.querySelectorAll<HTMLElement>('[role="option"]')].find((item) => item.textContent === 'secondary')!.click(); await setImmediate();
@@ -854,8 +1033,8 @@ test('expanded searchable dropdowns use the full snapshot, keep options when fil
   const items = [applicationSummary(rawApplication()), applicationSummary(other)]; let calls = 0;
   const request: PanelRequest = async <T>() => { calls++; return success({ items, totals: applicationCounts(items), matched: applicationCounts(items) } as T); };
   const browser = mountApplications(root, request); cleanup(root, () => browser.dispose()); browser.setConnection('primary', true, true); await setImmediate();
-  assert.equal(root.querySelector<HTMLDetailsElement>('.application-filters')!.open, true);
-  assert.equal(root.querySelectorAll('.filter-grid .oc-sdk-select').length, 8); assert.equal(root.querySelectorAll('.filter-grid input').length, 1);
+  assert.equal(root.querySelector<HTMLDetailsElement>('.application-filters')!.open, false);
+  assert.equal(root.querySelectorAll('.filter-grid .oc-sdk-select').length, 8); assert.equal(root.querySelectorAll('.application-search input').length, 1);
   selectTrigger(root, 'Project').click(); assert.deepEqual(selectOptions().map((node) => node.textContent), ['全部', 'other-project', 'platform']);
   selectOptions().find((node) => node.textContent === 'platform')!.click(); assert.equal(root.querySelectorAll('[aria-label="Argo CD 应用"] [role="option"]').length, 1);
   selectTrigger(root, 'Project').click(); assert.ok(selectOptions().some((node) => node.textContent === 'other-project'));
@@ -882,7 +1061,7 @@ test('three-line app rows, bounded keyboard/pointer resizing and collapse/back c
   const root = dom(t); const request: PanelRequest = async <T>(path: string) => success((path === '/v1/applications' ? listData() : applicationDetail(rawApplication())) as T);
   const browser = mountApplications(root, request); cleanup(root, () => browser.dispose()); browser.setConnection('primary', true, true); await setImmediate();
   const row = root.querySelector<HTMLElement>('[aria-label="Argo CD 应用"] [role="option"]')!;
-  assert.equal(row.children.length, 2); assert.equal(row.children[0]!.children.length, 2); assert.equal(row.children[1]!.className, 'application-status-line'); assert.equal(row.children[1]!.children.length, 3); assert.equal(row.title, 'argocd/demo');
+  assert.equal(row.children.length, 2); assert.equal(row.children[0]!.children.length, 2); assert.equal(row.children[1]!.className, 'application-status-line'); assert.equal(row.children[1]!.children.length, 3); assert.match(row.title, /^argocd\/demo/);
   row.click(); await setImmediate(); const columns = root.querySelector<HTMLElement>('.application-columns')!; assert.equal(columns.dataset.detailOpen, 'true');
   const divider = root.querySelector<HTMLElement>('[role="separator"]')!; assert.equal(divider.getAttribute('aria-valuenow'), '280');
   divider.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); assert.equal(divider.getAttribute('aria-valuenow'), '296');
@@ -914,15 +1093,15 @@ test('English host locale localizes chrome, keeps API data opaque, and switches 
     calls.push(path); return success((path === '/v1/contexts' ? { contexts: [{ name: 'primary', current: true, core: false, server: 'server', user: 'user' }], networkEnabled: true } : path === '/v1/applications' ? listData() : applicationDetail(rawApplication())) as T);
   };
   const ready = { ...hostReady(), locale: 'en-US' }; const workspace = mountWorkspace(root, request, host, ready); cleanup(root, () => workspace.dispose()); await setImmediate();
-  assert.equal(document.documentElement.lang, 'en'); resourceButton(root, '加载 contexts').click(); await setImmediate();
-  assert.deepEqual(calls, ['/v1/contexts', '/v1/applications']); assert.equal(root.querySelector<HTMLDetailsElement>('.application-filters')!.open, true);
+  assert.equal(document.documentElement.lang, 'en');
+  assert.deepEqual(calls, ['/v1/contexts', '/v1/applications']); assert.equal(root.querySelector<HTMLDetailsElement>('.application-filters')!.open, false);
   assert.match(root.textContent!, /Showing 2 \/ 2/); assert.doesNotMatch(root.textContent!, /\p{Script=Han}/u);
   selectTrigger(root, 'Project').click(); selectOptions().find((item) => item.textContent === 'platform')!.click();
   workspace.setHostLocale('zh-CN'); await setImmediate();
   assert.equal(document.documentElement.lang, 'zh-CN'); assert.match(root.textContent!, /当前筛选 2/); assert.equal(selectTrigger(root, 'Project').textContent, 'platform'); assert.equal(calls.length, 2);
   assert.ok(saved.every((item) => item.key === 'observer.view.v1' || item.key === navigationKey(ready.directory!)));
   assert.ok(saved.filter((item) => item.key === 'observer.view.v1').every((item) => !JSON.stringify(item.value).includes('primary')));
-  workspace.setHostLocale('fr-FR'); assert.equal(document.documentElement.lang, 'fr'); assert.ok(root.textContent!.includes(translate('只读')));
+  workspace.setHostLocale('fr-FR'); assert.equal(document.documentElement.lang, 'fr'); assert.ok(root.textContent!.includes(translate("Read only")));
   workspace.setHostLocale('not-a-known-locale'); assert.equal(document.documentElement.lang, 'en'); assert.equal(calls.length, 2);
   root.querySelector<HTMLElement>('[aria-label="Argo CD applications"] [role="option"]')!.click(); await setImmediate(); assert.match(root.querySelector('[aria-label="Application details"]')!.textContent!, /Sources and configuration/);
   assert.doesNotMatch(root.querySelector('[aria-label="Application details"]')!.textContent!, /\p{Script=Han}/u);
@@ -941,14 +1120,14 @@ test('localization does not translate fetched event/log/manifest text that happe
 test('all host languages apply live, ignore legacy language preferences and persist no independent language', async (t) => {
   const root = dom(t); const keys: string[] = []; let calls = 0;
   const host: WorkspaceHost = { storage: { get: async (key) => { keys.push(key); return key === 'observer.language.v1' ? 'en' : { density: 'comfortable', module: 'applications' }; }, set: async (key) => { assert.ok(key === 'observer.view.v1' || key === navigationKey(hostReady().directory!)); }, delete: async () => assert.fail(), keys: async () => [] }, writeClipboard: async () => {}, compose: async () => assert.fail() };
-  const request: PanelRequest = async <T>() => { calls++; return success({} as T); };
+  const request: PanelRequest = async <T>() => { calls++; return success({ contexts: [], networkEnabled: true } as T); };
   const workspace = mountWorkspace(root, request, host, hostReady()); cleanup(root, () => workspace.dispose()); await setImmediate();
   assert.equal(root.dataset.density, 'comfortable');
   assert.deepEqual(keys, ['observer.view.v1', navigationKey(hostReady().directory!)]); assert.equal(root.querySelector('.language-select'), null);
   for (const locale of LANGUAGES) {
     workspace.setHostLocale(locale); await setImmediate();
     assert.equal(document.documentElement.lang, locale); assert.equal(document.documentElement.dir, directionFor(locale));
-    assert.ok(root.textContent!.includes(translate('只读'))); assert.equal(root.dataset.density, 'comfortable'); assert.equal(calls, 0);
+    assert.ok(root.textContent!.includes(translate("Read only"))); assert.equal(root.dataset.density, 'comfortable'); assert.equal(calls, 1);
   }
   workspace.setHostLocale('unknown-language'); assert.equal(document.documentElement.lang, 'en'); assert.equal(document.documentElement.dir, 'ltr');
 });
@@ -969,7 +1148,7 @@ test('RTL host locales mirror tab navigation and splitter movement and localize 
   pointer('pointerdown', 100); pointer('pointermove', 60); assert.equal(divider.getAttribute('aria-valuenow'), '336'); pointer('pointercancel', 60);
   selectTrigger(root, 'Project').click(); const search = document.querySelector<HTMLInputElement>('.oc-sdk-popup input')!;
   search.value = 'no-such-project'; search.dispatchEvent(new Event('input', { bubbles: true })); await setImmediate();
-  assert.equal(document.querySelector('.oc-sdk-popup-empty')!.textContent, translate('无匹配项'));
+  assert.equal(document.querySelector('.oc-sdk-popup-empty')!.textContent, translate("No matches"));
   workspace.dispose(); assert.equal(document.querySelector('.oc-sdk-popup'), null);
 });
 
@@ -983,7 +1162,7 @@ test('language changes retire frozen summary confirmation without querying Argo 
     return { ...success(value as T), identityEpoch: 'a'.repeat(43) };
   };
   const workspace = mountWorkspace(root, request, host, hostReady()); cleanup(root, () => workspace.dispose()); await setImmediate();
-  resourceButton(root, '加载 contexts').click(); await setImmediate(); root.querySelector<HTMLElement>('[aria-label="Argo CD 应用"] [role="option"]')!.click(); await setImmediate();
+  root.querySelector<HTMLElement>('[aria-label="Argo CD 应用"] [role="option"]')!.click(); await setImmediate();
   resourceButton(root, 'Summary').click(); resourceButton(root, '生成脱敏摘要预览（不查询 Argo）').click(); await setImmediate();
   const oldConfirm = resourceButton(root, '确认：追加此预览到当前聊天输入框'); const before = paths.length;
   workspace.setHostLocale('en'); await setImmediate(); oldConfirm.click(); await setImmediate();

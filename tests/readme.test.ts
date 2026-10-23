@@ -7,14 +7,19 @@ test('English and Chinese READMEs stay concise, link to each other and retain pa
   const release = await assembleRelease(); const files = verifyRelease(release.zip);
   for (const [path, other, heading] of [['README.md', 'README.zh-CN.md', 'Installation'], ['README.zh-CN.md', 'README.md', '安装']] as const) {
     const text = files.get(path)!.toString();
+    assert.equal(text.match(/^## (.+)$/m)?.[1], heading, 'Installation should be the first section after the introduction.');
     assert.ok(text.split('\n').length < 90, 'Keep user-facing READMEs focused.');
     assert.ok(text.includes(`](${other})`));
-    assert.match(text, /!\[[^\]]+\]\(docs\/screenshot\.png\)/);
+    for (const screen of ['desktop', 'mobile']) assert.match(text, new RegExp(`!\\[[^\\]]+\\]\\(docs/applications-${screen}\\.png\\)`));
+    assert.doesNotMatch(text, /docs\/screenshot\.png/);
     const installation = text.split(`## ${heading}\n\n`)[1]!.split('\n## ')[0]!;
     assert.ok(installation.includes('https://github.com/hlhr202/OpenChamber-ArgoCD'));
     assert.match(installation, /Service/);
     assert.doesNotMatch(installation, /TBD/);
-    assert.equal((text.match(/^### /gm) ?? []).length, 5);
+    const features = text.split(`## ${path === 'README.md' ? 'Features' : '功能'}\n\n`)[1]!.split('\n## ')[0]!;
+    assert.doesNotMatch(features, /^### /m, 'Features should be a short list, not an operation manual.');
+    const bullets = features.match(/^- /gm) ?? [];
+    assert.ok(bullets.length > 0 && bullets.length <= 6); assert.ok(features.length < 1000);
     assert.match(text, /v1\.24\.0/); assert.match(text, /v2\.2\.0/);
     for (const [, target] of text.matchAll(/\]\(([^)]+)\)/g)) {
       if (/^https?:/.test(target!)) continue;
@@ -22,7 +27,12 @@ test('English and Chinese READMEs stay concise, link to each other and retain pa
       assert.ok(files.get(target!)!.equals(await readFile(target!)), 'Ship the original linked asset.');
     }
   }
-  assert.ok(files.get('docs/screenshot.png')!.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])));
+  assert.equal(files.has('docs/screenshot.png'), false);
+  for (const [screen, width, height] of [['desktop', 1440, 900], ['mobile', 390, 844]] as const) {
+    const image = files.get(`docs/applications-${screen}.png`)!;
+    assert.ok(image.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])));
+    assert.equal(image.readUInt32BE(16), width); assert.equal(image.readUInt32BE(20), height);
+  }
 });
 
 test('MIT license is declared in both manifests and shipped alongside third-party notices', async () => {

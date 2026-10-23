@@ -6,6 +6,9 @@ import { getLanguage, languageFor, setLanguage, t, formatTime } from '../src/pan
 import { LANGUAGES, isLanguage, directionFor, message } from '../src/shared/i18n.js';
 import { translations } from '../src/shared/locales/generated.js';
 import { english } from '../src/panel/locales.js';
+import { chinese } from '../src/shared/locales/base.js';
+import { overrides } from '../src/shared/locales/overrides.js';
+import { ERROR_MESSAGES } from '../src/shared/error-messages.js';
 import { buildSummary } from '../src/service/domains/summary.js';
 import type { SummaryEvidence } from '../src/shared/summary.js';
 
@@ -14,10 +17,10 @@ test('locale matching, preference allowlist, opaque template interpolation and s
   assert.equal(languageFor('zh-Hant-HK'), 'zh-TW'); assert.equal(languageFor('pt_BR'), 'pt-BR'); assert.equal(languageFor('iw-IL'), 'he'); assert.equal(languageFor('ua'), 'uk');
   for (const value of [undefined, null, {}, '', 'unknown', 'constructor', '__proto__', 'pt-PT']) assert.equal(languageFor(value), 'en');
   assert.equal(isLanguage('fr'), true); assert.equal(isLanguage('fr-FR'), false); assert.equal(directionFor('ar'), 'rtl'); assert.equal(directionFor('he'), 'rtl'); assert.equal(directionFor('ja'), 'ltr');
-  setLanguage('en'); assert.equal(getLanguage(), 'en'); assert.equal(t('只读'), 'Read only'); assert.equal(t`查看应用 ${'只读'}/${'{0}<img src=x>'}`, 'View application 只读/{0}<img src=x>');
+  setLanguage('en'); assert.equal(getLanguage(), 'en'); assert.equal(t("Read only"), 'Read only'); assert.equal(t`View application ${'只读'}/${'{0}<img src=x>'}`, 'View application 只读/{0}<img src=x>');
   assert.equal(t('unrecognized-value'), 'unrecognized-value'); assert.ok(formatTime('2026-10-18T00:00:00Z').length); assert.equal(formatTime('bad'), 'Unknown');
   for (const value of ['__proto__', 'constructor', 'toString']) assert.equal(t(value), value);
-  setLanguage('zh-CN'); assert.equal(t('Applications'), '应用'); assert.equal(t('只读'), '只读');
+  setLanguage('zh-CN'); assert.equal(t('Applications'), '应用'); assert.equal(t("Read only"), '只读');
 });
 
 test('all 15 OpenChamber locales have complete bundled messages with identical numbered variables', () => {
@@ -29,14 +32,14 @@ test('all 15 OpenChamber locales have complete bundled messages with identical n
       assert.deepEqual(placeholders(text), placeholders(value), `${locale}: ${key}`); assert.doesNotMatch(text, /OCVAR|OCNEWLINE|⟦\d+⟧/);
       if (locale !== 'en' && locale !== 'zh-CN') assert.ok(Object.hasOwn(translations[locale], key), `${locale}: ${key}`);
     }
-    assert.ok(message(locale, '查看应用 {0}/{1}', '只读', '<img>{0}').includes('只读'));
-    assert.ok(message(locale, '查看应用 {0}/{1}', '只读', '<img>{0}').includes('<img>{0}'));
+    assert.ok(message(locale, "View application {0}/{1}", '只读', '<img>{0}').includes('只读'));
+    assert.ok(message(locale, "View application {0}/{1}", '只读', '<img>{0}').includes('<img>{0}'));
   }
 });
 
-test('an absent translated message falls back to English, not its authored Chinese key', () => {
-  const previous = translations.fr['只读']; delete translations.fr['只读'];
-  try { assert.equal(message('fr', '只读'), 'Read only'); } finally { translations.fr['只读'] = previous!; }
+test('an absent translated message falls back to English', () => {
+  const previous = translations.fr["Read only"]; delete translations.fr["Read only"];
+  try { assert.equal(message('fr', "Read only"), 'Read only'); } finally { translations.fr["Read only"] = previous!; }
 });
 
 test('documentation is English except the Chinese README/language switch and relative Markdown links resolve', async () => {
@@ -54,7 +57,17 @@ test('documentation is English except the Chinese README/language switch and rel
   }
 });
 
-test('all authored Chinese panel messages have English catalog entries, including interpolated templates', async () => {
+test('catalogs use English keys exclusively, including scoped labels with the same English display text', () => {
+  for (const catalog of [english, chinese, ...Object.values(translations), ...Object.values(overrides)]) {
+    for (const key of Object.keys(catalog!)) { assert.doesNotMatch(key, /\p{Script=Han}/u); assert.ok(Object.hasOwn(english, key), key); }
+  }
+  assert.deepEqual(Object.keys(chinese).sort(), Object.keys(english).sort());
+  for (const key of Object.values(ERROR_MESSAGES)) assert.ok(Object.hasOwn(english, key), key);
+  assert.equal(chinese['Overview'], '概览'); assert.equal(chinese['Application overview'], '应用概览');
+  assert.equal(chinese['Applications'], '应用'); assert.equal(chinese['Application observations'], '应用观测');
+});
+
+test('authored panel strings and interpolated translation keys are English, not Chinese', async () => {
   const missing = new Set<string>();
   for (const filename of (await readdir('src/panel')).filter((name) => name.endsWith('.ts') && name !== 'locales.ts')) {
     const source = ts.createSourceFile(filename, await readFile(`src/panel/${filename}`, 'utf8'), ts.ScriptTarget.Latest, true);
@@ -62,7 +75,7 @@ test('all authored Chinese panel messages have English catalog entries, includin
       let message: string | undefined;
       if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) message = node.text;
       else if (ts.isTemplateExpression(node)) message = node.head.text + node.templateSpans.map((span, index) => `{${index}}${span.literal.text}`).join('');
-      if (message && /\p{Script=Han}/u.test(message) && message !== '简体中文' && !english[message]) missing.add(message);
+      if (message && /\p{Script=Han}/u.test(message) && message !== '简体中文') missing.add(`${filename}: ${message}`);
       ts.forEachChild(node, visit);
     }
     visit(source);

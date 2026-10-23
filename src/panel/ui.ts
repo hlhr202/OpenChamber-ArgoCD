@@ -18,13 +18,13 @@ function localMount<P extends object, H extends { update: (props: Partial<P>) =>
 export const mountButton = localMount(sdk.mountButton);
 const select = localMount(sdk.mountSelect);
 export const mountSelect: typeof sdk.mountSelect = (root, props) => {
-  const handle = select(root, { placeholder: '选择', searchPlaceholder: '搜索', ...props });
+  const handle = select(root, { placeholder: "Select", searchPlaceholder: "Search", ...props });
   // SDK 2.2 has one hard-coded empty-search notice and no locale prop. Only
   // that chrome node is rewritten; option labels/IDs/data are never traversed.
   const Observer = root.ownerDocument.defaultView?.MutationObserver;
   const observer = Observer ? new Observer(() => {
     for (const empty of root.querySelectorAll<HTMLElement>('.oc-sdk-popup-empty')) {
-      const text = t('无匹配项'); if (empty.textContent !== text) empty.textContent = text;
+      const text = t("No matches"); if (empty.textContent !== text) empty.textContent = text;
     }
   }) : undefined;
   observer?.observe(root, { childList: true, subtree: true });

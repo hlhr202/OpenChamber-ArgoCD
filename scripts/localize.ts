@@ -9,8 +9,9 @@ import { english, chinese } from '../src/shared/locales/base.js';
 import { LANGUAGES } from '../src/shared/language.js';
 
 if (!process.argv.includes('--translate-authored-messages')) throw new Error('Explicit --translate-authored-messages is required. Not an automatic build step.');
-const scratch = join(tmpdir(), 'opencode', 'argocd-authored-translations'); await mkdir(scratch, { recursive: true });
+const scratch = join(tmpdir(), 'opencode', 'argocd-authored-translations-english-keys-v1'); await mkdir(scratch, { recursive: true });
 const entries = Object.entries(english);
+if (entries.some(([key]) => /\p{Script=Han}/u.test(key))) throw new Error('Translation keys must be authored in English.');
 const locales = LANGUAGES.filter((locale) => !['en', 'zh-CN'].includes(locale));
 const output: Record<string, Record<string, string>> = {};
 async function translate(locale: string, source: string): Promise<string> {
@@ -28,7 +29,7 @@ for (const locale of locales) {
   const catalog: Record<string, string> = {}; const cacheFile = join(scratch, `${locale}.json`);
   try { Object.assign(catalog, JSON.parse(await readFile(cacheFile, 'utf8'))); } catch { /* first run */ }
   if (process.argv.includes('--refresh-terminology')) for (const [key, text] of entries) if (locale === 'zh-TW' || /composer|redact/i.test(text)) delete catalog[key];
-  const sourceText = (key: string, text: string) => locale === 'zh-TW' ? chinese[key] ?? (/\p{Script=Han}/u.test(key) ? key : text)
+  const sourceText = (key: string, text: string) => locale === 'zh-TW' ? chinese[key] ?? text
     : text.replace(/\bcomposer\b/gi, 'chat input box').replace(/\bredacted\b/gi, 'privacy-filtered').replace(/\bredaction\b/gi, 'removal of sensitive data');
   const pending = entries.filter(([key]) => !catalog[key]);
   // Each marker occupies its own line. Placeholders/newlines are protected and

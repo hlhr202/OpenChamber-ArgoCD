@@ -26,7 +26,7 @@ export function windowState(value: unknown, scope: 'project' | 'application'): W
   if (scope === 'application' && typeof input.canSync !== 'boolean') throw new ServiceError('UPSTREAM_INVALID', 502);
   if (scope === 'project' && input.windows === undefined && Object.keys(input).length) throw new ServiceError('UPSTREAM_INVALID', 502);
   return { scope, active: array(scope === 'project' ? input.windows : input.activeWindows).map(syncWindow), assigned: scope === 'application' ? array(input.assignedWindows).map(syncWindow) : null, canSync: scope === 'application' ? input.canSync as boolean : null,
-    note: '仅展示服务端此份响应的窗口判定，不使用浏览器时钟重算 cron。Project 活跃窗口不等于任意应用可同步；官方 v3.1.8 的 canSync 使用手动同步窗口判定，不能外推自动同步或 RBAC 权限，也不是本扩展提供同步操作的承诺。' };
+    note: "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync." };
 }
 export function project(value: unknown): Project {
   const input = object(value); const metadata = object(input.metadata); const spec = object(input.spec); const name = text(metadata.name);
@@ -47,7 +47,7 @@ function connection(value: unknown): ConnectionStatus {
   const known = ['Successful', 'Failed', 'Unknown'].includes(status);
   const messagePresent = typeof input.message === 'string' && Boolean(input.message);
   return { status: known ? status : 'Unrecognized', attemptedAt: text(input.attemptedAt), messagePresent,
-    summary: messagePresent ? '服务端存在连接说明；原文可能含认证信息，未传输。' : '服务端未提供可显示的连接说明；不据此判断成功。' };
+    summary: messagePresent ? "The server reported connection details; their contents may contain credentials and are withheld." : "No displayable connection details were provided; do not infer success." };
 }
 export function repositories(value: unknown): { items: Repository[] } {
   return { items: items(value).map((value, index) => { const input = object(value); const repo = metadataURL(input.repo); if (!repo) throw new ServiceError('UPSTREAM_INVALID', 502);
@@ -83,7 +83,7 @@ export function applicationSet(value: unknown): ApplicationSet {
     template: { name: templateText(templateMetadata.name), project: templateText(templateSpec.project), destination: { name: templateText(destination.name), server: metadataURL(templateText(destination.server)), namespace: templateText(destination.namespace) }, sources: sources.map((value) => {
       const input = object(value); return sourceSummary({ ...Object.fromEntries(['repoURL', 'path', 'chart', 'targetRevision', 'name', 'ref'].map((key) => [key, templateText(input[key])])), ...Object.fromEntries(['helm', 'kustomize', 'plugin', 'directory'].filter((key) => input[key] != null).map((key) => [key, {}])) });
     }) },
-    conditions: array(status.conditions).map((value) => { const item = object(value); return { type: text(item.type), status: text(item.status) || 'Unknown', reason: text(item.reason), lastTransitionTime: text(item.lastTransitionTime), messagePresent: typeof item.message === 'string' && Boolean(item.message), summary: item.message ? '服务端协调说明可能包含生成参数或凭据；正文未传输。' : '未提供说明正文。' }; }),
+    conditions: array(status.conditions).map((value) => { const item = object(value); return { type: text(item.type), status: text(item.status) || 'Unknown', reason: text(item.reason), lastTransitionTime: text(item.lastTransitionTime), messagePresent: typeof item.message === 'string' && Boolean(item.message), summary: item.message ? "Reconciliation details may contain generator values or credentials; bodies are withheld." : "No description body provided." }; }),
     applicationStatus: array(status.applicationStatus).map((value) => { const item = object(value); return { name: text(item.application), status: text(item.status) || 'Unknown', step: text(item.step), lastTransitionTime: text(item.lastTransitionTime) }; }),
   };
 }
@@ -102,9 +102,9 @@ export function applicationSetChildren(value: unknown): ApplicationSetChildren {
     if (!node.name || !node.namespace) { unresolved++; return []; }
     return [{ name: node.name, appNamespace: node.namespace, uid: node.uid }];
   });
-  return { items: result, unresolved, note: '关联来自服务端 ApplicationSet resource-tree；不从模板名称或缺省 Namespace 推断派生应用，不保证是完整审计记录。' };
+  return { items: result, unresolved, note: "Links come from the server ApplicationSet resource-tree. Generated applications are not inferred from template names or default Namespaces; this is not a complete audit trail." };
 }
 export function applicationSetEvents(value: unknown, expected: ResourceReference): EventList {
   const events = resourceEvents(value, expected);
-  return { ...events, scope: 'application-set', items: events.items.map((item) => ({ ...item, message: item.message ? '事件正文可能含生成参数或凭据；已在后端隐藏。' : '' })) };
+  return { ...events, scope: 'application-set', items: events.items.map((item) => ({ ...item, message: item.message ? "Event bodies may contain generator values or credentials; they were withheld by the Service." : '' })) };
 }

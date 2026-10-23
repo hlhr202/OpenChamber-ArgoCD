@@ -86,7 +86,7 @@ export function liveResource(value: unknown, expected: ResourceReference): LiveR
   return {
     reference: { ...expected, uid: text(metadata.uid) },
     pod: podStatus(manifest), manifest: sanitizeKubernetes(manifest),
-    redactionNotice: 'Secret 内容、注解值、环境变量字面值和 command/args 已隐藏；其他自定义字段仅作尽力脱敏，不保证发现所有秘密。',
+    redactionNotice: "Secret contents, annotation values, literal environment values and command/args are withheld. Other custom fields receive best-effort redaction; not all secrets can be detected.",
   };
 }
 

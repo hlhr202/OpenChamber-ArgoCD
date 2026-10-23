@@ -10,6 +10,14 @@ The compact-UI package passed 170 tests and the first two-language/documentation
 
 The latest distribution decision also supersedes historical immutable/hash-based packaging: new builds use fixed directory/ZIP paths with staged replacement, no checksum sidecars or release.json hash inventory. Git-root prebuilt assets/notices and CI/draft-release preparation are recorded in the final entry. Historical build evidence is preserved below, not a statement that hashes are still emitted.
 
+## Localization authoring contract
+
+- Translation keys are authored English messages, including English numbered-placeholder templates. Chinese belongs in translated values, never in runtime keys.
+- Identical English display labels with different meanings use distinct contextual keys, such as `Overview` and `Application overview`; locale-specific wording is preserved.
+- All 15 catalogs have the same key and placeholder coverage. Missing translations fall back to English. Unknown strings and interpolated application/resource/log values stay opaque.
+- `scripts/localize.ts` remains an explicit development-only network operation, never a build step. Its cache is namespaced for English keys; the migration reused bundled translations without translation requests.
+- Resource anomaly filtering is a checkbox inside the local resource-filter disclosure. The closed funnel shows an active-filter count; Escape and outside-pointer dismissal preserve the filter state.
+
 ## 2026-10-18: S01/S02 offline increment
 
 **Scope:** TypeScript/pnpm skeleton, prebuilt panel/Service, protected HTTP boundary, and loopback tests; not complete stage or milestone acceptance.
@@ -293,3 +301,12 @@ No real Argo request, CLI/configuration/deployment write, running-extension upda
 - README installation now links to Releases and distinguishes the attached prebuilt ZIP from GitHub's automatic source archive. This record supersedes earlier statements that no Git commit/push or Actions run had occurred, without upgrading actual host/platform acceptance.
 
 Remote OpenChamber acceptance remains **human-agreed skip, not verified**. No real Argo request, credential/configuration/deployment change or npm publication was performed during these publication steps.
+
+## Authorized 1.1.0 GitHub publication preparation
+
+- The user authorized committing, pushing and publishing a GitHub Release for version 1.1.0. GitHub reports the repository as public during this preparation; its visibility is not changed by this release. The private-repository description in the 1.0.0 entry records the earlier state, not current access requirements.
+- Local release preparation passed **227 tests, zero failed/skipped**, strict typecheck, bundled builds, isolated Service/archive smoke and prebuilt/source consistency. Actual host installation and broader real-platform compatibility remain unverified.
+- The release includes automatic current-context loading, stable application/resource selection across list refreshes, compact resource filtering and single-level narrow-screen resource details. Tests cover late responses, same-name Namespaces, recreated resource UIDs, retained navigation, unknown observations and sensitive-boundary clearing.
+- All 386 translation keys are English, with scoped keys for duplicate English labels. Existing bundled translations were reused without translation requests; 4,992 previously committed translated values were independently checked for preservation. Placeholder, fallback, opaque-data and catalog-coverage tests remain enforced.
+- Bilingual READMEs put installation first and use two English application screenshots rendered from synthetic data. The fixed release inventory contains 18 allowlisted files; local assistant screenshots, preview harnesses, dependencies and build caches are not shipped. No checksum sidecars or hash inventory are emitted.
+- No real Argo request, credential/configuration/deployment change, running-extension update or npm publication is part of this preparation. GitHub CI and the CI-built ZIP must be checked before the draft Release is published.

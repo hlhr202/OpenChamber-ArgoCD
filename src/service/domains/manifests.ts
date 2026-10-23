@@ -56,7 +56,7 @@ export function manifests(value: unknown, selection: ManifestSelection): Manifes
     return { id: JSON.stringify([index, key]), reference: ref, manifest: sanitizeKubernetes(manifest), namespaceExplicit: Boolean(ref.namespace) };
   });
   return { items, selection: structuredClone(selection), resolvedRevision: text(input.revision), warnings: [...new Set(warnings)],
-    note: '生成的期望 Manifest 预览，不是 Argo 同步比较结论。多源接口合并所有来源，source position/revision 只覆盖对应来源版本，不按来源过滤结果；Namespace 缺失时不推断其作用域。' };
+    note: "Generated desired-manifest preview, not an Argo sync comparison. Multi-source responses merge all sources; position/revision overrides do not filter the result. Scope is not inferred when Namespace is absent." };
 }
 
 function changedPaths(a: unknown, b: unknown): string[] {

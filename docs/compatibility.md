@@ -2,7 +2,7 @@
 
 ## Declared scope
 
-Current development baseline: Node 22+, pnpm 10.30.3, pinned `@openchamber/sdk` 2.2.0. OpenChamber `>=2.2.0` is a provisional install floor, not proof that all later versions or remote platforms work. Package `openchamber-argocd` is version `1.0.0` with `private: false`; the metadata change does not establish production compatibility or imply npm publication.
+Current development baseline: Node 22+, pnpm 10.30.3, pinned `@openchamber/sdk` 2.2.0. OpenChamber `>=2.2.0` is a provisional install floor, not proof that all later versions or remote platforms work. Package `openchamber-argocd` is version `1.1.0` with `private: false`; the metadata change does not establish production compatibility or imply npm publication.
 
 The user explicitly agreed to skip remote OpenChamber tests. Their status is **human-agreed skip, not verified**, not passed. A separately authorized local read-only preflight passed using existing CLI/current-context credentials without deployment/configuration changes, login, or renewal. Results do not extend to other contexts or authentication methods.
 
@@ -23,7 +23,7 @@ The user explicitly agreed to skip remote OpenChamber tests. Their status is **h
 | Compact resource tree / click-to-read | Synthetic tree/DOM/Service tests: folding, ancestor-preserving filters, DAG/cycles/orphans, selected-resource cache, independent tabs, log entry/container changes and cancellation | 220px/28px geometry checked in synthetic browser; actual host visual acceptance remains outstanding |
 | 2 MB task/cache/HTTP limits | Exact-boundary task/cache tests, aggregate-cache eviction, large direct Service HTTP responses and over-limit rejection | Plugin-side limits only; pinned SDK serviceRequest still caps bodies at 256,000 characters. No chunked transport or real host large-response acceptance |
 | Service restart boundary | New UUID observed in synthetic browser; retired callbacks rejected in tests | Observation-driven, not instantaneous instance isolation |
-| ZIP / directory | Fixed 17-file inventory including bilingual READMEs, screenshot and MIT LICENSE; manifest/entry checks, ZIP CRC, staged replacement/rollback and isolated extracted-Service execution; no checksum artifacts | Local packaging passed; not a real host installation |
+| ZIP / directory | Fixed 18-file inventory including bilingual READMEs, desktop/mobile application screenshots and MIT LICENSE; manifest/entry checks, ZIP CRC, staged replacement/rollback and isolated extracted-Service execution; no checksum artifacts | Local packaging passed; not a real host installation |
 | Git install/update | Root prebuilt assets/notices committed and pushed; initial main-branch GitHub Actions build passed on Ubuntu with source-consistency and package gates | Actual host Git installation/update remains unverified; remote host testing waived. Tag release checks and publication are separate from host acceptance |
 | CLI configuration / contexts | Synthetic files plus local CLI v3.4.6 and five real contexts parsed read-only; current-context API preflight | Original bytes/size/mtime unchanged; real material rotation untested |
 | 401 / 403 / redirects | Synthetic HTTP and legacy renewal-helper tests; production Service renewal disabled | Authentication failures do not execute CLI or write configuration |
