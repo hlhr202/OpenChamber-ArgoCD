@@ -30,13 +30,11 @@ También puedes descargar **openchamber-argocd.zip** desde [Releases](https://gi
 
 Interfaz en inglés con datos de ejemplo.
 
-**Escritorio — lista de aplicaciones y vista general**
-
-![Lista de aplicaciones de Argo CD y vista general en escritorio](applications-desktop.png)
-
-**Móvil — lista de aplicaciones**
-
-![Lista de aplicaciones de Argo CD en móvil](applications-mobile.png)
+| Vista general y acciones de aplicaciones | Diálogo de sincronización |
+| :---: | :---: |
+| ![Vista general y acciones de aplicaciones](screenshots/01-applications-overview.png) | ![Diálogo de sincronización](screenshots/02-sync-dialog.png) |
+| **Árbol y acciones de recursos** | **Gestión (Proyectos, Clústeres, Repositorios)** |
+| ![Árbol y acciones de recursos](screenshots/03-resource-actions.png) | ![Gestión (Proyectos, Clústeres, Repositorios)](screenshots/04-management.png) |
 
 ## Funciones
 

@@ -30,13 +30,11 @@
 
 예제 데이터를 사용한 영어 인터페이스입니다.
 
-**데스크톱 — 애플리케이션 목록 및 개요**
-
-![데스크톱의 Argo CD 애플리케이션 목록 및 개요](applications-desktop.png)
-
-**모바일 — 애플리케이션 목록**
-
-![모바일의 Argo CD 애플리케이션 목록](applications-mobile.png)
+| 애플리케이션 개요 및 작업 | Sync 대화상자 |
+| :---: | :---: |
+| ![애플리케이션 개요 및 작업](screenshots/01-applications-overview.png) | ![Sync 대화상자](screenshots/02-sync-dialog.png) |
+| **리소스 트리 및 리소스 작업** | **관리 (Projects, Clusters, Repositories)** |
+| ![리소스 트리 및 리소스 작업](screenshots/03-resource-actions.png) | ![관리 (Projects, Clusters, Repositories)](screenshots/04-management.png) |
 
 ## 기능
 

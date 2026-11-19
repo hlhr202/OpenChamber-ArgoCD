@@ -30,13 +30,11 @@
 
 英文界面，使用示例数据。
 
-**大屏 — 应用列表与概览**
-
-![大屏下的 Argo CD 应用列表与概览](applications-desktop.png)
-
-**小屏 — 应用列表**
-
-![小屏下的 Argo CD 应用列表](applications-mobile.png)
+| 应用概览与操作栏 | 应用 Sync 弹窗 |
+| :---: | :---: |
+| ![应用概览与操作栏](screenshots/01-applications-overview.png) | ![应用 Sync 弹窗](screenshots/02-sync-dialog.png) |
+| **资源树与资源操作** | **管理视图（Project / Cluster / Repository / ApplicationSet）** |
+| ![资源树与资源操作](screenshots/03-resource-actions.png) | ![管理视图（Project / Cluster / Repository / ApplicationSet）](screenshots/04-management.png) |
 
 ## 功能
 

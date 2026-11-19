@@ -30,13 +30,11 @@
 
 英文介面，使用範例資料。
 
-**桌面 — 應用程式清單與概覽**
-
-![桌面上的 Argo CD 應用程式清單與概覽](applications-desktop.png)
-
-**行動裝置 — 應用程式清單**
-
-![行動裝置上的 Argo CD 應用程式清單](applications-mobile.png)
+| 應用程式概覽與操作列 | 應用程式 Sync 對話框 |
+| :---: | :---: |
+| ![應用程式概覽與操作列](screenshots/01-applications-overview.png) | ![應用程式 Sync 對話框](screenshots/02-sync-dialog.png) |
+| **資源樹與資源操作** | **管理檢視（Project / Cluster / Repository / ApplicationSet）** |
+| ![資源樹與資源操作](screenshots/03-resource-actions.png) | ![管理檢視（Project / Cluster / Repository / ApplicationSet）](screenshots/04-management.png) |
 
 ## 功能
 

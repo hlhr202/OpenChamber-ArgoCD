@@ -30,13 +30,11 @@ Vous pouvez aussi télécharger **openchamber-argocd.zip** depuis les [Releases]
 
 Interface en anglais avec des données d'exemple.
 
-**Ordinateur — liste des applications et vue d'ensemble**
-
-![Liste des applications Argo CD et vue d'ensemble sur ordinateur](applications-desktop.png)
-
-**Mobile — liste des applications**
-
-![Liste des applications Argo CD sur mobile](applications-mobile.png)
+| Vue d’ensemble et actions d’application | Dialogue de synchronisation |
+| :---: | :---: |
+| ![Vue d’ensemble et actions d’application](screenshots/01-applications-overview.png) | ![Dialogue de synchronisation](screenshots/02-sync-dialog.png) |
+| **Arborescence et actions de ressources** | **Gestion (Projets, Clusters, Dépôts)** |
+| ![Arborescence et actions de ressources](screenshots/03-resource-actions.png) | ![Gestion (Projets, Clusters, Dépôts)](screenshots/04-management.png) |
 
 ## Fonctionnalités
 

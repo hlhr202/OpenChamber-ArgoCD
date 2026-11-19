@@ -30,13 +30,11 @@ Alternativ **openchamber-argocd.zip** aus den [Releases](https://github.com/hlhr
 
 Englische Oberfläche mit Beispieldaten.
 
-**Desktop — Anwendungsliste und Übersicht**
-
-![Argo-CD-Anwendungsliste und Übersicht auf dem Desktop](applications-desktop.png)
-
-**Mobilgerät — Anwendungsliste**
-
-![Argo-CD-Anwendungsliste auf einem Mobilgerät](applications-mobile.png)
+| Anwendungsübersicht & Aktionen | Anwendung synchronisieren |
+| :---: | :---: |
+| ![Anwendungsübersicht & Aktionen](screenshots/01-applications-overview.png) | ![Anwendung synchronisieren](screenshots/02-sync-dialog.png) |
+| **Ressourcenbaum & Ressourcenaktionen** | **Verwaltung (Projekte, Cluster, Repositories)** |
+| ![Ressourcenbaum & Ressourcenaktionen](screenshots/03-resource-actions.png) | ![Verwaltung (Projekte, Cluster, Repositories)](screenshots/04-management.png) |
 
 ## Funktionen
 

@@ -30,13 +30,11 @@
 
 サンプルデータを使用した英語の画面です。
 
-**デスクトップ — アプリケーション一覧と概要**
-
-![デスクトップでの Argo CD アプリケーション一覧と概要](applications-desktop.png)
-
-**モバイル — アプリケーション一覧**
-
-![モバイルでの Argo CD アプリケーション一覧](applications-mobile.png)
+| アプリケーション概要と操作 | Sync ダイアログ |
+| :---: | :---: |
+| ![アプリケーション概要と操作](screenshots/01-applications-overview.png) | ![Sync ダイアログ](screenshots/02-sync-dialog.png) |
+| **リソースツリーとリソース操作** | **管理（Projects / Clusters / Repositories）** |
+| ![リソースツリーとリソース操作](screenshots/03-resource-actions.png) | ![管理（Projects / Clusters / Repositories）](screenshots/04-management.png) |
 
 ## 機能
 

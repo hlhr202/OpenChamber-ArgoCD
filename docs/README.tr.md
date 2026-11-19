@@ -30,13 +30,11 @@ Alternatif olarak [Releases](https://github.com/hlhr202/OpenChamber-ArgoCD/relea
 
 Örnek verilerle İngilizce arayüz.
 
-**Masaüstü — uygulama listesi ve genel bakış**
-
-![Masaüstünde Argo CD uygulama listesi ve genel bakış](applications-desktop.png)
-
-**Mobil — uygulama listesi**
-
-![Mobilde Argo CD uygulama listesi](applications-mobile.png)
+| Uygulama genel bakışı ve işlemler | Uygulama senkronizasyon penceresi |
+| :---: | :---: |
+| ![Uygulama genel bakışı ve işlemler](screenshots/01-applications-overview.png) | ![Uygulama senkronizasyon penceresi](screenshots/02-sync-dialog.png) |
+| **Kaynak ağacı ve kaynak işlemleri** | **Yönetim (Projeler, Kümeler, Depolar)** |
+| ![Kaynak ağacı ve kaynak işlemleri](screenshots/03-resource-actions.png) | ![Yönetim (Projeler, Kümeler, Depolar)](screenshots/04-management.png) |
 
 ## Özellikler
 

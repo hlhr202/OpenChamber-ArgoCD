@@ -30,13 +30,11 @@ Alternatively, download **openchamber-argocd.zip** from [Releases](https://githu
 
 English UI with sample data.
 
-**Desktop — application list and overview**
-
-![Argo CD application list and overview on desktop](docs/applications-desktop.png)
-
-**Mobile — application list**
-
-![Argo CD application list on mobile](docs/applications-mobile.png)
+| Application overview & actions | Sync application dialog |
+| :---: | :---: |
+| ![Application overview and actions](docs/screenshots/01-applications-overview.png) | ![Sync application dialog](docs/screenshots/02-sync-dialog.png) |
+| **Resource tree & resource actions** | **Management (Projects, Clusters, Repositories, ApplicationSets)** |
+| ![Resource tree and resource actions](docs/screenshots/03-resource-actions.png) | ![Management view](docs/screenshots/04-management.png) |
 
 ## Features
 

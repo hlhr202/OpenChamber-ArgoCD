@@ -324,3 +324,9 @@ Remote OpenChamber acceptance remains **human-agreed skip, not verified**. No re
 - The user authorized publishing a new version after reviewing the deployment diagnostics and ReplicaSet navigation changes. Version 1.2.0 retains the package/panel identity and existing MIT license; no npm publication, repository visibility change or running-extension update is requested.
 - The release adds generic related-resource events with untranslated upstream content, explicit aggregate counts/partial failures, Deployment progress, visible application sync retry counts, optional visible-only detail refresh, rollback-aware current-first ReplicaSet sorting and collapsed confirmed-empty history.
 - Local preparation uses `pnpm release:prepare`. The matching v1.2.0 tag must pass GitHub CI; inspect the CI-built ZIP and release metadata before publishing the workflow-created draft. The synthetic diagnostics validation above does not establish real host/cluster acceptance; the existing remote-testing waiver remains unchanged.
+
+## Authorized 1.3.0 GitHub publication preparation
+
+- The user authorized publishing version 1.3.0 with updated 2x2 desktop UI screenshots rendered against a synthetic dummy Argo CD server (removing the mobile screenshot). Version 1.3.0 retains the package/panel identity and existing MIT license; no npm publication or repository visibility change is requested.
+- The release ships full RBAC-governed Argo CD operational capabilities enabled by default (Sync, Refresh / Hard Refresh, Terminate, Rollback, Resource Actions V2 with V1 fallback, Patch, Create / Delete Application & Resource, and Management actions for ApplicationSets, Projects, Repositories, and Clusters), complete 15-locale translations, and four updated English UI screenshots in a 2x2 grid.
+- Local preparation uses `pnpm release:prepare` and `pnpm package`. The matching v1.3.0 tag must pass GitHub CI; remote OpenChamber acceptance remains **human-agreed skip, not verified**.

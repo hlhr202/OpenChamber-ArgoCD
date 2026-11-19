@@ -30,13 +30,11 @@ U kunt ook **openchamber-argocd.zip** downloaden uit de [Releases](https://githu
 
 Engelstalige interface met voorbeeldgegevens.
 
-**Desktop — applicatielijst en overzicht**
-
-![Argo CD-applicatielijst en overzicht op desktop](applications-desktop.png)
-
-**Mobiel — applicatielijst**
-
-![Argo CD-applicatielijst op mobiel](applications-mobile.png)
+| Applicatieoverzicht & acties | Sync-dialoogvenster |
+| :---: | :---: |
+| ![Applicatieoverzicht & acties](screenshots/01-applications-overview.png) | ![Sync-dialoogvenster](screenshots/02-sync-dialog.png) |
+| **Resourceboom & resource-acties** | **Beheer (Projecten, Clusters, Repositories)** |
+| ![Resourceboom & resource-acties](screenshots/03-resource-actions.png) | ![Beheer (Projecten, Clusters, Repositories)](screenshots/04-management.png) |
 
 ## Functies
 
