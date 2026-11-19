@@ -280,3 +280,23 @@ button:focus-visible, summary:focus-visible, [role="tabpanel"]:focus-visible { o
   .resource-workspace:has(.resource-tree-pane:not([hidden]) > .resource-columns[data-selected="true"][data-detail-open="true"]) .resource-columns { background: transparent; }
   .resource-workspace:has(.resource-tree-pane:not([hidden]) > .resource-columns[data-selected="true"][data-detail-open="true"]) .application-detail-content { padding-inline: 0; }
 }
+
+.argocd-action-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-block: 6px; }
+.argocd-action-status { margin-block: 4px; padding: 6px 8px; border-radius: var(--oc-radius, 6px); background: color-mix(in srgb, var(--oc-fg) 6%, transparent); font-size: 11px; color: var(--oc-fg); }
+.argocd-dialog-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, #000 55%, transparent); }
+.argocd-dialog { width: min(520px, 100%); max-height: 85dvh; display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--oc-border); border-radius: var(--oc-radius, 8px); background: var(--oc-elevated, var(--oc-bg)); color: var(--oc-fg); box-shadow: 0 8px 32px #0006; }
+.argocd-dialog-danger { border-color: color-mix(in srgb, var(--oc-danger, #d9534f) 55%, var(--oc-border)); }
+.argocd-dialog h3 { margin: 0; font-size: 14px; }
+.argocd-dialog-body { display: flex; flex-direction: column; gap: 8px; overflow: auto; font-size: 12px; }
+.argocd-dialog-target { display: block; padding: 6px 8px; border-radius: 4px; background: color-mix(in srgb, var(--oc-fg) 6%, transparent); font-size: 11px; word-break: break-all; }
+.argocd-dialog-check { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.argocd-dialog-field { display: flex; flex-direction: column; gap: 4px; }
+.argocd-dialog-field input, .argocd-dialog-field select, .argocd-dialog-editor { width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid var(--oc-border); border-radius: 4px; background: var(--oc-bg); color: var(--oc-fg); font: inherit; }
+.argocd-dialog-editor { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; resize: vertical; }
+.argocd-dialog-error { margin: 0; color: var(--oc-danger, #d9534f); font-size: 11px; }
+.argocd-dialog-footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 6px; border-top: 1px solid var(--oc-border); }
+.argocd-btn { padding: 6px 12px; border: 1px solid var(--oc-border); border-radius: 4px; background: transparent; color: var(--oc-fg); font: inherit; font-size: 12px; cursor: pointer; }
+.argocd-btn-primary { border-color: transparent; background: var(--oc-primary, #2563eb); color: #fff; }
+.argocd-btn-danger { border-color: transparent; background: var(--oc-danger, #dc2626); color: #fff; }
+.argocd-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+

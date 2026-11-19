@@ -140,6 +140,10 @@ export class QueryCoordinator {
     // In-flight consumers recheck their identity snapshot before receiving
     // data. Do not cancel unrelated waiters or release active slots early.
   }
+  invalidateMatching(scope: string, match: (key: string) => boolean): void {
+    for (const [key, entry] of this.cache) if (entry.scope === scope && match(key)) this.removeCache(key);
+    for (const [key, entry] of this.failures) if (entry.scope === scope && match(key)) this.failures.delete(key);
+  }
   expired(snapshot: Pick<QuerySnapshot<unknown>, 'expiresAt'>): boolean { return Date.parse(snapshot.expiresAt) <= this.now(); }
   close(): void {
     this.closed = true;

@@ -7373,7 +7373,8 @@ var ERROR_MESSAGES = {
   CANCELLED: "The operation was cancelled.",
   EXPIRED: "The task or snapshot has expired; start a new query.",
   RESOURCE_CHANGED: "The resource no longer matches the selected tree snapshot. Reload the tree before inspecting this object.",
-  CAPABILITY_UNAVAILABLE: "The server version or API does not provide the requested capability. No fallback or refresh was attempted."
+  CAPABILITY_UNAVAILABLE: "The server version or API does not provide the requested capability. No fallback or refresh was attempted.",
+  CONFLICT: "Another operation is already in progress or the object state conflicted."
 };
 
 // src/service/security/errors.ts
@@ -7459,33 +7460,73 @@ var READ_OPERATIONS = {
   applicationSet: "/api/v1/applicationsets/{name}",
   applicationSetChildren: "/api/v1/applicationsets/{name}/resource-tree",
   applicationSetEvents: "/api/v1/applicationsets/{name}/events",
-  applicationWindows: "/api/v1/applications/{name}/syncwindows"
+  applicationWindows: "/api/v1/applications/{name}/syncwindows",
+  resourceActions: "/api/v1/applications/{name}/resource/actions",
+  canI: "/api/v1/account/can-i/{resource}/{action}/{subresource}"
 };
+var WRITE_OPERATIONS = {
+  refreshApplication: { method: "GET", path: "/api/v1/applications/{name}" },
+  syncApplication: { method: "POST", path: "/api/v1/applications/{name}/sync" },
+  terminateOperation: { method: "DELETE", path: "/api/v1/applications/{name}/operation" },
+  rollbackApplication: { method: "POST", path: "/api/v1/applications/{name}/rollback" },
+  createApplication: { method: "POST", path: "/api/v1/applications" },
+  updateApplication: { method: "PUT", path: "/api/v1/applications/{name}" },
+  patchApplication: { method: "PATCH", path: "/api/v1/applications/{name}" },
+  deleteApplication: { method: "DELETE", path: "/api/v1/applications/{name}" },
+  runResourceActionV2: { method: "POST", path: "/api/v1/applications/{name}/resource/actions/v2" },
+  runResourceActionV1: { method: "POST", path: "/api/v1/applications/{name}/resource/actions" },
+  deleteResource: { method: "DELETE", path: "/api/v1/applications/{name}/resource" },
+  patchResource: { method: "POST", path: "/api/v1/applications/{name}/resource" },
+  createApplicationSet: { method: "POST", path: "/api/v1/applicationsets" },
+  deleteApplicationSet: { method: "DELETE", path: "/api/v1/applicationsets/{name}" },
+  createProject: { method: "POST", path: "/api/v1/projects" },
+  updateProject: { method: "PUT", path: "/api/v1/projects/{project}" },
+  deleteProject: { method: "DELETE", path: "/api/v1/projects/{project}" },
+  validateRepository: { method: "POST", path: "/api/v1/repositories/{repo}/validate" },
+  deleteRepository: { method: "DELETE", path: "/api/v1/repositories/{repo}" },
+  invalidateClusterCache: { method: "GET", path: "/api/v1/clusters/{server}" },
+  deleteCluster: { method: "DELETE", path: "/api/v1/clusters/{server}" }
+};
+var K8S_NAME = /^[a-z0-9](?:[-a-z0-9.]{0,251}[a-z0-9])?$/;
+var K8S_NAMESPACE = /^[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?$/;
+var RESOURCE_NAME = /^[a-zA-Z0-9][a-zA-Z0-9_.:-]{0,252}$/;
+var KIND_RE = /^[A-Za-z][A-Za-z0-9]{0,127}$/;
+var VERSION_RE = /^[A-Za-z0-9][A-Za-z0-9.-]{0,127}$/;
+var GROUP_RE = /^[a-z0-9][a-z0-9.-]{0,252}$/;
+function validUrlLike(value) {
+  return typeof value === "string" && value.length > 0 && value.length <= 1024 && !/[\u0000-\u001f\u007f]/.test(value);
+}
 function operationUrl(baseUrl, operation, parameters = {}) {
   if (!Object.hasOwn(READ_OPERATIONS, operation)) throw new ServiceError("BAD_REQUEST", 400);
-  const allowed = operation === "application" || operation === "resourceTree" || operation === "managedResources" || operation === "applicationWindows" ? ["name", "appNamespace"] : operation === "manifests" ? ["name", "appNamespace", "revision", "sourcePositions", "revisions"] : operation === "resource" ? ["name", "appNamespace", "resourceName", "namespace", "kind", "group", "version"] : operation === "events" ? ["name", "appNamespace", "resourceName", "namespace", "resourceUID"] : ["orphanedMonitoring", "project", "projectWindows"].includes(operation) ? ["project"] : operation === "applicationSets" ? ["appsetNamespace"] : ["applicationSet", "applicationSetChildren", "applicationSetEvents"].includes(operation) ? ["name", "appsetNamespace"] : operation === "applications" ? ["appNamespace"] : [];
+  const allowed = operation === "application" || operation === "resourceTree" || operation === "managedResources" || operation === "applicationWindows" ? ["name", "appNamespace"] : operation === "manifests" ? ["name", "appNamespace", "revision", "sourcePositions", "revisions"] : operation === "resource" || operation === "resourceActions" ? ["name", "appNamespace", "resourceName", "namespace", "kind", "group", "version"] : operation === "events" ? ["name", "appNamespace", "resourceName", "namespace", "resourceUID"] : ["orphanedMonitoring", "project", "projectWindows"].includes(operation) ? ["project"] : operation === "applicationSets" ? ["appsetNamespace"] : ["applicationSet", "applicationSetChildren", "applicationSetEvents"].includes(operation) ? ["name", "appsetNamespace"] : operation === "canI" ? ["rbacResource", "rbacAction", "rbacSubresource"] : operation === "applications" ? ["appNamespace"] : [];
   if (Object.keys(parameters).some((key) => !allowed.includes(key))) throw new ServiceError("BAD_REQUEST", 400);
   const name = parameters.name ?? "";
   const namespace = parameters.appNamespace ?? "";
-  if (["application", "resourceTree", "resource", "events", "manifests", "managedResources", "applicationWindows"].includes(operation) && (!/^[a-z0-9](?:[-a-z0-9.]{0,251}[a-z0-9])?$/.test(name) || !namespace)) throw new ServiceError("BAD_REQUEST", 400);
-  if (namespace && !/^[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?$/.test(namespace)) throw new ServiceError("BAD_REQUEST", 400);
-  if (["orphanedMonitoring", "project", "projectWindows"].includes(operation) && !/^[a-z0-9](?:[-a-z0-9.]{0,251}[a-z0-9])?$/.test(parameters.project ?? "")) throw new ServiceError("BAD_REQUEST", 400);
-  if (parameters.appsetNamespace && !/^[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?$/.test(parameters.appsetNamespace)) throw new ServiceError("BAD_REQUEST", 400);
-  if (["applicationSet", "applicationSetChildren", "applicationSetEvents"].includes(operation) && (!/^[a-z0-9](?:[-a-z0-9.]{0,251}[a-z0-9])?$/.test(name) || !parameters.appsetNamespace)) throw new ServiceError("BAD_REQUEST", 400);
-  if (operation === "resource" || operation === "events" && parameters.resourceName !== void 0) {
-    if (!/^[a-zA-Z0-9][a-zA-Z0-9_.:-]{0,252}$/.test(parameters.resourceName ?? "") || parameters.namespace && !/^[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?$/.test(parameters.namespace)) throw new ServiceError("BAD_REQUEST", 400);
-    if (operation === "resource" && (!/^[A-Za-z][A-Za-z0-9]{0,127}$/.test(parameters.kind ?? "") || !/^[A-Za-z0-9][A-Za-z0-9.-]{0,127}$/.test(parameters.version ?? "") || parameters.group && !/^[a-z0-9][a-z0-9.-]{0,252}$/.test(parameters.group))) throw new ServiceError("BAD_REQUEST", 400);
+  if (["application", "resourceTree", "resource", "resourceActions", "events", "manifests", "managedResources", "applicationWindows"].includes(operation) && (!K8S_NAME.test(name) || !namespace)) throw new ServiceError("BAD_REQUEST", 400);
+  if (namespace && !K8S_NAMESPACE.test(namespace)) throw new ServiceError("BAD_REQUEST", 400);
+  if (["orphanedMonitoring", "project", "projectWindows"].includes(operation) && !K8S_NAME.test(parameters.project ?? "")) throw new ServiceError("BAD_REQUEST", 400);
+  if (parameters.appsetNamespace && !K8S_NAMESPACE.test(parameters.appsetNamespace)) throw new ServiceError("BAD_REQUEST", 400);
+  if (["applicationSet", "applicationSetChildren", "applicationSetEvents"].includes(operation) && (!K8S_NAME.test(name) || !parameters.appsetNamespace)) throw new ServiceError("BAD_REQUEST", 400);
+  if (operation === "resource" || operation === "resourceActions" || operation === "events" && parameters.resourceName !== void 0) {
+    if (!RESOURCE_NAME.test(parameters.resourceName ?? "") || parameters.namespace && !K8S_NAMESPACE.test(parameters.namespace)) throw new ServiceError("BAD_REQUEST", 400);
+    if ((operation === "resource" || operation === "resourceActions") && (!KIND_RE.test(parameters.kind ?? "") || !VERSION_RE.test(parameters.version ?? "") || parameters.group && !GROUP_RE.test(parameters.group))) throw new ServiceError("BAD_REQUEST", 400);
     if (operation === "events" && !/^[A-Za-z0-9_.:-]{1,128}$/.test(parameters.resourceUID ?? "")) throw new ServiceError("BAD_REQUEST", 400);
   }
   if (operation === "events" && !parameters.resourceName && (parameters.resourceUID || parameters.namespace)) throw new ServiceError("BAD_REQUEST", 400);
-  const validRevision = (value) => typeof value === "string" && Boolean(value.trim()) && value.length <= 512 && !/[\u0000-\u001f\u007f]/.test(value);
-  if (parameters.revision !== void 0 && !validRevision(parameters.revision)) throw new ServiceError("BAD_REQUEST", 400);
+  if (operation === "canI") {
+    if (!/^[a-z][a-z0-9-]{0,63}$/.test(parameters.rbacResource ?? "") || !/^[a-z][a-z0-9/_-]{0,127}$/.test(parameters.rbacAction ?? "")) throw new ServiceError("BAD_REQUEST", 400);
+    const sub = parameters.rbacSubresource ?? "";
+    if (!sub || sub.length > 512 || /[\u0000-\u001f\u007f]/.test(sub) || sub.split("/").some((part) => !part || part === "." || part === "..")) throw new ServiceError("BAD_REQUEST", 400);
+  }
+  const validRevision2 = (value) => typeof value === "string" && Boolean(value.trim()) && value.length <= 512 && !/[\u0000-\u001f\u007f]/.test(value);
+  if (parameters.revision !== void 0 && !validRevision2(parameters.revision)) throw new ServiceError("BAD_REQUEST", 400);
   if (parameters.sourcePositions !== void 0 || parameters.revisions !== void 0) {
     const positions = parameters.sourcePositions;
     const revisions2 = parameters.revisions;
-    if (parameters.revision !== void 0 || !Array.isArray(positions) || !Array.isArray(revisions2) || !positions.length || positions.length > 20 || positions.length !== revisions2.length || new Set(positions).size !== positions.length || positions.some((value) => !Number.isSafeInteger(value) || value < 1 || value > 20) || revisions2.some((value) => !validRevision(value))) throw new ServiceError("BAD_REQUEST", 400);
+    if (parameters.revision !== void 0 || !Array.isArray(positions) || !Array.isArray(revisions2) || !positions.length || positions.length > 20 || positions.length !== revisions2.length || new Set(positions).size !== positions.length || positions.some((value) => !Number.isSafeInteger(value) || value < 1 || value > 20) || revisions2.some((value) => !validRevision2(value))) throw new ServiceError("BAD_REQUEST", 400);
   }
-  const path = READ_OPERATIONS[operation].replace("{name}", encodeURIComponent(name)).replace("{project}", encodeURIComponent(parameters.project ?? ""));
+  const encodedSubresource = (parameters.rbacSubresource ?? "").split("/").map((part) => encodeURIComponent(part)).join("/");
+  const path = READ_OPERATIONS[operation].replace("{name}", encodeURIComponent(name)).replace("{project}", encodeURIComponent(parameters.project ?? "")).replace("{resource}", encodeURIComponent(parameters.rbacResource ?? "")).replace("{action}", encodeURIComponent(parameters.rbacAction ?? "")).replace("{subresource}", encodedSubresource);
   const url = new URL(baseUrl + path);
   if (namespace) url.searchParams.set("appNamespace", namespace);
   if (parameters.appsetNamespace) url.searchParams.set("appsetNamespace", parameters.appsetNamespace);
@@ -7498,18 +7539,87 @@ function operationUrl(baseUrl, operation, parameters = {}) {
   for (const revision of parameters.revisions ?? []) url.searchParams.append("revisions", revision);
   return url;
 }
+function writeOperationUrl(baseUrl, operation, parameters = {}) {
+  if (!Object.hasOwn(WRITE_OPERATIONS, operation)) throw new ServiceError("BAD_REQUEST", 400);
+  const spec = WRITE_OPERATIONS[operation];
+  const name = parameters.name ?? "";
+  const appNamespace = parameters.appNamespace ?? "";
+  if (["refreshApplication", "syncApplication", "terminateOperation", "rollbackApplication", "updateApplication", "patchApplication", "deleteApplication", "runResourceActionV2", "runResourceActionV1", "deleteResource", "patchResource"].includes(operation)) {
+    if (!K8S_NAME.test(name) || !appNamespace || !K8S_NAMESPACE.test(appNamespace)) throw new ServiceError("BAD_REQUEST", 400);
+  }
+  if (["runResourceActionV1", "deleteResource", "patchResource"].includes(operation)) {
+    if (!RESOURCE_NAME.test(parameters.resourceName ?? "") || parameters.namespace && !K8S_NAMESPACE.test(parameters.namespace) || !KIND_RE.test(parameters.kind ?? "") || !VERSION_RE.test(parameters.version ?? "") || parameters.group && !GROUP_RE.test(parameters.group)) throw new ServiceError("BAD_REQUEST", 400);
+  }
+  if (operation === "refreshApplication" && parameters.refresh !== "normal" && parameters.refresh !== "hard") throw new ServiceError("BAD_REQUEST", 400);
+  if (operation === "deleteApplicationSet" && (!K8S_NAME.test(name) || !parameters.appsetNamespace || !K8S_NAMESPACE.test(parameters.appsetNamespace))) throw new ServiceError("BAD_REQUEST", 400);
+  if (["updateProject", "deleteProject"].includes(operation) && !K8S_NAME.test(parameters.project ?? "")) throw new ServiceError("BAD_REQUEST", 400);
+  if (["validateRepository", "deleteRepository"].includes(operation) && !validUrlLike(parameters.repo)) throw new ServiceError("BAD_REQUEST", 400);
+  if (["invalidateClusterCache", "deleteCluster"].includes(operation) && !validUrlLike(parameters.server)) throw new ServiceError("BAD_REQUEST", 400);
+  const path = spec.path.replace("{name}", encodeURIComponent(name)).replace("{project}", encodeURIComponent(parameters.project ?? "")).replace("{repo}", encodeURIComponent(parameters.repo ?? "")).replace("{server}", encodeURIComponent(parameters.server ?? ""));
+  const url = new URL(baseUrl + path);
+  if (appNamespace && ["refreshApplication", "terminateOperation", "updateApplication", "deleteApplication", "runResourceActionV1", "deleteResource", "patchResource"].includes(operation)) {
+    url.searchParams.set("appNamespace", appNamespace);
+  }
+  if (operation === "refreshApplication" && parameters.refresh) url.searchParams.set("refresh", parameters.refresh);
+  if (operation === "invalidateClusterCache") url.searchParams.set("refresh", "true");
+  if (["runResourceActionV1", "deleteResource", "patchResource"].includes(operation)) {
+    for (const key of ["resourceName", "namespace", "kind", "group", "version"]) {
+      const value = parameters[key];
+      if (value !== void 0 && value !== "") url.searchParams.set(key, value);
+    }
+  }
+  if (operation === "patchResource" && parameters.patchType) url.searchParams.set("patchType", parameters.patchType);
+  if (operation === "deleteResource") {
+    if (parameters.force !== void 0) url.searchParams.set("force", String(parameters.force));
+    if (parameters.orphan !== void 0) url.searchParams.set("orphan", String(parameters.orphan));
+  }
+  if (operation === "deleteApplication") {
+    if (parameters.cascade !== void 0) url.searchParams.set("cascade", String(parameters.cascade));
+    if (parameters.propagationPolicy) url.searchParams.set("propagationPolicy", parameters.propagationPolicy);
+  }
+  if (["createApplication", "createApplicationSet", "createProject"].includes(operation) && parameters.upsert !== void 0) url.searchParams.set("upsert", String(parameters.upsert));
+  if (["createApplication", "updateApplication"].includes(operation) && parameters.validate !== void 0) url.searchParams.set("validate", String(parameters.validate));
+  if (operation === "deleteApplicationSet" && parameters.appsetNamespace) url.searchParams.set("appsetNamespace", parameters.appsetNamespace);
+  if (operation === "validateRepository") {
+    if (parameters.repoType) url.searchParams.set("type", parameters.repoType);
+    if (parameters.project) url.searchParams.set("project", parameters.project);
+  }
+  if (operation === "deleteRepository" && parameters.appProject) url.searchParams.set("appProject", parameters.appProject);
+  return url;
+}
 function requestJson(connection2, operation, signal, parameters = {}) {
   if (!Object.hasOwn(READ_OPERATIONS, operation)) return Promise.reject(new ServiceError("BAD_REQUEST", 400));
   if (!connection2.token) return Promise.reject(new ServiceError("AUTH_REQUIRED", 401));
   const url = operationUrl(connection2.baseUrl, operation, parameters);
   const deadline = AbortSignal.any([signal, AbortSignal.timeout(operation === "identity" ? 3500 : 25e3)]);
+  return executeHttpJson(connection2, url, "GET", deadline);
+}
+function mutateJson(connection2, operation, signal, parameters = {}, body) {
+  if (!Object.hasOwn(WRITE_OPERATIONS, operation)) return Promise.reject(new ServiceError("BAD_REQUEST", 400));
+  if (!connection2.token) return Promise.reject(new ServiceError("AUTH_REQUIRED", 401));
+  const url = writeOperationUrl(connection2.baseUrl, operation, parameters);
+  const payload = body !== void 0 ? JSON.stringify(body) : void 0;
+  if (payload !== void 0 && Buffer.byteLength(payload) > 2e6) return Promise.reject(new ServiceError("BAD_REQUEST", 413));
+  const deadline = AbortSignal.any([signal, AbortSignal.timeout(3e4)]);
+  return executeHttpJson(connection2, url, WRITE_OPERATIONS[operation].method, deadline, payload, true);
+}
+function executeHttpJson(connection2, url, method, deadline, payload, isMutation = false) {
   return new Promise((resolve2, reject) => {
     const request = url.protocol === "https:" ? httpsRequest : httpRequest;
+    const headers = {
+      Authorization: `Bearer ${connection2.token}`,
+      Accept: "application/json",
+      "Accept-Encoding": "identity"
+    };
+    if (payload !== void 0) {
+      headers["Content-Type"] = "application/json";
+      headers["Content-Length"] = Buffer.byteLength(payload);
+    }
     const req = request(url, {
-      method: "GET",
+      method,
       agent: false,
       signal: deadline,
-      headers: { Authorization: `Bearer ${connection2.token}`, Accept: "application/json", "Accept-Encoding": "identity" },
+      headers,
       rejectUnauthorized: !connection2.insecure,
       ...connection2.ca ? { ca: connection2.ca } : {},
       ...connection2.cert ? { cert: connection2.cert } : {},
@@ -7529,20 +7639,41 @@ function requestJson(connection2, operation, signal, parameters = {}) {
         return;
       }
       if (status === 404) {
-        reject(new ServiceError("NOT_FOUND", 404));
-        res.destroy();
+        fail("NOT_FOUND", 404);
         return;
       }
       if (status >= 300 && status < 400) {
         fail("UPSTREAM_INVALID", 502);
         return;
       }
-      if (status !== 200) {
+      if (isMutation) {
+        if (status === 400 || status === 412 || status === 422) {
+          fail("BAD_REQUEST", 400);
+          return;
+        }
+        if (status === 409) {
+          fail("CONFLICT", 409);
+          return;
+        }
+        if (status === 501) {
+          fail("CAPABILITY_UNAVAILABLE", 501);
+          return;
+        }
+        if (status < 200 || status >= 300) {
+          fail("UPSTREAM_UNAVAILABLE", 502);
+          return;
+        }
+      } else if (status !== 200) {
         fail("UPSTREAM_UNAVAILABLE", 502);
         return;
       }
+      if (isMutation && status === 204) {
+        res.resume();
+        resolve2({});
+        return;
+      }
       const type = res.headers["content-type"] ?? "";
-      if (!/^application\/(?:[a-zA-Z0-9.+-]+\+)?json(?:\s*;|$)/.test(type) || res.headers["content-encoding"] && res.headers["content-encoding"] !== "identity") {
+      if ((type || !isMutation) && (!/^application\/(?:[a-zA-Z0-9.+-]+\+)?json(?:\s*;|$)/.test(type) || res.headers["content-encoding"] && res.headers["content-encoding"] !== "identity")) {
         fail("UPSTREAM_INVALID", 502);
         return;
       }
@@ -7557,8 +7688,13 @@ function requestJson(connection2, operation, signal, parameters = {}) {
         chunks.push(chunk);
       });
       res.on("end", () => {
+        const text2 = Buffer.concat(chunks).toString("utf8");
+        if (isMutation && !text2.trim()) {
+          resolve2({});
+          return;
+        }
         try {
-          resolve2(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+          resolve2(JSON.parse(text2));
         } catch {
           reject(new ServiceError("UPSTREAM_INVALID", 502));
         }
@@ -7566,6 +7702,7 @@ function requestJson(connection2, operation, signal, parameters = {}) {
       res.on("error", () => reject(new ServiceError(deadline.aborted ? "TIMEOUT" : "UPSTREAM_UNAVAILABLE", deadline.aborted ? 504 : 502)));
     });
     req.on("error", () => reject(new ServiceError(deadline.aborted ? "TIMEOUT" : "UPSTREAM_UNAVAILABLE", deadline.aborted ? 504 : 502)));
+    if (payload !== void 0) req.write(payload);
     req.end();
   });
 }
@@ -8116,6 +8253,325 @@ function isLanguage(value) {
   return typeof value === "string" && LANGUAGES.includes(value);
 }
 
+// src/service/runtime/action-input.ts
+var K8S_NAME2 = /^[a-z0-9](?:[-a-z0-9.]{0,251}[a-z0-9])?$/;
+var K8S_NAMESPACE2 = /^[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?$/;
+var EPOCH_RE = /^[\w-]{43}$/;
+var PATCH_TYPES = /* @__PURE__ */ new Set(["merge", "json", "strategic"]);
+var PROPAGATION_POLICIES = /* @__PURE__ */ new Set(["foreground", "background", "orphan"]);
+function asRecord(value, allowed) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new ServiceError("BAD_REQUEST", 400);
+  const record2 = value;
+  if (Object.keys(record2).some((key) => !allowed.includes(key))) throw new ServiceError("BAD_REQUEST", 400);
+  return record2;
+}
+function validContext(value) {
+  if (typeof value !== "string" || !value || value.length > 512 || /[\u0000-\u001f\u007f]/.test(value)) throw new ServiceError("BAD_REQUEST", 400);
+  return value;
+}
+function validBase(record2) {
+  const context = validContext(record2.context);
+  if (typeof record2.identityEpoch !== "string" || !EPOCH_RE.test(record2.identityEpoch)) throw new ServiceError("BAD_REQUEST", 400);
+  return { context, identityEpoch: record2.identityEpoch };
+}
+function validName(value) {
+  if (typeof value !== "string" || !K8S_NAME2.test(value)) throw new ServiceError("BAD_REQUEST", 400);
+  return value;
+}
+function validNamespace(value) {
+  if (typeof value !== "string" || !K8S_NAMESPACE2.test(value)) throw new ServiceError("BAD_REQUEST", 400);
+  return value;
+}
+function validRevision(value) {
+  if (typeof value !== "string" || !value.trim() || value.length > 512 || /[\u0000-\u001f\u007f]/.test(value)) throw new ServiceError("BAD_REQUEST", 400);
+  return value;
+}
+function optionalBool(value) {
+  if (value === void 0) return void 0;
+  if (typeof value !== "boolean") throw new ServiceError("BAD_REQUEST", 400);
+  return value;
+}
+function validObjectPayload(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new ServiceError("BAD_REQUEST", 400);
+  return value;
+}
+function validPatch(patch, patchType) {
+  if (typeof patchType !== "string" || !PATCH_TYPES.has(patchType)) throw new ServiceError("BAD_REQUEST", 400);
+  if (typeof patch !== "string" || !patch.trim() || patch.length > 2e5) throw new ServiceError("BAD_REQUEST", 400);
+  let parsed;
+  try {
+    parsed = JSON.parse(patch);
+  } catch {
+    throw new ServiceError("BAD_REQUEST", 400);
+  }
+  if (patchType === "json" ? !Array.isArray(parsed) : !parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new ServiceError("BAD_REQUEST", 400);
+  return { patch, patchType };
+}
+function parseCanIQuery(params) {
+  const allowed = ["context", "resource", "action", "subresource"];
+  if (Object.keys(params).some((key) => !allowed.includes(key))) throw new ServiceError("BAD_REQUEST", 400);
+  const context = validContext(params.context);
+  const resource2 = params.resource ?? "";
+  const action = params.action ?? "";
+  const subresource = params.subresource ?? "";
+  if (!/^[a-z][a-z0-9-]{0,63}$/.test(resource2) || !/^[a-z][a-z0-9/_-]{0,127}$/.test(action)) throw new ServiceError("BAD_REQUEST", 400);
+  if (!subresource || subresource.length > 512 || /[\u0000-\u001f\u007f]/.test(subresource) || subresource.split("/").some((part) => !part || part === "." || part === "..")) throw new ServiceError("BAD_REQUEST", 400);
+  return { context, resource: resource2, action, subresource };
+}
+function parseRefreshRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "mode"]);
+  if (record2.mode !== "normal" && record2.mode !== "hard") throw new ServiceError("BAD_REQUEST", 400);
+  return { ...validBase(record2), name: validName(record2.name), appNamespace: validNamespace(record2.appNamespace), mode: record2.mode };
+}
+function parseSyncRequest(value) {
+  const record2 = asRecord(value, [
+    "context",
+    "identityEpoch",
+    "name",
+    "appNamespace",
+    "revision",
+    "sourcePositions",
+    "revisions",
+    "dryRun",
+    "prune",
+    "force",
+    "strategy",
+    "replace",
+    "serverSideApply",
+    "applyOutOfSyncOnly",
+    "resources",
+    "retryLimit"
+  ]);
+  const result = {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace)
+  };
+  if (record2.revision !== void 0) result.revision = validRevision(record2.revision);
+  if (record2.sourcePositions !== void 0 || record2.revisions !== void 0) {
+    if (record2.revision !== void 0 || !Array.isArray(record2.sourcePositions) || !Array.isArray(record2.revisions) || !record2.sourcePositions.length || record2.sourcePositions.length > 20 || record2.sourcePositions.length !== record2.revisions.length) throw new ServiceError("BAD_REQUEST", 400);
+    const positions = record2.sourcePositions.map((item) => {
+      if (typeof item !== "number" || !Number.isSafeInteger(item) || item < 1 || item > 20) throw new ServiceError("BAD_REQUEST", 400);
+      return item;
+    });
+    if (new Set(positions).size !== positions.length) throw new ServiceError("BAD_REQUEST", 400);
+    result.sourcePositions = positions;
+    result.revisions = record2.revisions.map(validRevision);
+  }
+  const dryRun = optionalBool(record2.dryRun);
+  if (dryRun !== void 0) result.dryRun = dryRun;
+  const prune = optionalBool(record2.prune);
+  if (prune !== void 0) result.prune = prune;
+  const force = optionalBool(record2.force);
+  if (force !== void 0) result.force = force;
+  const replace = optionalBool(record2.replace);
+  if (replace !== void 0) result.replace = replace;
+  const serverSideApply = optionalBool(record2.serverSideApply);
+  if (serverSideApply !== void 0) result.serverSideApply = serverSideApply;
+  const applyOutOfSyncOnly = optionalBool(record2.applyOutOfSyncOnly);
+  if (applyOutOfSyncOnly !== void 0) result.applyOutOfSyncOnly = applyOutOfSyncOnly;
+  if (record2.strategy !== void 0) {
+    if (record2.strategy !== "apply" && record2.strategy !== "hook") throw new ServiceError("BAD_REQUEST", 400);
+    result.strategy = record2.strategy;
+  }
+  if (record2.retryLimit !== void 0) {
+    if (typeof record2.retryLimit !== "number" || !Number.isSafeInteger(record2.retryLimit) || record2.retryLimit < 0 || record2.retryLimit > 100) throw new ServiceError("BAD_REQUEST", 400);
+    result.retryLimit = record2.retryLimit;
+  }
+  if (record2.resources !== void 0) {
+    if (!Array.isArray(record2.resources) || record2.resources.length > 200) throw new ServiceError("BAD_REQUEST", 400);
+    result.resources = record2.resources.map((item) => {
+      const target = asRecord(item, ["group", "kind", "name", "namespace"]);
+      if (typeof target.kind !== "string" || !/^[A-Za-z][A-Za-z0-9]{0,127}$/.test(target.kind)) throw new ServiceError("BAD_REQUEST", 400);
+      if (typeof target.name !== "string" || !/^[a-zA-Z0-9][a-zA-Z0-9_.:-]{0,252}$/.test(target.name)) throw new ServiceError("BAD_REQUEST", 400);
+      if (target.group !== void 0 && target.group !== "" && (typeof target.group !== "string" || !/^[a-z0-9][a-z0-9.-]{0,252}$/.test(target.group))) throw new ServiceError("BAD_REQUEST", 400);
+      if (target.namespace !== void 0 && target.namespace !== "" && (typeof target.namespace !== "string" || !K8S_NAMESPACE2.test(target.namespace))) throw new ServiceError("BAD_REQUEST", 400);
+      return {
+        ...target.group ? { group: target.group } : { group: "" },
+        kind: target.kind,
+        name: target.name,
+        ...target.namespace ? { namespace: target.namespace } : {}
+      };
+    });
+  }
+  return result;
+}
+function parseTerminateRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace"]);
+  return { ...validBase(record2), name: validName(record2.name), appNamespace: validNamespace(record2.appNamespace) };
+}
+function parseRollbackRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "id", "dryRun", "prune"]);
+  if (typeof record2.id !== "number" || !Number.isSafeInteger(record2.id) || record2.id < 0) throw new ServiceError("BAD_REQUEST", 400);
+  const dryRun = optionalBool(record2.dryRun);
+  const prune = optionalBool(record2.prune);
+  return {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace),
+    id: record2.id,
+    ...dryRun !== void 0 ? { dryRun } : {},
+    ...prune !== void 0 ? { prune } : {}
+  };
+}
+function parseCreateApplicationRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "application", "upsert", "validate"]);
+  const application = validObjectPayload(record2.application);
+  const metadata = validObjectPayload(application.metadata);
+  validName(metadata.name);
+  if (metadata.namespace !== void 0) validNamespace(metadata.namespace);
+  const upsert = optionalBool(record2.upsert);
+  const validate = optionalBool(record2.validate);
+  return { ...validBase(record2), application, ...upsert !== void 0 ? { upsert } : {}, ...validate !== void 0 ? { validate } : {} };
+}
+function parseUpdateApplicationRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "application", "validate"]);
+  const application = validObjectPayload(record2.application);
+  const validate = optionalBool(record2.validate);
+  return {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace),
+    application,
+    ...validate !== void 0 ? { validate } : {}
+  };
+}
+function parsePatchApplicationRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "patch", "patchType"]);
+  return {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace),
+    ...validPatch(record2.patch, record2.patchType)
+  };
+}
+function parseDeleteApplicationRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "cascade", "propagationPolicy"]);
+  const cascade = optionalBool(record2.cascade);
+  if (record2.propagationPolicy !== void 0 && (typeof record2.propagationPolicy !== "string" || !PROPAGATION_POLICIES.has(record2.propagationPolicy))) throw new ServiceError("BAD_REQUEST", 400);
+  return {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace),
+    ...cascade !== void 0 ? { cascade } : {},
+    ...record2.propagationPolicy !== void 0 ? { propagationPolicy: record2.propagationPolicy } : {}
+  };
+}
+function parseRunResourceActionRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "resource", "action", "parameters"]);
+  if (typeof record2.action !== "string" || !/^[a-zA-Z0-9][a-zA-Z0-9_.:/-]{0,127}$/.test(record2.action)) throw new ServiceError("BAD_REQUEST", 400);
+  const resource2 = parseResourceInput(record2.resource, "resource");
+  let parameters;
+  if (record2.parameters !== void 0) {
+    if (!Array.isArray(record2.parameters) || record2.parameters.length > 50) throw new ServiceError("BAD_REQUEST", 400);
+    parameters = record2.parameters.map((item) => {
+      const entry = asRecord(item, ["name", "value"]);
+      if (typeof entry.name !== "string" || !entry.name || entry.name.length > 128 || /[\u0000-\u001f\u007f]/.test(entry.name)) throw new ServiceError("BAD_REQUEST", 400);
+      if (typeof entry.value !== "string" || entry.value.length > 4096) throw new ServiceError("BAD_REQUEST", 400);
+      return { name: entry.name, value: entry.value };
+    });
+  }
+  return {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace),
+    resource: resource2,
+    action: record2.action,
+    ...parameters ? { parameters } : {}
+  };
+}
+function parseDeleteResourceRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "resource", "force", "orphan"]);
+  const force = optionalBool(record2.force);
+  const orphan = optionalBool(record2.orphan);
+  return {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace),
+    resource: parseResourceInput(record2.resource, "resource"),
+    ...force !== void 0 ? { force } : {},
+    ...orphan !== void 0 ? { orphan } : {}
+  };
+}
+function parsePatchResourceRequest(value) {
+  const record2 = asRecord(value, ["context", "identityEpoch", "name", "appNamespace", "resource", "patch", "patchType"]);
+  return {
+    ...validBase(record2),
+    name: validName(record2.name),
+    appNamespace: validNamespace(record2.appNamespace),
+    resource: parseResourceInput(record2.resource, "resource"),
+    ...validPatch(record2.patch, record2.patchType)
+  };
+}
+function validUrlLike2(value) {
+  if (typeof value !== "string" || !value.trim() || value.length > 1024 || /[\u0000-\u001f\u007f]/.test(value)) throw new ServiceError("BAD_REQUEST", 400);
+  return value;
+}
+function parseManagementActionRequest(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new ServiceError("BAD_REQUEST", 400);
+  const operation = value.operation;
+  switch (operation) {
+    case "createApplicationSet": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "applicationSet", "upsert"]);
+      const applicationSet2 = validObjectPayload(record2.applicationSet);
+      const metadata = validObjectPayload(applicationSet2.metadata);
+      validName(metadata.name);
+      if (metadata.namespace !== void 0) validNamespace(metadata.namespace);
+      const upsert = optionalBool(record2.upsert);
+      return { operation, ...validBase(record2), applicationSet: applicationSet2, ...upsert !== void 0 ? { upsert } : {} };
+    }
+    case "deleteApplicationSet": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "name", "appsetNamespace"]);
+      return { operation, ...validBase(record2), name: validName(record2.name), appsetNamespace: validNamespace(record2.appsetNamespace) };
+    }
+    case "createProject": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "project", "upsert"]);
+      const project2 = validObjectPayload(record2.project);
+      const metadata = validObjectPayload(project2.metadata);
+      validName(metadata.name);
+      const upsert = optionalBool(record2.upsert);
+      return { operation, ...validBase(record2), project: project2, ...upsert !== void 0 ? { upsert } : {} };
+    }
+    case "updateProject": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "name", "project"]);
+      return { operation, ...validBase(record2), name: validName(record2.name), project: validObjectPayload(record2.project) };
+    }
+    case "deleteProject": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "name"]);
+      return { operation, ...validBase(record2), name: validName(record2.name) };
+    }
+    case "validateRepository": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "repo", "type", "project"]);
+      if (record2.type !== void 0 && (typeof record2.type !== "string" || !/^[a-z0-9-]{1,32}$/.test(record2.type))) throw new ServiceError("BAD_REQUEST", 400);
+      if (record2.project !== void 0 && record2.project !== "") validName(record2.project);
+      return {
+        operation,
+        ...validBase(record2),
+        repo: validUrlLike2(record2.repo),
+        ...record2.type ? { type: record2.type } : {},
+        ...record2.project ? { project: record2.project } : {}
+      };
+    }
+    case "deleteRepository": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "repo", "appProject"]);
+      if (record2.appProject !== void 0 && record2.appProject !== "") validName(record2.appProject);
+      return {
+        operation,
+        ...validBase(record2),
+        repo: validUrlLike2(record2.repo),
+        ...record2.appProject ? { appProject: record2.appProject } : {}
+      };
+    }
+    case "invalidateClusterCache":
+    case "deleteCluster": {
+      const record2 = asRecord(value, ["operation", "context", "identityEpoch", "server"]);
+      return { operation, ...validBase(record2), server: validUrlLike2(record2.server) };
+    }
+    default:
+      throw new ServiceError("BAD_REQUEST", 400);
+  }
+}
+
 // src/service/runtime/server.ts
 function createService(options) {
   if (!options.token || options.token.length > 4096) throw new Error("Invalid service credentials.");
@@ -8169,15 +8625,30 @@ function createService(options) {
         throw new ServiceError("BAD_REQUEST", 400);
       }
       const url = new URL(target, "http://127.0.0.1");
-      const resourcePaths = ["/v1/resource-tree", "/v1/resource", "/v1/events"];
-      if (!["/health", "/v1/diagnostics", "/v1/contexts", "/v1/identity", "/v1/applications", "/v1/application", "/v1/tasks", "/v1/logs", "/v1/summary", "/v1/management", "/v1/orphaned-monitoring", "/v1/manifests", "/v1/comparison", ...resourcePaths].includes(url.pathname)) throw new ServiceError("NOT_FOUND", 404);
-      if (url.pathname === "/v1/summary" ? req.method !== "POST" : ["/v1/tasks", "/v1/logs"].includes(url.pathname) ? !["GET", "POST", "DELETE"].includes(req.method ?? "") : req.method !== "GET") throw new ServiceError("METHOD_NOT_ALLOWED", 405);
+      const resourcePaths = ["/v1/resource-tree", "/v1/resource", "/v1/events", "/v1/resource-actions"];
+      const actionPaths = [
+        "/v1/actions/refresh",
+        "/v1/actions/sync",
+        "/v1/actions/terminate",
+        "/v1/actions/rollback",
+        "/v1/actions/application-create",
+        "/v1/actions/application-update",
+        "/v1/actions/application-patch",
+        "/v1/actions/application-delete",
+        "/v1/actions/resource-action",
+        "/v1/actions/resource-delete",
+        "/v1/actions/resource-patch",
+        "/v1/actions/management"
+      ];
+      if (!["/health", "/v1/diagnostics", "/v1/contexts", "/v1/identity", "/v1/can-i", "/v1/applications", "/v1/application", "/v1/tasks", "/v1/logs", "/v1/summary", "/v1/management", "/v1/orphaned-monitoring", "/v1/manifests", "/v1/comparison", ...resourcePaths, ...actionPaths].includes(url.pathname)) throw new ServiceError("NOT_FOUND", 404);
+      const isAction = actionPaths.includes(url.pathname);
+      if (url.pathname === "/v1/summary" || isAction ? req.method !== "POST" : ["/v1/tasks", "/v1/logs"].includes(url.pathname) ? !["GET", "POST", "DELETE"].includes(req.method ?? "") : req.method !== "GET") throw new ServiceError("METHOD_NOT_ALLOWED", 405);
       const isTaskStart = url.pathname === "/v1/tasks" && req.method === "POST";
       const isLogStart = url.pathname === "/v1/logs" && req.method === "POST";
       const isSummary = url.pathname === "/v1/summary";
-      if (!isTaskStart && !isLogStart && !isSummary && (req.headers["transfer-encoding"] || Number(req.headers["content-length"] ?? 0) !== 0)) throw new ServiceError("BAD_REQUEST", 400);
+      if (!isTaskStart && !isLogStart && !isSummary && !isAction && (req.headers["transfer-encoding"] || Number(req.headers["content-length"] ?? 0) !== 0)) throw new ServiceError("BAD_REQUEST", 400);
       const filterKeys = ["name", "appNamespace", "project", "cluster", "destinationNamespace", "repo", "selector", "sync", "health"];
-      const allowed = url.pathname === "/v1/identity" ? ["context"] : url.pathname === "/v1/applications" ? ["context", ...filterKeys] : url.pathname === "/v1/application" ? ["context", "name", "appNamespace"] : url.pathname === "/v1/comparison" ? ["context", "name", "appNamespace"] : url.pathname === "/v1/manifests" ? ["context", "name", "appNamespace", "revision"] : url.pathname === "/v1/orphaned-monitoring" ? ["context", "project"] : url.pathname === "/v1/management" ? ["context", "operation", "project", "name", "appNamespace", "appsetNamespace"] : resourcePaths.includes(url.pathname) ? ["context", "name", "appNamespace", ...url.pathname === "/v1/resource-tree" ? [] : ["group", "kind", "version", "namespace", "resourceName", "uid"]] : url.pathname === "/v1/tasks" && !isTaskStart ? ["context", "id"] : url.pathname === "/v1/logs" && !isLogStart ? ["context", "id", ...req.method === "GET" ? ["after"] : []] : [];
+      const allowed = url.pathname === "/v1/identity" ? ["context"] : url.pathname === "/v1/can-i" ? ["context", "resource", "action", "subresource"] : url.pathname === "/v1/applications" ? ["context", ...filterKeys] : url.pathname === "/v1/application" ? ["context", "name", "appNamespace"] : url.pathname === "/v1/comparison" ? ["context", "name", "appNamespace"] : url.pathname === "/v1/manifests" ? ["context", "name", "appNamespace", "revision"] : url.pathname === "/v1/orphaned-monitoring" ? ["context", "project"] : url.pathname === "/v1/management" ? ["context", "operation", "project", "name", "appNamespace", "appsetNamespace"] : resourcePaths.includes(url.pathname) ? ["context", "name", "appNamespace", ...url.pathname === "/v1/resource-tree" ? [] : ["group", "kind", "version", "namespace", "resourceName", "uid"]] : url.pathname === "/v1/tasks" && !isTaskStart ? ["context", "id"] : url.pathname === "/v1/logs" && !isLogStart ? ["context", "id", ...req.method === "GET" ? ["after"] : []] : [];
       if ([...url.searchParams.keys()].some((key) => !allowed.includes(key)) || [...url.searchParams.keys()].some((key) => url.searchParams.getAll(key).length !== 1)) throw new ServiceError("BAD_REQUEST", 400);
       const context = url.searchParams.get("context") ?? "";
       if (allowed.includes("context") && (!context || context.length > 512 || /[\u0000-\u001f\u007f]/.test(context))) throw new ServiceError("BAD_REQUEST", 400);
@@ -8204,7 +8675,7 @@ function createService(options) {
       const aborted = new Promise((_, reject) => {
         signal.addEventListener("abort", () => reject(new ServiceError("TIMEOUT", 504)), { once: true });
       });
-      timer = setTimeout(() => controller?.abort(), timeoutMs);
+      timer = setTimeout(() => controller?.abort(), isAction ? Math.max(timeoutMs, 3e4) : timeoutMs);
       res.once("close", () => {
         if (!res.writableEnded) controller?.abort();
       });
@@ -8212,6 +8683,78 @@ function createService(options) {
       let initialScope;
       let identityContext = context;
       async function operation() {
+        if (isAction) {
+          const largeBody = ["/v1/actions/application-create", "/v1/actions/application-update", "/v1/actions/application-patch", "/v1/actions/resource-patch", "/v1/actions/management"].includes(url.pathname);
+          const raw = await readJsonBody(req, signal, largeBody ? 262144 : 32768);
+          const api = await argo();
+          const bindEpoch = async (ctx) => {
+            identityContext = ctx;
+            initialScope = await api.scope(ctx);
+            identityEpoch = api.publicEpoch(initialScope);
+          };
+          switch (url.pathname) {
+            case "/v1/actions/refresh": {
+              const cmd = parseRefreshRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.refreshApplication(cmd, signal);
+            }
+            case "/v1/actions/sync": {
+              const cmd = parseSyncRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.syncApplication(cmd, signal);
+            }
+            case "/v1/actions/terminate": {
+              const cmd = parseTerminateRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.terminateOperation(cmd, signal);
+            }
+            case "/v1/actions/rollback": {
+              const cmd = parseRollbackRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.rollbackApplication(cmd, signal);
+            }
+            case "/v1/actions/application-create": {
+              const cmd = parseCreateApplicationRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.createApplication(cmd, signal);
+            }
+            case "/v1/actions/application-update": {
+              const cmd = parseUpdateApplicationRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.updateApplication(cmd, signal);
+            }
+            case "/v1/actions/application-patch": {
+              const cmd = parsePatchApplicationRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.patchApplication(cmd, signal);
+            }
+            case "/v1/actions/application-delete": {
+              const cmd = parseDeleteApplicationRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.deleteApplication(cmd, signal);
+            }
+            case "/v1/actions/resource-action": {
+              const cmd = parseRunResourceActionRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.runResourceAction(cmd, signal);
+            }
+            case "/v1/actions/resource-delete": {
+              const cmd = parseDeleteResourceRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.deleteResource(cmd, signal);
+            }
+            case "/v1/actions/resource-patch": {
+              const cmd = parsePatchResourceRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.patchResource(cmd, signal);
+            }
+            case "/v1/actions/management": {
+              const cmd = parseManagementActionRequest(raw);
+              await bindEpoch(cmd.context);
+              return api.managementAction(cmd, signal);
+            }
+          }
+        }
         if (isSummary) {
           const value = await readJsonBody(req, signal, 24e3);
           if (!value || typeof value !== "object" || Array.isArray(value)) throw new ServiceError("BAD_REQUEST", 400);
@@ -8222,6 +8765,10 @@ function createService(options) {
           initialScope = await api.scope(identityContext);
           identityEpoch = api.publicEpoch(initialScope);
           return api.summary(identityContext, body.identityEpoch, body.evidence, isLanguage(body.language) ? body.language : void 0);
+        }
+        if (url.pathname === "/v1/can-i") {
+          const query = parseCanIQuery(Object.fromEntries(url.searchParams));
+          return (await argo()).canI(query, signal);
         }
         if (url.pathname === "/v1/management") {
           const command = parseManagementCommand(Object.fromEntries(url.searchParams));
@@ -8277,7 +8824,10 @@ function createService(options) {
           const api = await argo();
           if (url.pathname === "/v1/resource-tree") snapshot = await api.resourceTreeSnapshot(context, app, signal);
           else if (url.pathname === "/v1/events") snapshot = await api.eventsSnapshot(context, app, signal, resource2);
-          else {
+          else if (url.pathname === "/v1/resource-actions") {
+            if (!resource2) throw new ServiceError("BAD_REQUEST", 400);
+            return api.resourceActions(context, app, resource2, signal);
+          } else {
             if (!resource2) throw new ServiceError("BAD_REQUEST", 400);
             snapshot = await api.resourceSnapshot(context, app, resource2, signal);
           }
@@ -8308,7 +8858,7 @@ function createService(options) {
         }
         return options.diagnostics ? options.diagnostics(signal) : {
           service: "ready",
-          readOnly: true,
+          readOnly: false,
           runtime: process.version,
           platform: process.platform,
           argoConnection: "not-attempted"
@@ -8920,6 +9470,10 @@ var QueryCoordinator = class {
   invalidateScope(scope) {
     for (const [key, entry] of this.cache) if (entry.scope === scope) this.removeCache(key);
     for (const [key, entry] of this.failures) if (entry.scope === scope) this.failures.delete(key);
+  }
+  invalidateMatching(scope, match) {
+    for (const [key, entry] of this.cache) if (entry.scope === scope && match(key)) this.removeCache(key);
+    for (const [key, entry] of this.failures) if (entry.scope === scope && match(key)) this.failures.delete(key);
   }
   expired(snapshot) {
     return Date.parse(snapshot.expiresAt) <= this.now();
@@ -9659,9 +10213,222 @@ var deploymentChinese = {
   "Related resource events": "\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6"
 };
 
+// src/shared/locales/actions.ts
+var actionsEnglish = {
+  "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+  "New application": "New application",
+  "Create application": "Create application",
+  "Create": "Create",
+  "Creating application\u2026": "Creating application\u2026",
+  "Application created.": "Application created.",
+  "Action failed.": "Action failed.",
+  "Application actions": "Application actions",
+  "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+  "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+  "Sync": "Sync",
+  "Sync application": "Sync application",
+  "Syncing application\u2026": "Syncing application\u2026",
+  "Sync requested.": "Sync requested.",
+  "Refresh": "Refresh",
+  "Refreshing application\u2026": "Refreshing application\u2026",
+  "Application refreshed.": "Application refreshed.",
+  "Hard refresh": "Hard refresh",
+  "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+  "Application hard refreshed.": "Application hard refreshed.",
+  "Terminate": "Terminate",
+  "Terminate operation": "Terminate operation",
+  "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+  "Terminating operation\u2026": "Terminating operation\u2026",
+  "Operation termination requested.": "Operation termination requested.",
+  "Rollback": "Rollback",
+  "Rollback application": "Rollback application",
+  "Rolling back application\u2026": "Rolling back application\u2026",
+  "Rollback requested.": "Rollback requested.",
+  "Patch": "Patch",
+  "Patch application": "Patch application",
+  "Patching application\u2026": "Patching application\u2026",
+  "Application patched.": "Application patched.",
+  "Apply patch": "Apply patch",
+  "Delete": "Delete",
+  "Delete application": "Delete application",
+  "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+  "Cascade delete managed resources": "Cascade delete managed resources",
+  "Propagation policy": "Propagation policy",
+  "Foreground": "Foreground",
+  "Background": "Background",
+  "Non-cascading (orphan)": "Non-cascading (orphan)",
+  "Deleting application\u2026": "Deleting application\u2026",
+  "Application deleted.": "Application deleted.",
+  "Resource actions": "Resource actions",
+  "Syncing resource\u2026": "Syncing resource\u2026",
+  "Resource sync requested.": "Resource sync requested.",
+  "Patch resource": "Patch resource",
+  "Patching resource\u2026": "Patching resource\u2026",
+  "Resource patched.": "Resource patched.",
+  "Delete resource": "Delete resource",
+  "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+  "Force delete": "Force delete",
+  "Orphan dependents": "Orphan dependents",
+  "Deleting resource\u2026": "Deleting resource\u2026",
+  "Resource deleted.": "Resource deleted.",
+  "Run resource action": "Run resource action",
+  "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+  "Run action": "Run action",
+  "Running resource action\u2026": "Running resource action\u2026",
+  "Resource action completed.": "Resource action completed.",
+  "Cancel": "Cancel",
+  "Confirm": "Confirm",
+  "Submit": "Submit",
+  "Save": "Save",
+  "Edit": "Edit",
+  "Type {0} to confirm": "Type {0} to confirm",
+  "Target revision (optional)": "Target revision (optional)",
+  "Retry limit (optional)": "Retry limit (optional)",
+  "Prune": "Prune",
+  "Dry run": "Dry run",
+  "Force": "Force",
+  "Replace": "Replace",
+  "Server-Side Apply": "Server-Side Apply",
+  "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+  "Revision history": "Revision history",
+  "Patch type": "Patch type",
+  "Upsert if already exists": "Upsert if already exists",
+  "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+  "Running management action\u2026": "Running management action\u2026",
+  "Create ApplicationSet": "Create ApplicationSet",
+  "Create Project": "Create Project",
+  "ApplicationSet created.": "ApplicationSet created.",
+  "Project created.": "Project created.",
+  "Validate access": "Validate access",
+  "Repository access validated.": "Repository access validated.",
+  "Delete repository": "Delete repository",
+  "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+  "Repository deleted.": "Repository deleted.",
+  "Invalidate cache": "Invalidate cache",
+  "Cluster cache invalidated.": "Cluster cache invalidated.",
+  "Delete cluster": "Delete cluster",
+  "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+  "Cluster deleted.": "Cluster deleted.",
+  "Update Project": "Update Project",
+  "Project updated.": "Project updated.",
+  "Delete Project": "Delete Project",
+  "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+  "Project deleted.": "Project deleted.",
+  "Delete ApplicationSet": "Delete ApplicationSet",
+  "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+  "ApplicationSet deleted.": "ApplicationSet deleted.",
+  "No resource actions available.": "No resource actions available."
+};
+var actionsChinese = {
+  "Another operation is already in progress or the object state conflicted.": "\u5DF2\u6709\u5176\u4ED6\u64CD\u4F5C\u6B63\u5728\u6267\u884C\uFF0C\u6216\u5BF9\u8C61\u72B6\u6001\u53D1\u751F\u51B2\u7A81\u3002",
+  "New application": "\u65B0\u5EFA\u5E94\u7528",
+  "Create application": "\u521B\u5EFA\u5E94\u7528",
+  "Create": "\u521B\u5EFA",
+  "Creating application\u2026": "\u6B63\u5728\u521B\u5EFA\u5E94\u7528\u2026",
+  "Application created.": "\u5E94\u7528\u5DF2\u521B\u5EFA\u3002",
+  "Action failed.": "\u64CD\u4F5C\u5931\u8D25\u3002",
+  "Application actions": "\u5E94\u7528\u64CD\u4F5C",
+  "Session identity unavailable. Reload applications first.": "\u4F1A\u8BDD\u8EAB\u4EFD\u4E0D\u53EF\u7528\uFF0C\u8BF7\u5148\u91CD\u65B0\u52A0\u8F7D\u5E94\u7528\u3002",
+  "Session identity unavailable. Read management data first.": "\u4F1A\u8BDD\u8EAB\u4EFD\u4E0D\u53EF\u7528\uFF0C\u8BF7\u5148\u8BFB\u53D6\u7BA1\u7406\u6570\u636E\u3002",
+  "Sync": "\u540C\u6B65",
+  "Sync application": "\u540C\u6B65\u5E94\u7528",
+  "Syncing application\u2026": "\u6B63\u5728\u540C\u6B65\u5E94\u7528\u2026",
+  "Sync requested.": "\u5DF2\u53D1\u8D77\u540C\u6B65\u3002",
+  "Refresh": "\u5237\u65B0",
+  "Refreshing application\u2026": "\u6B63\u5728\u5237\u65B0\u5E94\u7528\u2026",
+  "Application refreshed.": "\u5E94\u7528\u5DF2\u5237\u65B0\u3002",
+  "Hard refresh": "\u5F3A\u5236\u5237\u65B0",
+  "Hard refreshing application\u2026": "\u6B63\u5728\u5F3A\u5236\u5237\u65B0\u5E94\u7528\u2026",
+  "Application hard refreshed.": "\u5E94\u7528\u5DF2\u5F3A\u5236\u5237\u65B0\u3002",
+  "Terminate": "\u7EC8\u6B62",
+  "Terminate operation": "\u7EC8\u6B62\u64CD\u4F5C",
+  "Terminate the currently running operation for this application?": "\u786E\u5B9A\u7EC8\u6B62\u8BE5\u5E94\u7528\u5F53\u524D\u6B63\u5728\u6267\u884C\u7684\u64CD\u4F5C\uFF1F",
+  "Terminating operation\u2026": "\u6B63\u5728\u7EC8\u6B62\u64CD\u4F5C\u2026",
+  "Operation termination requested.": "\u5DF2\u8BF7\u6C42\u7EC8\u6B62\u64CD\u4F5C\u3002",
+  "Rollback": "\u56DE\u6EDA",
+  "Rollback application": "\u56DE\u6EDA\u5E94\u7528",
+  "Rolling back application\u2026": "\u6B63\u5728\u56DE\u6EDA\u5E94\u7528\u2026",
+  "Rollback requested.": "\u5DF2\u53D1\u8D77\u56DE\u6EDA\u3002",
+  "Patch": "\u8865\u4E01",
+  "Patch application": "\u4FEE\u8865\u5E94\u7528",
+  "Patching application\u2026": "\u6B63\u5728\u4FEE\u8865\u5E94\u7528\u2026",
+  "Application patched.": "\u5E94\u7528\u5DF2\u4FEE\u8865\u3002",
+  "Apply patch": "\u5E94\u7528\u8865\u4E01",
+  "Delete": "\u5220\u9664",
+  "Delete application": "\u5220\u9664\u5E94\u7528",
+  "This permanently deletes the Argo CD application.": "\u6B64\u64CD\u4F5C\u5C06\u6C38\u4E45\u5220\u9664\u8BE5 Argo CD \u5E94\u7528\u3002",
+  "Cascade delete managed resources": "\u7EA7\u8054\u5220\u9664\u6258\u7BA1\u8D44\u6E90",
+  "Propagation policy": "\u4F20\u64AD\u7B56\u7565",
+  "Foreground": "Foreground\uFF08\u524D\u53F0\u7EA7\u8054\uFF09",
+  "Background": "Background\uFF08\u540E\u53F0\u7EA7\u8054\uFF09",
+  "Non-cascading (orphan)": "\u975E\u7EA7\u8054\uFF08\u4FDD\u7559\u5B64\u7ACB\u8D44\u6E90\uFF09",
+  "Deleting application\u2026": "\u6B63\u5728\u5220\u9664\u5E94\u7528\u2026",
+  "Application deleted.": "\u5E94\u7528\u5DF2\u5220\u9664\u3002",
+  "Resource actions": "\u8D44\u6E90\u64CD\u4F5C",
+  "Syncing resource\u2026": "\u6B63\u5728\u540C\u6B65\u8D44\u6E90\u2026",
+  "Resource sync requested.": "\u5DF2\u53D1\u8D77\u8D44\u6E90\u540C\u6B65\u3002",
+  "Patch resource": "\u4FEE\u8865\u8D44\u6E90",
+  "Patching resource\u2026": "\u6B63\u5728\u4FEE\u8865\u8D44\u6E90\u2026",
+  "Resource patched.": "\u8D44\u6E90\u5DF2\u4FEE\u8865\u3002",
+  "Delete resource": "\u5220\u9664\u8D44\u6E90",
+  "Delete this Kubernetes resource from the cluster?": "\u786E\u5B9A\u4ECE\u96C6\u7FA4\u5220\u9664\u6B64 Kubernetes \u8D44\u6E90\uFF1F",
+  "Force delete": "\u5F3A\u5236\u5220\u9664",
+  "Orphan dependents": "\u4FDD\u7559\u5B50\u8D44\u6E90\uFF08Orphan\uFF09",
+  "Deleting resource\u2026": "\u6B63\u5728\u5220\u9664\u8D44\u6E90\u2026",
+  "Resource deleted.": "\u8D44\u6E90\u5DF2\u5220\u9664\u3002",
+  "Run resource action": "\u6267\u884C\u8D44\u6E90\u52A8\u4F5C",
+  "Execute this Argo CD resource action?": "\u786E\u5B9A\u6267\u884C\u6B64 Argo CD \u8D44\u6E90\u52A8\u4F5C\uFF1F",
+  "Run action": "\u6267\u884C\u52A8\u4F5C",
+  "Running resource action\u2026": "\u6B63\u5728\u6267\u884C\u8D44\u6E90\u52A8\u4F5C\u2026",
+  "Resource action completed.": "\u8D44\u6E90\u52A8\u4F5C\u5DF2\u5B8C\u6210\u3002",
+  "Cancel": "\u53D6\u6D88",
+  "Confirm": "\u786E\u8BA4",
+  "Submit": "\u63D0\u4EA4",
+  "Save": "\u4FDD\u5B58",
+  "Edit": "\u7F16\u8F91",
+  "Type {0} to confirm": "\u8BF7\u8F93\u5165 {0} \u4EE5\u786E\u8BA4",
+  "Target revision (optional)": "\u76EE\u6807\u7248\u672C\uFF08\u53EF\u9009\uFF09",
+  "Retry limit (optional)": "\u91CD\u8BD5\u6B21\u6570\u4E0A\u9650\uFF08\u53EF\u9009\uFF09",
+  "Prune": "\u6E05\u7406\u591A\u4F59\u8D44\u6E90\uFF08Prune\uFF09",
+  "Dry run": "\u6F14\u7EC3\u6A21\u5F0F\uFF08Dry run\uFF09",
+  "Force": "\u5F3A\u5236\uFF08Force\uFF09",
+  "Replace": "\u66FF\u6362\uFF08Replace\uFF09",
+  "Server-Side Apply": "\u670D\u52A1\u7AEF\u5E94\u7528\uFF08Server-Side Apply\uFF09",
+  "Apply Out-Of-Sync Only": "\u4EC5\u5E94\u7528\u5931\u6B65\u8D44\u6E90\uFF08Apply Out-Of-Sync Only\uFF09",
+  "Revision history": "\u5386\u53F2\u7248\u672C",
+  "Patch type": "\u8865\u4E01\u7C7B\u578B",
+  "Upsert if already exists": "\u5982\u5DF2\u5B58\u5728\u5219\u66F4\u65B0\uFF08Upsert\uFF09",
+  "Invalid JSON or YAML content.": "JSON \u6216 YAML \u5185\u5BB9\u65E0\u6548\u3002",
+  "Running management action\u2026": "\u6B63\u5728\u6267\u884C\u7BA1\u7406\u64CD\u4F5C\u2026",
+  "Create ApplicationSet": "\u521B\u5EFA ApplicationSet",
+  "Create Project": "\u521B\u5EFA Project",
+  "ApplicationSet created.": "ApplicationSet \u5DF2\u521B\u5EFA\u3002",
+  "Project created.": "Project \u5DF2\u521B\u5EFA\u3002",
+  "Validate access": "\u9A8C\u8BC1\u8FDE\u63A5",
+  "Repository access validated.": "\u4ED3\u5E93\u8BBF\u95EE\u9A8C\u8BC1\u6210\u529F\u3002",
+  "Delete repository": "\u5220\u9664\u4ED3\u5E93",
+  "Remove this repository configuration from Argo CD?": "\u786E\u5B9A\u4ECE Argo CD \u79FB\u9664\u8BE5\u4ED3\u5E93\u914D\u7F6E\uFF1F",
+  "Repository deleted.": "\u4ED3\u5E93\u5DF2\u5220\u9664\u3002",
+  "Invalidate cache": "\u6E05\u9664\u7F13\u5B58",
+  "Cluster cache invalidated.": "\u96C6\u7FA4\u7F13\u5B58\u5DF2\u6E05\u9664\u3002",
+  "Delete cluster": "\u5220\u9664\u96C6\u7FA4",
+  "Remove this cluster registration from Argo CD?": "\u786E\u5B9A\u4ECE Argo CD \u79FB\u9664\u8BE5\u96C6\u7FA4\u6CE8\u518C\uFF1F",
+  "Cluster deleted.": "\u96C6\u7FA4\u5DF2\u5220\u9664\u3002",
+  "Update Project": "\u66F4\u65B0 Project",
+  "Project updated.": "Project \u5DF2\u66F4\u65B0\u3002",
+  "Delete Project": "\u5220\u9664 Project",
+  "Permanently delete this Argo CD Project?": "\u786E\u5B9A\u6C38\u4E45\u5220\u9664\u6B64 Argo CD Project\uFF1F",
+  "Project deleted.": "Project \u5DF2\u5220\u9664\u3002",
+  "Delete ApplicationSet": "\u5220\u9664 ApplicationSet",
+  "Permanently delete this ApplicationSet?": "\u786E\u5B9A\u6C38\u4E45\u5220\u9664\u6B64 ApplicationSet\uFF1F",
+  "ApplicationSet deleted.": "ApplicationSet \u5DF2\u5220\u9664\u3002",
+  "No resource actions available.": "\u5F53\u524D\u8D44\u6E90\u6CA1\u6709\u53EF\u7528\u7684\u52A8\u4F5C\u3002"
+};
+
 // src/shared/locales/base.ts
 var english = {
   ...deploymentEnglish,
+  ...actionsEnglish,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "Opening the Logs tab reads a recent fragment; following is off by default.",
   "Reload logs": "Reload logs",
   "Invalid log options. Check the line count and time range.": "Invalid log options. Check the line count and time range.",
@@ -10051,6 +10818,7 @@ var english = {
 };
 var chinese = {
   ...deploymentChinese,
+  ...actionsChinese,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "\u6253\u5F00\u65E5\u5FD7\u6807\u7B7E\u540E\u8BFB\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u8FDE\u7EED\u67E5\u770B\u9ED8\u8BA4\u5173\u95ED\u3002",
   "Reload logs": "\u91CD\u65B0\u67E5\u8BE2\u65E5\u5FD7",
   "Invalid log options. Check the line count and time range.": "\u65E5\u5FD7\u53C2\u6570\u65E0\u6548\uFF1B\u8BF7\u68C0\u67E5\u884C\u6570\u548C\u65F6\u95F4\u8303\u56F4\u3002",
@@ -10442,9 +11210,126 @@ var chinese = {
 // src/shared/locales/generated.ts
 var translations = {
   "de": {
-    ...deploymentEnglish,
-    "Restarts": "Neustarts",
-    "Redaction notice": "Hinweis zur Schw\xE4rzung",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Beim \xD6ffnen der Registerkarte \u201EProtokolle\u201C wird ein aktuelles Fragment gelesen. Folgendes ist standardm\xE4\xDFig deaktiviert.",
     "Reload logs": "Protokolle neu laden",
     "Invalid log options. Check the line count and time range.": "Ung\xFCltige Protokolloptionen. \xDCberpr\xFCfen Sie die Zeilenanzahl und den Zeitbereich.",
@@ -10636,6 +11521,8 @@ var translations = {
     "Completed": "Abgeschlossen",
     "Initiated by": "Initiiert von",
     "Automated": "Automatisiert",
+    "Restarts": "Neustarts",
+    "Redaction notice": "Hinweis zur Schw\xE4rzung",
     "{0} (unrecognized state)": "{0} (nicht erkannter Status)",
     "Default": "Standard",
     "None": "Keine",
@@ -10831,9 +11718,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Zusammenfassungsvorschau fehlgeschlagen oder Identit\xE4t/Host-Grenze ge\xE4ndert; Dem Chat-Eingabefeld wurde nichts hinzugef\xFCgt."
   },
   "fr": {
-    ...deploymentEnglish,
-    "Restarts": "Red\xE9marrages",
-    "Redaction notice": "Avis de masquage",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "L'ouverture de l'onglet Journaux lit un fragment r\xE9cent\xA0; ce qui suit est d\xE9sactiv\xE9 par d\xE9faut.",
     "Reload logs": "Recharger les journaux",
     "Invalid log options. Check the line count and time range.": "Options de journal non valides. V\xE9rifiez le nombre de lignes et la plage horaire.",
@@ -11025,6 +12029,8 @@ var translations = {
     "Completed": "Termin\xE9",
     "Initiated by": "Initi\xE9 par",
     "Automated": "Automatis\xE9",
+    "Restarts": "Red\xE9marrages",
+    "Redaction notice": "Avis de masquage",
     "{0} (unrecognized state)": "{0} (\xE9tat non reconnu)",
     "Default": "Par d\xE9faut",
     "None": "Aucun",
@@ -11220,9 +12226,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "L'aper\xE7u r\xE9capitulatif a \xE9chou\xE9 ou la limite identit\xE9/h\xF4te a \xE9t\xE9 modifi\xE9e\xA0; rien n'a \xE9t\xE9 ajout\xE9 \xE0 la zone de saisie du chat."
   },
   "nl": {
-    ...deploymentEnglish,
-    "Restarts": "Herstarts",
-    "Redaction notice": "Toelichting op afscherming",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Als u het tabblad Logboeken opent, wordt een recent fragment gelezen; volgen is standaard uitgeschakeld.",
     "Reload logs": "Logboeken opnieuw laden",
     "Invalid log options. Check the line count and time range.": "Ongeldige logopties. Controleer het aantal lijnen en het tijdsbereik.",
@@ -11414,6 +12537,8 @@ var translations = {
     "Completed": "Voltooid",
     "Initiated by": "Ge\xEFnitieerd door",
     "Automated": "Geautomatiseerd",
+    "Restarts": "Herstarts",
+    "Redaction notice": "Toelichting op afscherming",
     "{0} (unrecognized state)": "{0} (niet-herkende status)",
     "Default": "Standaard",
     "None": "Geen",
@@ -11609,9 +12734,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Samenvattingsvoorbeeld mislukt of identiteit/hostgrens gewijzigd; er is niets toegevoegd aan het chatinvoervak."
   },
   "zh-TW": {
-    ...deploymentEnglish,
-    "Restarts": "\u91CD\u65B0\u555F\u52D5\u6B21\u6578",
-    "Redaction notice": "\u654F\u611F\u8CC7\u8A0A\u96B1\u85CF\u8AAA\u660E",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u958B\u555F\u65E5\u8A8C\u6A19\u7C64\u5F8C\u8B80\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u9023\u7E8C\u67E5\u770B\u9810\u8A2D\u70BA\u95DC\u9589\u3002",
     "Reload logs": "\u91CD\u65B0\u67E5\u8A62\u65E5\u8A8C",
     "Invalid log options. Check the line count and time range.": "\u65E5\u8A8C\u53C3\u6578\u7121\u6548\uFF1B\u8ACB\u6AA2\u67E5\u884C\u6578\u548C\u6642\u9593\u7BC4\u570D\u3002",
@@ -11803,6 +13045,8 @@ var translations = {
     "Completed": "\u5B8C\u6210",
     "Initiated by": "\u767C\u8D77\u8005",
     "Automated": "\u81EA\u52D5",
+    "Restarts": "\u91CD\u65B0\u555F\u52D5\u6B21\u6578",
+    "Redaction notice": "\u654F\u611F\u8CC7\u8A0A\u96B1\u85CF\u8AAA\u660E",
     "{0} (unrecognized state)": "{0}\uFF08\u672A\u77E5\u72C0\u614B\uFF09",
     "Default": "\u9810\u8A2D",
     "None": "\u7121",
@@ -11998,9 +13242,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6458\u8981\u9810\u89BD\u5931\u6557\u6216\u8EAB\u5206/\u5BBF\u4E3B\u908A\u754C\u8B8A\u5316\uFF1B\u672A\u5BEB\u5165\u8F38\u5165\u6846\u3002"
   },
   "uk": {
-    ...deploymentEnglish,
-    "Restarts": "\u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u043A\u0438",
-    "Redaction notice": "\u041F\u0440\u0438\u043C\u0456\u0442\u043A\u0430 \u043F\u0440\u043E \u043F\u0440\u0438\u0445\u043E\u0432\u0443\u0432\u0430\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u0412\u0456\u0434\u043A\u0440\u0438\u0442\u0442\u044F \u0432\u043A\u043B\u0430\u0434\u043A\u0438 \xAB\u0416\u0443\u0440\u043D\u0430\u043B\u0438\xBB \u0447\u0438\u0442\u0430\u0454 \u043E\u0441\u0442\u0430\u043D\u043D\u0456\u0439 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442; \u0437\u0430 \u0443\u043C\u043E\u0432\u0447\u0430\u043D\u043D\u044F\u043C \u0432\u0438\u043C\u043A\u043D\u0435\u043D\u043E.",
     "Reload logs": "\u041F\u0435\u0440\u0435\u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0438\u0442\u0438 \u0436\u0443\u0440\u043D\u0430\u043B\u0438",
     "Invalid log options. Check the line count and time range.": "\u041D\u0435\u0434\u0456\u0439\u0441\u043D\u0456 \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u0438 \u0436\u0443\u0440\u043D\u0430\u043B\u0443. \u041F\u0435\u0440\u0435\u0432\u0456\u0440\u0442\u0435 \u043A\u0456\u043B\u044C\u043A\u0456\u0441\u0442\u044C \u0440\u044F\u0434\u043A\u0456\u0432 \u0456 \u0434\u0456\u0430\u043F\u0430\u0437\u043E\u043D \u0447\u0430\u0441\u0443.",
@@ -12192,6 +13553,8 @@ var translations = {
     "Completed": "\u0412\u0438\u043A\u043E\u043D\u0430\u043D\u043E",
     "Initiated by": "\u0406\u043D\u0456\u0446\u0456\u0430\u0442\u043E\u0440\u043E\u043C",
     "Automated": "\u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0437\u043E\u0432\u0430\u043D\u0438\u0439",
+    "Restarts": "\u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u043A\u0438",
+    "Redaction notice": "\u041F\u0440\u0438\u043C\u0456\u0442\u043A\u0430 \u043F\u0440\u043E \u043F\u0440\u0438\u0445\u043E\u0432\u0443\u0432\u0430\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
     "{0} (unrecognized state)": "{0} (\u043D\u0435\u0440\u043E\u0437\u043F\u0456\u0437\u043D\u0430\u043D\u0438\u0439 \u0441\u0442\u0430\u043D)",
     "Default": "\u0417\u0430 \u0437\u0430\u043C\u043E\u0432\u0447\u0443\u0432\u0430\u043D\u043D\u044F\u043C",
     "None": "\u0436\u043E\u0434\u043D\u043E\u0433\u043E",
@@ -12387,9 +13750,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u043E\u043F\u0435\u0440\u0435\u0434\u043D\u044C\u043E\u0433\u043E \u043F\u0435\u0440\u0435\u0433\u043B\u044F\u0434\u0443 \u0437\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0430\u0431\u043E \u0437\u043C\u0456\u043D\u0435\u043D\u043E \u043C\u0435\u0436\u0443 \u0456\u0434\u0435\u043D\u0442\u0438\u0444\u0456\u043A\u0430\u0442\u043E\u0440\u0430/\u0445\u043E\u0441\u0442\u0443; \u0443 \u043F\u043E\u043B\u0435 \u0432\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0447\u0430\u0442\u0443 \u043D\u0456\u0447\u043E\u0433\u043E \u043D\u0435 \u0434\u043E\u0434\u0430\u043D\u043E."
   },
   "es": {
-    ...deploymentEnglish,
-    "Restarts": "Reinicios",
-    "Redaction notice": "Aviso de ocultaci\xF3n de datos",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Al abrir la pesta\xF1a Registros se lee un fragmento reciente; Lo siguiente est\xE1 desactivado de forma predeterminada.",
     "Reload logs": "Recargar registros",
     "Invalid log options. Check the line count and time range.": "Opciones de registro no v\xE1lidas. Verifique el recuento de l\xEDneas y el rango de tiempo.",
@@ -12581,6 +14061,8 @@ var translations = {
     "Completed": "Completado",
     "Initiated by": "Iniciado por",
     "Automated": "Automatizado",
+    "Restarts": "Reinicios",
+    "Redaction notice": "Aviso de ocultaci\xF3n de datos",
     "{0} (unrecognized state)": "{0} (estado no reconocido)",
     "Default": "Predeterminado",
     "None": "Ninguno",
@@ -12776,9 +14258,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Error en la vista previa del resumen o se modific\xF3 el l\xEDmite de identidad/host; no se agreg\xF3 nada al cuadro de entrada del chat."
   },
   "pt-BR": {
-    ...deploymentEnglish,
-    "Restarts": "Reinicializa\xE7\xF5es",
-    "Redaction notice": "Aviso de oculta\xE7\xE3o de dados",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Abrir a guia Logs l\xEA um fragmento recente; o seguinte est\xE1 desativado por padr\xE3o.",
     "Reload logs": "Recarregar registros",
     "Invalid log options. Check the line count and time range.": "Op\xE7\xF5es de registro inv\xE1lidas. Verifique a contagem de linhas e o intervalo de tempo.",
@@ -12970,6 +14569,8 @@ var translations = {
     "Completed": "Conclu\xEDdo",
     "Initiated by": "Iniciado por",
     "Automated": "Automatizado",
+    "Restarts": "Reinicializa\xE7\xF5es",
+    "Redaction notice": "Aviso de oculta\xE7\xE3o de dados",
     "{0} (unrecognized state)": "{0} (estado n\xE3o reconhecido)",
     "Default": "Padr\xE3o",
     "None": "Nenhum",
@@ -13165,9 +14766,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Falha na visualiza\xE7\xE3o do resumo ou limite de identidade/host alterado; nada foi adicionado \xE0 caixa de entrada do chat."
   },
   "ko": {
-    ...deploymentEnglish,
-    "Restarts": "\uC7AC\uC2DC\uC791 \uD69F\uC218",
-    "Redaction notice": "\uBBFC\uAC10 \uC815\uBCF4 \uC228\uAE40 \uC548\uB0B4",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\uB85C\uADF8 \uD0ED\uC744 \uC5F4\uBA74 \uCD5C\uADFC \uC870\uAC01\uC744 \uC77D\uC2B5\uB2C8\uB2E4. \uB2E4\uC74C\uC740 \uAE30\uBCF8\uC801\uC73C\uB85C \uAEBC\uC838 \uC788\uC2B5\uB2C8\uB2E4.",
     "Reload logs": "\uB85C\uADF8 \uB2E4\uC2DC \uB85C\uB4DC",
     "Invalid log options. Check the line count and time range.": "\uB85C\uADF8 \uC635\uC158\uC774 \uC798\uBABB\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uD68C\uC120 \uC218\uC640 \uC2DC\uAC04 \uBC94\uC704\uB97C \uD655\uC778\uD558\uC138\uC694.",
@@ -13359,6 +15077,8 @@ var translations = {
     "Completed": "\uC644\uB8CC\uB428",
     "Initiated by": "\uC2DC\uC791\uD55C \uC0AC\uB78C",
     "Automated": "\uC790\uB3D9\uD654\uB428",
+    "Restarts": "\uC7AC\uC2DC\uC791 \uD69F\uC218",
+    "Redaction notice": "\uBBFC\uAC10 \uC815\uBCF4 \uC228\uAE40 \uC548\uB0B4",
     "{0} (unrecognized state)": "{0}(\uC778\uC2DD\uD560 \uC218 \uC5C6\uB294 \uC0C1\uD0DC)",
     "Default": "\uAE30\uBCF8\uAC12",
     "None": "\uC5C6\uC74C",
@@ -13554,9 +15274,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\uC694\uC57D \uBBF8\uB9AC\uBCF4\uAE30\uAC00 \uC2E4\uD328\uD588\uAC70\uB098 ID/\uD638\uC2A4\uD2B8 \uACBD\uACC4\uAC00 \uBCC0\uACBD\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uCC44\uD305 \uC785\uB825\uCC3D\uC5D0 \uC544\uBB34\uAC83\uB3C4 \uCD94\uAC00\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
   },
   "pl": {
-    ...deploymentEnglish,
-    "Restarts": "Ponowne uruchomienia",
-    "Redaction notice": "Informacja o ukryciu danych",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Otwarcie zak\u0142adki Logi powoduje odczytanie najnowszego fragmentu; poni\u017Csze jest domy\u015Blnie wy\u0142\u0105czone.",
     "Reload logs": "Za\u0142aduj ponownie logi",
     "Invalid log options. Check the line count and time range.": "Nieprawid\u0142owe opcje dziennika. Sprawd\u017A liczb\u0119 linii i zakres czasu.",
@@ -13748,6 +15585,8 @@ var translations = {
     "Completed": "Uko\u0144czono",
     "Initiated by": "Zainicjowany przez",
     "Automated": "Zautomatyzowane",
+    "Restarts": "Ponowne uruchomienia",
+    "Redaction notice": "Informacja o ukryciu danych",
     "{0} (unrecognized state)": "{0} (stan nierozpoznany)",
     "Default": "Domy\u015Blne",
     "None": "\u017Badne",
@@ -13943,9 +15782,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Podgl\u0105d podsumowania nie powi\xF3d\u0142 si\u0119 lub zmieniono granic\u0119 to\u017Csamo\u015Bci/hosta; nic nie zosta\u0142o dodane do pola wprowadzania czatu."
   },
   "ja": {
-    ...deploymentEnglish,
-    "Restarts": "\u518D\u8D77\u52D5\u56DE\u6570",
-    "Redaction notice": "\u6A5F\u5BC6\u60C5\u5831\u306E\u30DE\u30B9\u30AD\u30F3\u30B0\u306B\u3064\u3044\u3066",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u300C\u30ED\u30B0\u300D\u30BF\u30D6\u3092\u958B\u304F\u3068\u3001\u6700\u8FD1\u306E\u30D5\u30E9\u30B0\u30E1\u30F3\u30C8\u304C\u8AAD\u307F\u53D6\u3089\u308C\u307E\u3059\u3002\u4EE5\u4E0B\u306F\u30C7\u30D5\u30A9\u30EB\u30C8\u3067\u306F\u30AA\u30D5\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002",
     "Reload logs": "\u30ED\u30B0\u3092\u30EA\u30ED\u30FC\u30C9\u3059\u308B",
     "Invalid log options. Check the line count and time range.": "\u7121\u52B9\u306A\u30ED\u30B0\u30AA\u30D7\u30B7\u30E7\u30F3\u3067\u3059\u3002\u884C\u6570\u3068\u6642\u9593\u7BC4\u56F2\u3092\u78BA\u8A8D\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
@@ -14137,6 +16093,8 @@ var translations = {
     "Completed": "\u5B8C\u4E86",
     "Initiated by": "\u306B\u3088\u3063\u3066\u958B\u59CB\u3055\u308C\u307E\u3057\u305F",
     "Automated": "\u81EA\u52D5\u5316",
+    "Restarts": "\u518D\u8D77\u52D5\u56DE\u6570",
+    "Redaction notice": "\u6A5F\u5BC6\u60C5\u5831\u306E\u30DE\u30B9\u30AD\u30F3\u30B0\u306B\u3064\u3044\u3066",
     "{0} (unrecognized state)": "{0} (\u672A\u8A8D\u8B58\u72B6\u614B)",
     "Default": "\u30C7\u30D5\u30A9\u30EB\u30C8",
     "None": "\u306A\u3057",
@@ -14332,9 +16290,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6982\u8981\u30D7\u30EC\u30D3\u30E5\u30FC\u304C\u5931\u6557\u3057\u305F\u304B\u3001\u30A2\u30A4\u30C7\u30F3\u30C6\u30A3\u30C6\u30A3/\u30DB\u30B9\u30C8\u5883\u754C\u304C\u5909\u66F4\u3055\u308C\u307E\u3057\u305F\u3002\u30C1\u30E3\u30C3\u30C8\u5165\u529B\u30DC\u30C3\u30AF\u30B9\u306B\u306F\u4F55\u3082\u8FFD\u52A0\u3055\u308C\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
   },
   "tr": {
-    ...deploymentEnglish,
-    "Restarts": "Yeniden ba\u015Flatmalar",
-    "Redaction notice": "Hassas veri gizleme bildirimi",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "G\xFCnl\xFCkler sekmesini a\xE7t\u0131\u011F\u0131n\u0131zda yeni bir par\xE7a okunur; a\u015Fa\u011F\u0131dakiler varsay\u0131lan olarak kapal\u0131d\u0131r.",
     "Reload logs": "G\xFCnl\xFCkleri yeniden y\xFCkle",
     "Invalid log options. Check the line count and time range.": "Ge\xE7ersiz g\xFCnl\xFCk se\xE7enekleri. Sat\u0131r say\u0131s\u0131n\u0131 ve zaman aral\u0131\u011F\u0131n\u0131 kontrol edin.",
@@ -14526,6 +16601,8 @@ var translations = {
     "Completed": "Tamamland\u0131",
     "Initiated by": "Ba\u015Flatan",
     "Automated": "Otomatik",
+    "Restarts": "Yeniden ba\u015Flatmalar",
+    "Redaction notice": "Hassas veri gizleme bildirimi",
     "{0} (unrecognized state)": "{0} (tan\u0131nmayan durum)",
     "Default": "Varsay\u0131lan",
     "None": "Yok",
@@ -14721,9 +16798,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\xD6zet \xF6nizlemesi ba\u015Far\u0131s\u0131z oldu veya kimlik/ana bilgisayar s\u0131n\u0131r\u0131 de\u011Fi\u015Fti; sohbet giri\u015F kutusuna hi\xE7bir \u015Fey eklenmedi."
   },
   "ar": {
-    ...deploymentEnglish,
-    "Restarts": "\u0645\u0631\u0627\u062A \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u062A\u0634\u063A\u064A\u0644",
-    "Redaction notice": "\u0625\u0634\u0639\u0627\u0631 \u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u062D\u0633\u0627\u0633\u0629",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": '\u064A\u0624\u062F\u064A \u0641\u062A\u062D \u0639\u0644\u0627\u0645\u0629 \u0627\u0644\u062A\u0628\u0648\u064A\u0628 "\u0627\u0644\u0633\u062C\u0644\u0627\u062A" \u0625\u0644\u0649 \u0642\u0631\u0627\u0621\u0629 \u062C\u0632\u0621 \u062D\u062F\u064A\u062B\u061B \u064A\u062A\u0645 \u0625\u064A\u0642\u0627\u0641 \u062A\u0634\u063A\u064A\u0644 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0628\u0634\u0643\u0644 \u0627\u0641\u062A\u0631\u0627\u0636\u064A.',
     "Reload logs": "\u0625\u0639\u0627\u062F\u0629 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0633\u062C\u0644\u0627\u062A",
     "Invalid log options. Check the line count and time range.": "\u062E\u064A\u0627\u0631\u0627\u062A \u0627\u0644\u0633\u062C\u0644 \u063A\u064A\u0631 \u0635\u0627\u0644\u062D\u0629. \u062A\u062D\u0642\u0642 \u0645\u0646 \u0639\u062F\u062F \u0627\u0644\u062E\u0637\u0648\u0637 \u0648\u0627\u0644\u0646\u0637\u0627\u0642 \u0627\u0644\u0632\u0645\u0646\u064A.",
@@ -14915,6 +17109,8 @@ var translations = {
     "Completed": "\u0645\u0643\u062A\u0645\u0644",
     "Initiated by": "\u0628\u062F\u0623 \u0628\u0648\u0627\u0633\u0637\u0629",
     "Automated": "\u0622\u0644\u064A",
+    "Restarts": "\u0645\u0631\u0627\u062A \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u062A\u0634\u063A\u064A\u0644",
+    "Redaction notice": "\u0625\u0634\u0639\u0627\u0631 \u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u062D\u0633\u0627\u0633\u0629",
     "{0} (unrecognized state)": "{0} (\u062D\u0627\u0644\u0629 \u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641\u0629)",
     "Default": "\u0627\u0644\u0627\u0641\u062A\u0631\u0627\u0636\u064A",
     "None": "\u0644\u0627 \u0634\u064A\u0621",
@@ -15110,9 +17306,126 @@ var translations = {
     "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u0641\u0634\u0644\u062A \u0645\u0639\u0627\u064A\u0646\u0629 \u0627\u0644\u0645\u0644\u062E\u0635 \u0623\u0648 \u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u062D\u062F\u0648\u062F \u0627\u0644\u0647\u0648\u064A\u0629/\u0627\u0644\u0645\u0636\u064A\u0641\u061B \u0644\u0645 \u062A\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 \u0623\u064A \u0634\u064A\u0621 \u0625\u0644\u0649 \u0645\u0631\u0628\u0639 \u0625\u062F\u062E\u0627\u0644 \u0627\u0644\u062F\u0631\u062F\u0634\u0629."
   },
   "he": {
-    ...deploymentEnglish,
-    "Restarts": "\u05D4\u05E4\u05E2\u05DC\u05D5\u05EA \u05DE\u05D7\u05D3\u05E9",
-    "Redaction notice": "\u05D4\u05D5\u05D3\u05E2\u05D4 \u05E2\u05DC \u05D4\u05E1\u05EA\u05E8\u05EA \u05DE\u05D9\u05D3\u05E2 \u05E8\u05D2\u05D9\u05E9",
+    "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+    "Current": "Current",
+    "Current target unconfirmed": "Current target unconfirmed",
+    "Application sync retries": "Application sync retries",
+    "Deployment and related resource events": "Deployment and related resource events",
+    "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+    "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+    "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+    "Occurrences: {0}": "Occurrences: {0}",
+    "Desired": "Desired",
+    "Updated": "Updated",
+    "Available": "Available",
+    "Generation": "Generation",
+    "Observed generation": "Observed generation",
+    "Auto-update resource details": "Auto-update resource details",
+    "Include related resource events": "Include related resource events",
+    "Related resource events": "Related resource events",
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Non-cascading (orphan)": "Non-cascading (orphan)",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available.",
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05D9\u05D4 \u05D9\u05D5\u05DE\u05E0\u05D9\u05DD \u05E7\u05D5\u05E8\u05D0\u05EA \u05E7\u05D8\u05E2 \u05D0\u05D7\u05E8\u05D5\u05DF; \u05D4\u05D1\u05D0 \u05DB\u05D1\u05D5\u05D9 \u05DB\u05D1\u05E8\u05D9\u05E8\u05EA \u05DE\u05D7\u05D3\u05DC.",
     "Reload logs": "\u05D8\u05E2\u05DF \u05DE\u05D7\u05D3\u05E9 \u05D9\u05D5\u05DE\u05E0\u05D9\u05DD",
     "Invalid log options. Check the line count and time range.": "\u05D0\u05E4\u05E9\u05E8\u05D5\u05D9\u05D5\u05EA \u05D9\u05D5\u05DE\u05DF \u05DC\u05D0 \u05D7\u05D5\u05E7\u05D9\u05D5\u05EA. \u05D1\u05D3\u05D5\u05E7 \u05D0\u05EA \u05E1\u05E4\u05D9\u05E8\u05EA \u05D4\u05E9\u05D5\u05E8\u05D5\u05EA \u05D5\u05D8\u05D5\u05D5\u05D7 \u05D4\u05D6\u05DE\u05DF.",
@@ -15304,6 +17617,8 @@ var translations = {
     "Completed": "\u05D4\u05D5\u05E9\u05DC\u05DD",
     "Initiated by": "\u05D1\u05D9\u05D5\u05D6\u05DE\u05EA",
     "Automated": "\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9",
+    "Restarts": "\u05D4\u05E4\u05E2\u05DC\u05D5\u05EA \u05DE\u05D7\u05D3\u05E9",
+    "Redaction notice": "\u05D4\u05D5\u05D3\u05E2\u05D4 \u05E2\u05DC \u05D4\u05E1\u05EA\u05E8\u05EA \u05DE\u05D9\u05D3\u05E2 \u05E8\u05D2\u05D9\u05E9",
     "{0} (unrecognized state)": "{0} (\u05DE\u05E6\u05D1 \u05DC\u05D0 \u05DE\u05D6\u05D5\u05D4\u05D4)",
     "Default": "\u05D1\u05E8\u05D9\u05E8\u05EA \u05DE\u05D7\u05D3\u05DC",
     "None": "\u05D0\u05D9\u05DF",
@@ -16017,6 +18332,225 @@ var ArgoClient = class {
         if (scope !== await this.scope(context)) throw new ServiceError("AUTH_REQUIRED", 401);
         return result;
       }
+    }
+  }
+  async canI(query, signal) {
+    const { data } = await this.read(query.context, "canI", signal, (value) => {
+      if (!value || typeof value !== "object" || Array.isArray(value)) throw new ServiceError("UPSTREAM_INVALID", 502);
+      const raw = value.value;
+      if (raw !== "yes" && raw !== "no") throw new ServiceError("UPSTREAM_INVALID", 502);
+      return { allowed: raw === "yes" };
+    }, { rbacResource: query.resource, rbacAction: query.action, rbacSubresource: query.subresource });
+    return data;
+  }
+  async resourceActions(context, app, resource2, signal) {
+    const parameters = { ...app, group: resource2.group, kind: resource2.kind, version: resource2.version, namespace: resource2.namespace, resourceName: resource2.name };
+    operationUrl("https://validation.invalid", "resourceActions", parameters);
+    await this.verifyResource(context, app, resource2, signal);
+    const { data } = await this.read(context, "resourceActions", signal, (value) => {
+      if (!value || typeof value !== "object" || Array.isArray(value)) throw new ServiceError("UPSTREAM_INVALID", 502);
+      const list = value.actions;
+      if (list !== void 0 && !Array.isArray(list)) throw new ServiceError("UPSTREAM_INVALID", 502);
+      const actions = (Array.isArray(list) ? list : []).flatMap((item) => {
+        if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+        const rec = item;
+        if (typeof rec.name !== "string" || !rec.name) return [];
+        const params = Array.isArray(rec.params) ? rec.params.flatMap((param) => {
+          if (!param || typeof param !== "object" || Array.isArray(param)) return [];
+          const p = param;
+          if (typeof p.name !== "string" || !p.name) return [];
+          return [{ name: p.name, ...typeof p.default === "string" ? { default: p.default } : {}, ...typeof p.type === "string" ? { type: p.type } : {} }];
+        }) : [];
+        return [{
+          name: rec.name,
+          displayName: typeof rec.displayName === "string" && rec.displayName ? rec.displayName : rec.name,
+          iconClass: typeof rec.iconClass === "string" ? rec.iconClass : "",
+          disabled: Boolean(rec.disabled),
+          params
+        }];
+      });
+      return { actions };
+    }, parameters);
+    return data;
+  }
+  /**
+   * Non-cached, non-retried write path. Verifies identityEpoch before dispatch
+   * and invalidates cached observations for the scope upon completion.
+   */
+  async mutate(context, expectedEpoch, operation, signal, parameters = {}, body, project2 = (value) => value) {
+    if (this.closed || signal.aborted) throw new ServiceError("CANCELLED", 499);
+    if (!this.networkEnabled) throw new ServiceError("NETWORK_DISABLED", 403);
+    const scope = await this.scope(context);
+    if (this.publicEpoch(scope) !== expectedEpoch) throw new ServiceError("EXPIRED", 410);
+    const connection2 = await this.credentials.resolve(context);
+    if (this.connectionScope(connection2) !== scope) throw new ServiceError("EXPIRED", 410);
+    const raw = await mutateJson(connection2, operation, signal, parameters, body);
+    this.queries.invalidateScope(scope);
+    return this.safe(project2(raw), connection2);
+  }
+  async refreshApplication(req, signal) {
+    const data = await this.mutate(req.context, req.identityEpoch, "refreshApplication", signal, { name: req.name, appNamespace: req.appNamespace, refresh: req.mode }, void 0, applicationDetail);
+    return { operation: "refresh", accepted: true, data };
+  }
+  /** Mirrors argoproj/argo-cd cmd/argocd/commands/app.go NewApplicationSyncCommand. */
+  async syncApplication(req, signal) {
+    const syncOptionsItems = [];
+    if (req.replace) syncOptionsItems.push("Replace=true");
+    if (req.serverSideApply) syncOptionsItems.push("ServerSideApply=true");
+    if (req.applyOutOfSyncOnly) syncOptionsItems.push("ApplyOutOfSyncOnly=true");
+    const body = {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      ...req.revision !== void 0 ? { revision: req.revision } : {},
+      ...req.revisions && req.sourcePositions ? { revisions: req.revisions, sourcePositions: req.sourcePositions } : {},
+      ...req.dryRun !== void 0 ? { dryRun: req.dryRun } : {},
+      ...req.prune !== void 0 ? { prune: req.prune } : {},
+      ...req.resources?.length ? { resources: req.resources } : {},
+      ...syncOptionsItems.length ? { syncOptions: { items: syncOptionsItems } } : {},
+      ...req.retryLimit !== void 0 ? { retryStrategy: { limit: req.retryLimit } } : {}
+    };
+    if (req.strategy === "apply") body.strategy = { apply: { force: Boolean(req.force) } };
+    else if (req.strategy === "hook" || req.force) body.strategy = { hook: { force: Boolean(req.force) } };
+    const data = await this.mutate(req.context, req.identityEpoch, "syncApplication", signal, { name: req.name, appNamespace: req.appNamespace }, body, applicationDetail);
+    return { operation: "sync", accepted: true, data };
+  }
+  async terminateOperation(req, signal) {
+    await this.mutate(req.context, req.identityEpoch, "terminateOperation", signal, { name: req.name, appNamespace: req.appNamespace });
+    return { operation: "terminate", accepted: true };
+  }
+  async rollbackApplication(req, signal) {
+    const body = {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      id: req.id,
+      ...req.dryRun !== void 0 ? { dryRun: req.dryRun } : {},
+      ...req.prune !== void 0 ? { prune: req.prune } : {}
+    };
+    const data = await this.mutate(req.context, req.identityEpoch, "rollbackApplication", signal, { name: req.name, appNamespace: req.appNamespace }, body, applicationDetail);
+    return { operation: "rollback", accepted: true, data };
+  }
+  async createApplication(req, signal) {
+    const data = await this.mutate(req.context, req.identityEpoch, "createApplication", signal, {
+      ...req.upsert !== void 0 ? { upsert: req.upsert } : {},
+      ...req.validate !== void 0 ? { validate: req.validate } : {}
+    }, req.application, applicationDetail);
+    return { operation: "createApplication", accepted: true, data };
+  }
+  async updateApplication(req, signal) {
+    const data = await this.mutate(req.context, req.identityEpoch, "updateApplication", signal, {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      ...req.validate !== void 0 ? { validate: req.validate } : {}
+    }, req.application, applicationDetail);
+    return { operation: "updateApplication", accepted: true, data };
+  }
+  async patchApplication(req, signal) {
+    const body = { name: req.name, appNamespace: req.appNamespace, patch: req.patch, patchType: req.patchType };
+    const data = await this.mutate(req.context, req.identityEpoch, "patchApplication", signal, { name: req.name, appNamespace: req.appNamespace }, body, applicationDetail);
+    return { operation: "patchApplication", accepted: true, data };
+  }
+  async deleteApplication(req, signal) {
+    await this.mutate(req.context, req.identityEpoch, "deleteApplication", signal, {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      ...req.cascade !== void 0 ? { cascade: req.cascade } : {},
+      ...req.propagationPolicy ? { propagationPolicy: req.propagationPolicy } : {}
+    });
+    return { operation: "deleteApplication", accepted: true };
+  }
+  /** Mirrors argoproj/argo-cd cmd/argocd/commands/app_actions.go RunResourceActionV2 -> V1 fallback. */
+  async runResourceAction(req, signal) {
+    const app = { name: req.name, appNamespace: req.appNamespace };
+    await this.verifyResource(req.context, app, req.resource, signal);
+    const v2Body = {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      namespace: req.resource.namespace,
+      resourceName: req.resource.name,
+      version: req.resource.version,
+      group: req.resource.group,
+      kind: req.resource.kind,
+      action: req.action,
+      ...req.parameters?.length ? { resourceActionParameters: req.parameters } : {}
+    };
+    try {
+      await this.mutate(req.context, req.identityEpoch, "runResourceActionV2", signal, app, v2Body);
+      return { operation: "resourceAction", accepted: true, fallbackUsed: false };
+    } catch (error) {
+      if (!(error instanceof ServiceError) || !["NOT_FOUND", "CAPABILITY_UNAVAILABLE"].includes(error.code)) throw error;
+      if (req.parameters?.length) throw new ServiceError("CAPABILITY_UNAVAILABLE", 501);
+      await this.mutate(req.context, req.identityEpoch, "runResourceActionV1", signal, {
+        ...app,
+        namespace: req.resource.namespace,
+        resourceName: req.resource.name,
+        version: req.resource.version,
+        group: req.resource.group,
+        kind: req.resource.kind
+      }, req.action);
+      return { operation: "resourceAction", accepted: true, fallbackUsed: true };
+    }
+  }
+  async deleteResource(req, signal) {
+    const app = { name: req.name, appNamespace: req.appNamespace };
+    await this.verifyResource(req.context, app, req.resource, signal);
+    await this.mutate(req.context, req.identityEpoch, "deleteResource", signal, {
+      ...app,
+      namespace: req.resource.namespace,
+      resourceName: req.resource.name,
+      version: req.resource.version,
+      group: req.resource.group,
+      kind: req.resource.kind,
+      ...req.force !== void 0 ? { force: req.force } : {},
+      ...req.orphan !== void 0 ? { orphan: req.orphan } : {}
+    });
+    return { operation: "deleteResource", accepted: true };
+  }
+  async patchResource(req, signal) {
+    const app = { name: req.name, appNamespace: req.appNamespace };
+    await this.verifyResource(req.context, app, req.resource, signal);
+    const data = await this.mutate(req.context, req.identityEpoch, "patchResource", signal, {
+      ...app,
+      namespace: req.resource.namespace,
+      resourceName: req.resource.name,
+      version: req.resource.version,
+      group: req.resource.group,
+      kind: req.resource.kind,
+      patchType: req.patchType
+    }, req.patch, (value) => liveResource(value, req.resource));
+    return { operation: "patchResource", accepted: true, data };
+  }
+  async managementAction(req, signal) {
+    switch (req.operation) {
+      case "createApplicationSet": {
+        const data = await this.mutate(req.context, req.identityEpoch, "createApplicationSet", signal, { ...req.upsert !== void 0 ? { upsert: req.upsert } : {} }, req.applicationSet, applicationSet);
+        return { operation: req.operation, accepted: true, data };
+      }
+      case "deleteApplicationSet":
+        await this.mutate(req.context, req.identityEpoch, "deleteApplicationSet", signal, { name: req.name, appsetNamespace: req.appsetNamespace });
+        return { operation: req.operation, accepted: true };
+      case "createProject": {
+        const data = await this.mutate(req.context, req.identityEpoch, "createProject", signal, { ...req.upsert !== void 0 ? { upsert: req.upsert } : {} }, { project: req.project, ...req.upsert !== void 0 ? { upsert: req.upsert } : {} }, project);
+        return { operation: req.operation, accepted: true, data };
+      }
+      case "updateProject": {
+        const data = await this.mutate(req.context, req.identityEpoch, "updateProject", signal, { project: req.name }, { project: req.project }, project);
+        return { operation: req.operation, accepted: true, data };
+      }
+      case "deleteProject":
+        await this.mutate(req.context, req.identityEpoch, "deleteProject", signal, { project: req.name });
+        return { operation: req.operation, accepted: true };
+      case "validateRepository":
+        await this.mutate(req.context, req.identityEpoch, "validateRepository", signal, { repo: req.repo, ...req.type ? { repoType: req.type } : {}, ...req.project ? { project: req.project } : {} }, {});
+        return { operation: req.operation, accepted: true };
+      case "deleteRepository":
+        await this.mutate(req.context, req.identityEpoch, "deleteRepository", signal, { repo: req.repo, ...req.appProject ? { appProject: req.appProject } : {} });
+        return { operation: req.operation, accepted: true };
+      case "invalidateClusterCache":
+        await this.mutate(req.context, req.identityEpoch, "invalidateClusterCache", signal, { server: req.server });
+        return { operation: req.operation, accepted: true };
+      case "deleteCluster":
+        await this.mutate(req.context, req.identityEpoch, "deleteCluster", signal, { server: req.server });
+        return { operation: req.operation, accepted: true };
     }
   }
   close() {

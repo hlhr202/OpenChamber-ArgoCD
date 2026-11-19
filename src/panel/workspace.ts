@@ -38,7 +38,7 @@ function mountWorkspaceView(root: HTMLElement, request: PanelRequest, host: Work
   let session: SessionSnapshot | null = ready.session; let preferencesVersion = 0; const preferences: ViewPreferences = { density: 'compact', module: 'applications' };
   let navigationRevision = 0; let suppressNavigation = false; let pendingRestore: NavigationState | undefined; let pendingInitialLoad = false;
   const statusSurface = ready.surface === 'status'; const storageOptions = { scope: ready.features?.deviceStorage ? 'device' as const : 'instance' as const };
-  const heading = element('header'); heading.className = 'observer-heading'; element('h1', 'Argo CD', heading); element('span', "Read only", heading).className = 'read-only-label';
+  const heading = element('header'); heading.className = 'observer-heading'; element('h1', 'Argo CD', heading);
   const more = document.createElement('details'); more.className = 'workspace-more'; heading.append(more);
   const moreLabel = element('summary', 'Applications', more);
   const nav = element('nav', '', more); nav.className = 'workspace-navigation'; nav.setAttribute('aria-label', t("Argo CD navigation"));

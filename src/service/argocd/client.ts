@@ -6,7 +6,7 @@ import { CredentialProvider, type Connection } from '../auth/config.js';
 import { RefreshCoordinator } from '../auth/refresh.js';
 import { ServiceError } from '../security/errors.js';
 import { redactResult } from '../security/redact.js';
-import { operationUrl, requestJson, type ReadOperation, type ReadParameters } from './transport.js';
+import { mutateJson, operationUrl, requestJson, type ReadOperation, type ReadParameters, type WriteOperation, type WriteParameters } from './transport.js';
 import { applicationCounts, applicationDetail, applicationSummaries } from '../domains/applications.js';
 import { QueryCoordinator } from '../runtime/queries.js';
 import type { ApplicationReference, EventList, LiveResource, OrphanedMonitoring, ResourceReference, ResourceTree } from '../../shared/resources.js';
@@ -25,6 +25,12 @@ import { parseManagementCommand } from '../runtime/management-input.js';
 import { buildSummary, parseSummaryEvidence } from '../domains/summary.js';
 import type { SummaryEvidence, SummaryPreview } from '../../shared/summary.js';
 import type { Language } from '../../shared/language.js';
+import type {
+  ActionResult, CanIQuery, CanIResult, CreateApplicationRequest, DeleteApplicationRequest,
+  DeleteResourceRequest, ManagementActionRequest, PatchApplicationRequest, PatchResourceRequest,
+  RefreshApplicationRequest, ResourceActionItem, ResourceActionList, RollbackApplicationRequest,
+  RunResourceActionRequest, SyncApplicationRequest, TerminateOperationRequest, UpdateApplicationRequest,
+} from '../../shared/actions.js';
 
 export class ArgoClient {
   private readonly scopes = new Map<string, string>();
@@ -338,6 +344,246 @@ export class ArgoClient {
         if (scope !== await this.scope(context)) throw new ServiceError('AUTH_REQUIRED', 401);
         return result;
       }
+    }
+  }
+
+  async canI(query: CanIQuery, signal: AbortSignal): Promise<CanIResult> {
+    const { data } = await this.read(query.context, 'canI', signal, (value) => {
+      if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ServiceError('UPSTREAM_INVALID', 502);
+      const raw = (value as { value?: unknown }).value;
+      if (raw !== 'yes' && raw !== 'no') throw new ServiceError('UPSTREAM_INVALID', 502);
+      return { allowed: raw === 'yes' };
+    }, { rbacResource: query.resource, rbacAction: query.action, rbacSubresource: query.subresource });
+    return data;
+  }
+
+  async resourceActions(context: string, app: ApplicationReference, resource: ResourceReference, signal: AbortSignal): Promise<ResourceActionList> {
+    const parameters: ReadParameters = { ...app, group: resource.group, kind: resource.kind, version: resource.version, namespace: resource.namespace, resourceName: resource.name };
+    operationUrl('https://validation.invalid', 'resourceActions', parameters);
+    await this.verifyResource(context, app, resource, signal);
+    const { data } = await this.read(context, 'resourceActions', signal, (value) => {
+      if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ServiceError('UPSTREAM_INVALID', 502);
+      const list = (value as { actions?: unknown }).actions;
+      if (list !== undefined && !Array.isArray(list)) throw new ServiceError('UPSTREAM_INVALID', 502);
+      const actions: ResourceActionItem[] = (Array.isArray(list) ? list : []).flatMap((item): ResourceActionItem[] => {
+        if (!item || typeof item !== 'object' || Array.isArray(item)) return [];
+        const rec = item as Record<string, unknown>;
+        if (typeof rec.name !== 'string' || !rec.name) return [];
+        const params = Array.isArray(rec.params) ? rec.params.flatMap((param) => {
+          if (!param || typeof param !== 'object' || Array.isArray(param)) return [];
+          const p = param as Record<string, unknown>;
+          if (typeof p.name !== 'string' || !p.name) return [];
+          return [{ name: p.name, ...(typeof p.default === 'string' ? { default: p.default } : {}), ...(typeof p.type === 'string' ? { type: p.type } : {}) }];
+        }) : [];
+        return [{
+          name: rec.name,
+          displayName: typeof rec.displayName === 'string' && rec.displayName ? rec.displayName : rec.name,
+          iconClass: typeof rec.iconClass === 'string' ? rec.iconClass : '',
+          disabled: Boolean(rec.disabled),
+          params,
+        }];
+      });
+      return { actions };
+    }, parameters);
+    return data;
+  }
+
+  /**
+   * Non-cached, non-retried write path. Verifies identityEpoch before dispatch
+   * and invalidates cached observations for the scope upon completion.
+   */
+  private async mutate<T = unknown>(
+    context: string,
+    expectedEpoch: string,
+    operation: WriteOperation,
+    signal: AbortSignal,
+    parameters: WriteParameters = {},
+    body?: unknown,
+    project: (value: unknown) => T = (value) => value as T,
+  ): Promise<T> {
+    if (this.closed || signal.aborted) throw new ServiceError('CANCELLED', 499);
+    if (!this.networkEnabled) throw new ServiceError('NETWORK_DISABLED', 403);
+    const scope = await this.scope(context);
+    if (this.publicEpoch(scope) !== expectedEpoch) throw new ServiceError('EXPIRED', 410);
+    const connection = await this.credentials.resolve(context);
+    if (this.connectionScope(connection) !== scope) throw new ServiceError('EXPIRED', 410);
+    const raw = await mutateJson(connection, operation, signal, parameters, body);
+    this.queries.invalidateScope(scope);
+    return this.safe(project(raw), connection) as T;
+  }
+
+  async refreshApplication(req: RefreshApplicationRequest, signal: AbortSignal): Promise<ActionResult<ApplicationDetail>> {
+    const data = await this.mutate(req.context, req.identityEpoch, 'refreshApplication', signal, { name: req.name, appNamespace: req.appNamespace, refresh: req.mode }, undefined, applicationDetail);
+    return { operation: 'refresh', accepted: true, data };
+  }
+
+  /** Mirrors argoproj/argo-cd cmd/argocd/commands/app.go NewApplicationSyncCommand. */
+  async syncApplication(req: SyncApplicationRequest, signal: AbortSignal): Promise<ActionResult<ApplicationDetail>> {
+    const syncOptionsItems: string[] = [];
+    if (req.replace) syncOptionsItems.push('Replace=true');
+    if (req.serverSideApply) syncOptionsItems.push('ServerSideApply=true');
+    if (req.applyOutOfSyncOnly) syncOptionsItems.push('ApplyOutOfSyncOnly=true');
+    const body: Record<string, unknown> = {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      ...(req.revision !== undefined ? { revision: req.revision } : {}),
+      ...(req.revisions && req.sourcePositions ? { revisions: req.revisions, sourcePositions: req.sourcePositions } : {}),
+      ...(req.dryRun !== undefined ? { dryRun: req.dryRun } : {}),
+      ...(req.prune !== undefined ? { prune: req.prune } : {}),
+      ...(req.resources?.length ? { resources: req.resources } : {}),
+      ...(syncOptionsItems.length ? { syncOptions: { items: syncOptionsItems } } : {}),
+      ...(req.retryLimit !== undefined ? { retryStrategy: { limit: req.retryLimit } } : {}),
+    };
+    if (req.strategy === 'apply') body.strategy = { apply: { force: Boolean(req.force) } };
+    else if (req.strategy === 'hook' || req.force) body.strategy = { hook: { force: Boolean(req.force) } };
+    const data = await this.mutate(req.context, req.identityEpoch, 'syncApplication', signal, { name: req.name, appNamespace: req.appNamespace }, body, applicationDetail);
+    return { operation: 'sync', accepted: true, data };
+  }
+
+  async terminateOperation(req: TerminateOperationRequest, signal: AbortSignal): Promise<ActionResult> {
+    await this.mutate(req.context, req.identityEpoch, 'terminateOperation', signal, { name: req.name, appNamespace: req.appNamespace });
+    return { operation: 'terminate', accepted: true };
+  }
+
+  async rollbackApplication(req: RollbackApplicationRequest, signal: AbortSignal): Promise<ActionResult<ApplicationDetail>> {
+    const body: Record<string, unknown> = {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      id: req.id,
+      ...(req.dryRun !== undefined ? { dryRun: req.dryRun } : {}),
+      ...(req.prune !== undefined ? { prune: req.prune } : {}),
+    };
+    const data = await this.mutate(req.context, req.identityEpoch, 'rollbackApplication', signal, { name: req.name, appNamespace: req.appNamespace }, body, applicationDetail);
+    return { operation: 'rollback', accepted: true, data };
+  }
+
+  async createApplication(req: CreateApplicationRequest, signal: AbortSignal): Promise<ActionResult<ApplicationDetail>> {
+    const data = await this.mutate(req.context, req.identityEpoch, 'createApplication', signal, {
+      ...(req.upsert !== undefined ? { upsert: req.upsert } : {}),
+      ...(req.validate !== undefined ? { validate: req.validate } : {}),
+    }, req.application, applicationDetail);
+    return { operation: 'createApplication', accepted: true, data };
+  }
+
+  async updateApplication(req: UpdateApplicationRequest, signal: AbortSignal): Promise<ActionResult<ApplicationDetail>> {
+    const data = await this.mutate(req.context, req.identityEpoch, 'updateApplication', signal, {
+      name: req.name, appNamespace: req.appNamespace,
+      ...(req.validate !== undefined ? { validate: req.validate } : {}),
+    }, req.application, applicationDetail);
+    return { operation: 'updateApplication', accepted: true, data };
+  }
+
+  async patchApplication(req: PatchApplicationRequest, signal: AbortSignal): Promise<ActionResult<ApplicationDetail>> {
+    const body = { name: req.name, appNamespace: req.appNamespace, patch: req.patch, patchType: req.patchType };
+    const data = await this.mutate(req.context, req.identityEpoch, 'patchApplication', signal, { name: req.name, appNamespace: req.appNamespace }, body, applicationDetail);
+    return { operation: 'patchApplication', accepted: true, data };
+  }
+
+  async deleteApplication(req: DeleteApplicationRequest, signal: AbortSignal): Promise<ActionResult> {
+    await this.mutate(req.context, req.identityEpoch, 'deleteApplication', signal, {
+      name: req.name, appNamespace: req.appNamespace,
+      ...(req.cascade !== undefined ? { cascade: req.cascade } : {}),
+      ...(req.propagationPolicy ? { propagationPolicy: req.propagationPolicy } : {}),
+    });
+    return { operation: 'deleteApplication', accepted: true };
+  }
+
+  /** Mirrors argoproj/argo-cd cmd/argocd/commands/app_actions.go RunResourceActionV2 -> V1 fallback. */
+  async runResourceAction(req: RunResourceActionRequest, signal: AbortSignal): Promise<ActionResult> {
+    const app = { name: req.name, appNamespace: req.appNamespace };
+    await this.verifyResource(req.context, app, req.resource, signal);
+    const v2Body: Record<string, unknown> = {
+      name: req.name,
+      appNamespace: req.appNamespace,
+      namespace: req.resource.namespace,
+      resourceName: req.resource.name,
+      version: req.resource.version,
+      group: req.resource.group,
+      kind: req.resource.kind,
+      action: req.action,
+      ...(req.parameters?.length ? { resourceActionParameters: req.parameters } : {}),
+    };
+    try {
+      await this.mutate(req.context, req.identityEpoch, 'runResourceActionV2', signal, app, v2Body);
+      return { operation: 'resourceAction', accepted: true, fallbackUsed: false };
+    } catch (error) {
+      if (!(error instanceof ServiceError) || !['NOT_FOUND', 'CAPABILITY_UNAVAILABLE'].includes(error.code)) throw error;
+      if (req.parameters?.length) throw new ServiceError('CAPABILITY_UNAVAILABLE', 501);
+      await this.mutate(req.context, req.identityEpoch, 'runResourceActionV1', signal, {
+        ...app,
+        namespace: req.resource.namespace,
+        resourceName: req.resource.name,
+        version: req.resource.version,
+        group: req.resource.group,
+        kind: req.resource.kind,
+      }, req.action);
+      return { operation: 'resourceAction', accepted: true, fallbackUsed: true };
+    }
+  }
+
+  async deleteResource(req: DeleteResourceRequest, signal: AbortSignal): Promise<ActionResult> {
+    const app = { name: req.name, appNamespace: req.appNamespace };
+    await this.verifyResource(req.context, app, req.resource, signal);
+    await this.mutate(req.context, req.identityEpoch, 'deleteResource', signal, {
+      ...app,
+      namespace: req.resource.namespace,
+      resourceName: req.resource.name,
+      version: req.resource.version,
+      group: req.resource.group,
+      kind: req.resource.kind,
+      ...(req.force !== undefined ? { force: req.force } : {}),
+      ...(req.orphan !== undefined ? { orphan: req.orphan } : {}),
+    });
+    return { operation: 'deleteResource', accepted: true };
+  }
+
+  async patchResource(req: PatchResourceRequest, signal: AbortSignal): Promise<ActionResult<LiveResource>> {
+    const app = { name: req.name, appNamespace: req.appNamespace };
+    await this.verifyResource(req.context, app, req.resource, signal);
+    const data = await this.mutate(req.context, req.identityEpoch, 'patchResource', signal, {
+      ...app,
+      namespace: req.resource.namespace,
+      resourceName: req.resource.name,
+      version: req.resource.version,
+      group: req.resource.group,
+      kind: req.resource.kind,
+      patchType: req.patchType,
+    }, req.patch, (value) => liveResource(value, req.resource));
+    return { operation: 'patchResource', accepted: true, data };
+  }
+
+  async managementAction(req: ManagementActionRequest, signal: AbortSignal): Promise<ActionResult> {
+    switch (req.operation) {
+      case 'createApplicationSet': {
+        const data = await this.mutate(req.context, req.identityEpoch, 'createApplicationSet', signal, { ...(req.upsert !== undefined ? { upsert: req.upsert } : {}) }, req.applicationSet, management.applicationSet);
+        return { operation: req.operation, accepted: true, data };
+      }
+      case 'deleteApplicationSet':
+        await this.mutate(req.context, req.identityEpoch, 'deleteApplicationSet', signal, { name: req.name, appsetNamespace: req.appsetNamespace });
+        return { operation: req.operation, accepted: true };
+      case 'createProject': {
+        const data = await this.mutate(req.context, req.identityEpoch, 'createProject', signal, { ...(req.upsert !== undefined ? { upsert: req.upsert } : {}) }, { project: req.project, ...(req.upsert !== undefined ? { upsert: req.upsert } : {}) }, management.project);
+        return { operation: req.operation, accepted: true, data };
+      }
+      case 'updateProject': {
+        const data = await this.mutate(req.context, req.identityEpoch, 'updateProject', signal, { project: req.name }, { project: req.project }, management.project);
+        return { operation: req.operation, accepted: true, data };
+      }
+      case 'deleteProject':
+        await this.mutate(req.context, req.identityEpoch, 'deleteProject', signal, { project: req.name });
+        return { operation: req.operation, accepted: true };
+      case 'validateRepository':
+        await this.mutate(req.context, req.identityEpoch, 'validateRepository', signal, { repo: req.repo, ...(req.type ? { repoType: req.type } : {}), ...(req.project ? { project: req.project } : {}) }, {});
+        return { operation: req.operation, accepted: true };
+      case 'deleteRepository':
+        await this.mutate(req.context, req.identityEpoch, 'deleteRepository', signal, { repo: req.repo, ...(req.appProject ? { appProject: req.appProject } : {}) });
+        return { operation: req.operation, accepted: true };
+      case 'invalidateClusterCache':
+        await this.mutate(req.context, req.identityEpoch, 'invalidateClusterCache', signal, { server: req.server });
+        return { operation: req.operation, accepted: true };
+      case 'deleteCluster':
+        await this.mutate(req.context, req.identityEpoch, 'deleteCluster', signal, { server: req.server });
+        return { operation: req.operation, accepted: true };
     }
   }
 

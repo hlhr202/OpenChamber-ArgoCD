@@ -32,6 +32,14 @@ The host right-side rail uses panel/argocd.svg, a bundled Argo mark declared in 
 
 The Service does **not execute CLI commands, log in, renew credentials, or write configuration**. The manifest requests no exec permission. Invalid/expired credentials produce an explicit error. Legacy networkEnabled is no longer a second gate, even if an existing file says false. These policies supersede the earlier default-disabled network/CLI-renewal design recorded in validation history.
 
+## Operational actions
+
+Operational actions are **enabled by default** (`Diagnostics.readOnly = false`) and follow the semantics of the official [argoproj/argo-cd](https://github.com/argoproj/argo-cd) CLI (`cmd/argocd/commands/app.go`, `app_actions.go`, `app_resources.go`, `applicationset.go`, `project.go`, `repo.go`, `cluster.go`, `account.go`) directly over Argo CD's `/api/v1/...` REST endpoints:
+
+- **Authorization**: Delegated entirely to Argo CD RBAC (`403 FORBIDDEN`) and Sync Windows; `/v1/can-i` exposes Argo CD's `AccountService.CanI` endpoint.
+- **Safety guardrails**: Fixed write-endpoint allowlist (no arbitrary URLs/methods), mandatory `identityEpoch` verification (`410 EXPIRED` on context/credential drift), resource UID verification before resource mutations (`409 RESOURCE_CHANGED`), zero automatic retries on non-idempotent mutations, immediate cache invalidation after success, and explicit confirmation dialogs (including exact name typing for destructive deletions).
+- **Test isolation**: Automated tests run exclusively against the in-repo Mock Argo CD API Server fixture (`tests/argocd-server-fixture.ts` on `127.0.0.1:0` with isolated temporary synthetic configuration) and never touch host Kubernetes or host Argo CD instances.
+
 ## Acceptance and authorization
 
 The package is **openchamber-argocd 1.2.0**, with private=false and the MIT license. This metadata does not imply npm publication, real host acceptance or production compatibility. Remote acceptance remains **human-agreed skip, not verified**, retained in these documents. The former release.json hash inventory is no longer generated; removing it does not turn build checks into real host acceptance.

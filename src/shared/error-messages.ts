@@ -23,6 +23,7 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   EXPIRED: 'The task or snapshot has expired; start a new query.',
   RESOURCE_CHANGED: 'The resource no longer matches the selected tree snapshot. Reload the tree before inspecting this object.',
   CAPABILITY_UNAVAILABLE: 'The server version or API does not provide the requested capability. No fallback or refresh was attempted.',
+  CONFLICT: 'Another operation is already in progress or the object state conflicted.',
 };
 export const CHINESE_ERRORS: Record<ErrorCode, string> = {
   UNAUTHORIZED: '需要 Service 身份认证。', BAD_REQUEST: '请求不符合允许的操作。', NOT_FOUND: '未找到请求的操作或资源。',
@@ -34,4 +35,5 @@ export const CHINESE_ERRORS: Record<ErrorCode, string> = {
   UPSTREAM_UNAVAILABLE: '无法连接 Argo CD，或 TLS 连接失败。', UPSTREAM_INVALID: 'Argo CD 返回了不支持的响应或重定向。', CANCELLED: '操作已取消。',
   EXPIRED: '任务或快照已过期，请开始新查询。', RESOURCE_CHANGED: '资源与所选树快照不再匹配，请重新读取资源树。',
   CAPABILITY_UNAVAILABLE: '服务端版本或 API 不提供此能力；未执行回退或刷新。',
+  CONFLICT: '已有其他操作正在执行，或对象状态发生冲突。',
 };

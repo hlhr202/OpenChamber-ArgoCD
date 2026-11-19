@@ -1146,7 +1146,7 @@ test('English host locale localizes chrome, keeps API data opaque, and switches 
   assert.equal(document.documentElement.lang, 'zh-CN'); assert.match(root.textContent!, /当前筛选 2/); assert.equal(selectTrigger(root, 'Project').textContent, 'platform'); assert.equal(calls.length, 2);
   assert.ok(saved.every((item) => item.key === 'observer.view.v1' || item.key === navigationKey(ready.directory!)));
   assert.ok(saved.filter((item) => item.key === 'observer.view.v1').every((item) => !JSON.stringify(item.value).includes('primary')));
-  workspace.setHostLocale('fr-FR'); assert.equal(document.documentElement.lang, 'fr'); assert.ok(root.textContent!.includes(translate("Read only")));
+  workspace.setHostLocale('fr-FR'); assert.equal(document.documentElement.lang, 'fr'); assert.ok(root.textContent!.includes(translate("Applications")));
   workspace.setHostLocale('not-a-known-locale'); assert.equal(document.documentElement.lang, 'en'); assert.equal(calls.length, 2);
   root.querySelector<HTMLElement>('[aria-label="Argo CD applications"] [role="option"]')!.click(); await setImmediate(); assert.match(root.querySelector('[aria-label="Application details"]')!.textContent!, /Sources and configuration/);
   assert.doesNotMatch(root.querySelector('[aria-label="Application details"]')!.textContent!, /\p{Script=Han}/u);
@@ -1172,7 +1172,7 @@ test('all host languages apply live, ignore legacy language preferences and pers
   for (const locale of LANGUAGES) {
     workspace.setHostLocale(locale); await setImmediate();
     assert.equal(document.documentElement.lang, locale); assert.equal(document.documentElement.dir, directionFor(locale));
-    assert.ok(root.textContent!.includes(translate("Read only"))); assert.equal(root.dataset.density, 'comfortable'); assert.equal(calls, 1);
+    assert.ok(root.textContent!.includes(translate("Applications"))); assert.equal(root.dataset.density, 'comfortable'); assert.equal(calls, 1);
   }
   workspace.setHostLocale('unknown-language'); assert.equal(document.documentElement.lang, 'en'); assert.equal(document.documentElement.dir, 'ltr');
 });
@@ -1288,3 +1288,49 @@ test('offline end-to-end workspace traverses real Service/tasks/log stream and c
   assert.match(composed[0]!, /REDACTED/); assert.doesNotMatch(composed[0]!, /synthetic-original|private-env|private-command|private-annotation|hidden-values/); assert.equal(root.querySelector('img'), null);
   workspace.dispose(); gateway.invalidate(); await delay(30); const stopped = hostReads; await delay(650); assert.equal(hostReads, stopped);
 });
+
+test('panel UI operational actions (Sync dialog & Delete name confirmation) run end-to-end against in-repo Mock Argo CD server', async (t) => {
+  const { startMockArgoServer } = await import('./argocd-server-fixture.js');
+  const argo = await startMockArgoServer(t);
+  const svc = await argo.createHostService('synthetic-panel-actions-token');
+  const root = dom(t);
+  const transport: PanelRequest = async <T>(path: string, query?: Record<string, string>, options?: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown }) => {
+    const qs = query ? `?${new URLSearchParams(query)}` : '';
+    const res = await svc.request<Envelope<T>>(`${path}${qs}`, { method: options?.method ?? 'GET', ...(options?.body !== undefined ? { body: options.body } : {}) });
+    return res.body;
+  };
+  const gateway = new ServiceGateway(transport, () => assert.fail('No boundary change expected'));
+  const host: WorkspaceHost = { storage: { get: async () => undefined, set: async () => {}, delete: async () => {}, keys: async () => [] }, writeClipboard: async () => {}, compose: async () => {} };
+  const workspace = mountWorkspace(root, gateway.bind(), host, { ...hostReady(), locale: 'en-US' });
+  cleanup(root, () => workspace.dispose());
+  const until = async (condition: () => boolean) => { for (let i = 0; i < 300; i++) { if (condition()) return; await delay(10); } assert.fail('Expected UI state not reached'); };
+
+  resourceButton(root, 'Load contexts').click();
+  await until(() => Boolean(root.querySelector('[aria-label="Argo CD applications"] [role="option"]')));
+  root.querySelector<HTMLElement>('[aria-label="Argo CD applications"] [role="option"]')!.click();
+  await until(() => Boolean(root.querySelector('[aria-label="Application actions"]')));
+
+  // Open Sync dialog, enable Prune, submit
+  resourceButton(root.querySelector('[aria-label="Application actions"]')!, 'Sync').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog')));
+  const pruneCheck = [...document.querySelectorAll<HTMLLabelElement>('.argocd-dialog-check')].find((el) => el.textContent?.includes('Prune'))!.querySelector('input')!;
+  pruneCheck.checked = true; pruneCheck.dispatchEvent(new Event('change'));
+  document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-primary')!.click();
+  await until(() => argo.requests.some((r) => r.method === 'POST' && r.path === '/api/v1/applications/demo/sync'));
+  const syncReq = argo.requests.find((r) => r.method === 'POST' && r.path === '/api/v1/applications/demo/sync')!;
+  assert.equal((syncReq.body as Record<string, unknown>).prune, true);
+
+  // Open Delete dialog, verify confirmation disabled until exact name typed
+  await until(() => Boolean(root.querySelector('[aria-label="Application actions"]')));
+  resourceButton(root.querySelector('[aria-label="Application actions"]')!, 'Delete').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog-danger')));
+  const confirmDel = document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-danger')!;
+  assert.equal(confirmDel.disabled, true);
+  const nameInput = document.querySelector<HTMLInputElement>('.argocd-dialog input[type="text"]')!;
+  nameInput.value = 'demo'; nameInput.dispatchEvent(new Event('input'));
+  assert.equal(confirmDel.disabled, false);
+  confirmDel.click();
+  await until(() => !argo.state.applications.has('argocd/demo'));
+  workspace.dispose(); gateway.invalidate();
+});
+

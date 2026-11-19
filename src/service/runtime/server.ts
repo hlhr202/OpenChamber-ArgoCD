@@ -14,6 +14,11 @@ import { parseLogCommand } from './log-input.js';
 import { LogSessions } from './log-sessions.js';
 import { parseManagementCommand } from './management-input.js';
 import { isLanguage } from '../../shared/language.js';
+import {
+  parseCanIQuery, parseCreateApplicationRequest, parseDeleteApplicationRequest, parseDeleteResourceRequest,
+  parseManagementActionRequest, parsePatchApplicationRequest, parsePatchResourceRequest, parseRefreshRequest,
+  parseRollbackRequest, parseRunResourceActionRequest, parseSyncRequest, parseTerminateRequest, parseUpdateApplicationRequest,
+} from './action-input.js';
 
 export interface ServiceOptions {
   token: string;
@@ -78,15 +83,22 @@ export function createService(options: ServiceOptions) {
         throw new ServiceError('BAD_REQUEST', 400);
       }
       const url = new URL(target, 'http://127.0.0.1');
-      const resourcePaths = ['/v1/resource-tree', '/v1/resource', '/v1/events'];
-      if (!['/health', '/v1/diagnostics', '/v1/contexts', '/v1/identity', '/v1/applications', '/v1/application', '/v1/tasks', '/v1/logs', '/v1/summary', '/v1/management', '/v1/orphaned-monitoring', '/v1/manifests', '/v1/comparison', ...resourcePaths].includes(url.pathname)) throw new ServiceError('NOT_FOUND', 404);
-      if (url.pathname === '/v1/summary' ? req.method !== 'POST' : ['/v1/tasks', '/v1/logs'].includes(url.pathname) ? !['GET', 'POST', 'DELETE'].includes(req.method ?? '') : req.method !== 'GET') throw new ServiceError('METHOD_NOT_ALLOWED', 405);
+      const resourcePaths = ['/v1/resource-tree', '/v1/resource', '/v1/events', '/v1/resource-actions'];
+      const actionPaths = [
+        '/v1/actions/refresh', '/v1/actions/sync', '/v1/actions/terminate', '/v1/actions/rollback',
+        '/v1/actions/application-create', '/v1/actions/application-update', '/v1/actions/application-patch', '/v1/actions/application-delete',
+        '/v1/actions/resource-action', '/v1/actions/resource-delete', '/v1/actions/resource-patch', '/v1/actions/management',
+      ];
+      if (!['/health', '/v1/diagnostics', '/v1/contexts', '/v1/identity', '/v1/can-i', '/v1/applications', '/v1/application', '/v1/tasks', '/v1/logs', '/v1/summary', '/v1/management', '/v1/orphaned-monitoring', '/v1/manifests', '/v1/comparison', ...resourcePaths, ...actionPaths].includes(url.pathname)) throw new ServiceError('NOT_FOUND', 404);
+      const isAction = actionPaths.includes(url.pathname);
+      if ((url.pathname === '/v1/summary' || isAction) ? req.method !== 'POST' : ['/v1/tasks', '/v1/logs'].includes(url.pathname) ? !['GET', 'POST', 'DELETE'].includes(req.method ?? '') : req.method !== 'GET') throw new ServiceError('METHOD_NOT_ALLOWED', 405);
       const isTaskStart = url.pathname === '/v1/tasks' && req.method === 'POST';
       const isLogStart = url.pathname === '/v1/logs' && req.method === 'POST';
       const isSummary = url.pathname === '/v1/summary';
-      if (!isTaskStart && !isLogStart && !isSummary && (req.headers['transfer-encoding'] || Number(req.headers['content-length'] ?? 0) !== 0)) throw new ServiceError('BAD_REQUEST', 400);
+      if (!isTaskStart && !isLogStart && !isSummary && !isAction && (req.headers['transfer-encoding'] || Number(req.headers['content-length'] ?? 0) !== 0)) throw new ServiceError('BAD_REQUEST', 400);
       const filterKeys = ['name', 'appNamespace', 'project', 'cluster', 'destinationNamespace', 'repo', 'selector', 'sync', 'health'] as const;
       const allowed = url.pathname === '/v1/identity' ? ['context']
+        : url.pathname === '/v1/can-i' ? ['context', 'resource', 'action', 'subresource']
         : url.pathname === '/v1/applications' ? ['context', ...filterKeys]
         : url.pathname === '/v1/application' ? ['context', 'name', 'appNamespace']
         : url.pathname === '/v1/comparison' ? ['context', 'name', 'appNamespace']
@@ -123,11 +135,31 @@ export function createService(options: ServiceOptions) {
       const aborted = new Promise<never>((_, reject) => {
         signal.addEventListener('abort', () => reject(new ServiceError('TIMEOUT', 504)), { once: true });
       });
-      timer = setTimeout(() => controller?.abort(), timeoutMs);
+      timer = setTimeout(() => controller?.abort(), isAction ? Math.max(timeoutMs, 30_000) : timeoutMs);
       res.once('close', () => { if (!res.writableEnded) controller?.abort(); });
       let snapshot: QuerySnapshot<unknown> | undefined;
       let initialScope: string | undefined; let identityContext = context;
       async function operation(): Promise<unknown> {
+        if (isAction) {
+          const largeBody = ['/v1/actions/application-create', '/v1/actions/application-update', '/v1/actions/application-patch', '/v1/actions/resource-patch', '/v1/actions/management'].includes(url.pathname);
+          const raw = await readJsonBody(req, signal, largeBody ? 262_144 : 32_768);
+          const api = await argo();
+          const bindEpoch = async (ctx: string) => { identityContext = ctx; initialScope = await api.scope(ctx); identityEpoch = api.publicEpoch(initialScope); };
+          switch (url.pathname) {
+            case '/v1/actions/refresh': { const cmd = parseRefreshRequest(raw); await bindEpoch(cmd.context); return api.refreshApplication(cmd, signal); }
+            case '/v1/actions/sync': { const cmd = parseSyncRequest(raw); await bindEpoch(cmd.context); return api.syncApplication(cmd, signal); }
+            case '/v1/actions/terminate': { const cmd = parseTerminateRequest(raw); await bindEpoch(cmd.context); return api.terminateOperation(cmd, signal); }
+            case '/v1/actions/rollback': { const cmd = parseRollbackRequest(raw); await bindEpoch(cmd.context); return api.rollbackApplication(cmd, signal); }
+            case '/v1/actions/application-create': { const cmd = parseCreateApplicationRequest(raw); await bindEpoch(cmd.context); return api.createApplication(cmd, signal); }
+            case '/v1/actions/application-update': { const cmd = parseUpdateApplicationRequest(raw); await bindEpoch(cmd.context); return api.updateApplication(cmd, signal); }
+            case '/v1/actions/application-patch': { const cmd = parsePatchApplicationRequest(raw); await bindEpoch(cmd.context); return api.patchApplication(cmd, signal); }
+            case '/v1/actions/application-delete': { const cmd = parseDeleteApplicationRequest(raw); await bindEpoch(cmd.context); return api.deleteApplication(cmd, signal); }
+            case '/v1/actions/resource-action': { const cmd = parseRunResourceActionRequest(raw); await bindEpoch(cmd.context); return api.runResourceAction(cmd, signal); }
+            case '/v1/actions/resource-delete': { const cmd = parseDeleteResourceRequest(raw); await bindEpoch(cmd.context); return api.deleteResource(cmd, signal); }
+            case '/v1/actions/resource-patch': { const cmd = parsePatchResourceRequest(raw); await bindEpoch(cmd.context); return api.patchResource(cmd, signal); }
+            case '/v1/actions/management': { const cmd = parseManagementActionRequest(raw); await bindEpoch(cmd.context); return api.managementAction(cmd, signal); }
+          }
+        }
         if (isSummary) {
           const value = await readJsonBody(req, signal, 24000);
           if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ServiceError('BAD_REQUEST', 400);
@@ -135,6 +167,10 @@ export function createService(options: ServiceOptions) {
           if (Object.keys(body).some((key) => !['context', 'identityEpoch', 'evidence', 'language'].includes(key)) || (body.language !== undefined && !isLanguage(body.language)) || typeof body.context !== 'string' || !body.context || body.context.length > 512 || /[\u0000-\u001f\u007f]/.test(body.context) || typeof body.identityEpoch !== 'string' || !/^[\w-]{43}$/.test(body.identityEpoch)) throw new ServiceError('BAD_REQUEST', 400);
           identityContext = body.context; const api = await argo(); initialScope = await api.scope(identityContext); identityEpoch = api.publicEpoch(initialScope);
           return api.summary(identityContext, body.identityEpoch, body.evidence, isLanguage(body.language) ? body.language : undefined);
+        }
+        if (url.pathname === '/v1/can-i') {
+          const query = parseCanIQuery(Object.fromEntries(url.searchParams));
+          return (await argo()).canI(query, signal);
         }
         if (url.pathname === '/v1/management') {
           const command = parseManagementCommand(Object.fromEntries(url.searchParams));
@@ -170,7 +206,10 @@ export function createService(options: ServiceOptions) {
           const api = await argo();
           if (url.pathname === '/v1/resource-tree') snapshot = await api.resourceTreeSnapshot(context, app, signal);
           else if (url.pathname === '/v1/events') snapshot = await api.eventsSnapshot(context, app, signal, resource);
-          else {
+          else if (url.pathname === '/v1/resource-actions') {
+            if (!resource) throw new ServiceError('BAD_REQUEST', 400);
+            return api.resourceActions(context, app, resource, signal);
+          } else {
             if (!resource) throw new ServiceError('BAD_REQUEST', 400);
             snapshot = await api.resourceSnapshot(context, app, resource, signal);
           }
@@ -195,7 +234,7 @@ export function createService(options: ServiceOptions) {
           return req.method === 'DELETE' ? tasks.cancel(taskId, scope) : tasks.get(taskId, scope);
         }
         return options.diagnostics ? options.diagnostics(signal) : {
-          service: 'ready', readOnly: true, runtime: process.version,
+          service: 'ready', readOnly: false, runtime: process.version,
           platform: process.platform, argoConnection: 'not-attempted',
         };
       }

@@ -7,6 +7,8 @@ import type { ApplicationReference, EventList } from '../shared/resources.js';
 import { queryTask, type PanelRequest } from './task-client.js';
 import { renderEvents } from './resources.js';
 import { mountIconButton } from './icon-button.js';
+import type { ActionResult } from '../shared/actions.js';
+import { openConfirmDialog, openEditorDialog } from './action-dialogs.js';
 
 function element<K extends keyof HTMLElementTagNameMap>(root: HTMLElement, tag: K, text = ''): HTMLElementTagNameMap[K] {
   const node = root.ownerDocument.createElement(tag); node.textContent = tag === 'pre' ? text : t(text); root.append(node); return node;
@@ -46,34 +48,64 @@ type Domain = 'applicationSets' | 'projects' | 'repositories' | 'clusters';
 type Row = ApplicationSet | Project | Repository | Cluster;
 export function mountManagement(root: HTMLElement, request: PanelRequest, options: { applications?: (filters: ApplicationFilters) => void; application?: (ref: ApplicationReference) => void } = {}) {
   const document = root.ownerDocument; let context = ''; let enabled = false; let generation = 0; let selectionGeneration = 0; let disposed = false; let intersecting = true; let active = true;
-  let domain: Domain = 'applicationSets'; let namespace = ''; let rows: Row[] = [];
+  let domain: Domain = 'applicationSets'; let namespace = ''; let rows: Row[] = []; let currentEpoch = '';
   const controllers = new Set<AbortController>(); const selectedControllers = new Set<AbortController>(); const detailDisposers: Array<() => void> = [];
   const extraDisposers: Array<() => void> = []; let extraController: AbortController | undefined;
   const disposers: Array<() => void> = [];
   const hidden = () => document.hidden || !intersecting || !active;
-  element(root, 'h2', "Read-only management");
+  element(root, 'h2', "Management");
   element(root, 'p', "Modules load independently on demand. Denied or unsupported modules do not block applications. Generator values, template expressions, connection-error bodies and authentication settings are withheld.").className = 'description';
   const controls = element(root, 'div'); controls.className = 'filter-grid';
-  const select = mountSelect(controls, { label: "Management module", value: domain, options: [{ id: 'applicationSets', label: 'ApplicationSet' }, { id: 'projects', label: 'Project' }, { id: 'repositories', label: t("Repository") }, { id: 'clusters', label: t("Cluster") }], onChange: (value) => { domain = value as Domain; select.update({ value }); reset(); namespaceField.update({ disabled: domain !== 'applicationSets' }); } });
+  const select = mountSelect(controls, { label: "Management module", value: domain, options: [{ id: 'applicationSets', label: 'ApplicationSet' }, { id: 'projects', label: 'Project' }, { id: 'repositories', label: t("Repository") }, { id: 'clusters', label: t("Cluster") }], onChange: (value) => { domain = value as Domain; select.update({ value }); reset(); namespaceField.update({ disabled: domain !== 'applicationSets' }); createBtn.update({ disabled: !enabled || !context || !['applicationSets', 'projects'].includes(domain) }); } });
   const namespaceField = mountTextField(controls, { label: "ApplicationSet Namespace (blank means server default, not all Namespaces)", value: '', onChange: (value) => { namespace = value; namespaceField.update({ value }); } });
   const status = element(root, 'section'); status.setAttribute('role', 'status');
   const listRoot = element(root, 'div'); const detail = element(root, 'section'); detail.setAttribute('aria-label', t("Management details"));
   const button = mountButton(controls, { label: "Read management data", disabled: true, onClick: () => { void load(); } });
+  const createBtn = mountButton(controls, { label: "Create", disabled: true, variant: 'secondary', onClick: () => { void runCreate(); } });
   const list = mountList(listRoot, { ariaLabel: "Management entries", items: [], emptyText: "No management data loaded", onSelect: (id) => { void pick(id); } });
-  disposers.push(() => select.dispose(), () => namespaceField.dispose(), () => button.dispose(), () => list.dispose());
+  disposers.push(() => select.dispose(), () => namespaceField.dispose(), () => button.dispose(), () => createBtn.dispose(), () => list.dispose());
   function clearDetail(): void { selectionGeneration++; for (const item of selectedControllers) { item.abort(); controllers.delete(item); } selectedControllers.clear(); for (const dispose of detailDisposers.splice(0)) dispose(); for (const dispose of extraDisposers.splice(0)) dispose(); detail.replaceChildren(); }
   function cancel(): void { generation++; for (const item of controllers) item.abort(); controllers.clear(); button.update({ loading: false }); }
   function reset(): void { cancel(); clearDetail(); rows = []; list.update({ items: [], selectedId: null }); status.replaceChildren(); element(status, 'p', t`Context: ${context || t("Not selected")}; click to query, no automatic connection.`); }
   function current(version: number, controller: AbortController, selection?: number): boolean { return !disposed && !hidden() && !controller.signal.aborted && version === generation && (selection === undefined || selection === selectionGeneration); }
   function start(selected = false): AbortController { const controller = new AbortController(); controllers.add(controller); if (selected) selectedControllers.add(controller); return controller; }
   function addButton(parent: HTMLElement, label: string, action: () => void, extra = false): void { const mounted = mountButton(parent, { label, variant: 'secondary', onClick: action }); (extra ? extraDisposers : detailDisposers).push(() => mounted.dispose()); }
+  async function execManagementAction(payload: Record<string, unknown>, doneText: string, reloadAfter = true): Promise<void> {
+    if (!currentEpoch) { status.replaceChildren(); element(status, 'p', 'Session identity unavailable. Read management data first.'); return; }
+    status.replaceChildren(); element(status, 'p', 'Running management action…');
+    try {
+      const res = await request<ActionResult>('/v1/actions/management', undefined, { method: 'POST', body: { context, identityEpoch: currentEpoch, ...payload } });
+      if (disposed) return;
+      if (res.identityEpoch) currentEpoch = res.identityEpoch;
+      status.replaceChildren();
+      if (!res.ok) { element(status, 'p', `${res.error.code}: ${res.error.message}`); return; }
+      element(status, 'p', doneText);
+      if (reloadAfter) void load();
+    } catch { if (!disposed) { status.replaceChildren(); element(status, 'p', 'Action failed.'); } }
+  }
+  async function runCreate(): Promise<void> {
+    if (!enabled || !context || !['applicationSets', 'projects'].includes(domain)) return;
+    const isAppSet = domain === 'applicationSets';
+    const template = isAppSet
+      ? JSON.stringify({ metadata: { name: 'my-appset', namespace: namespace || 'argocd' }, spec: { generators: [], template: {} } }, null, 2)
+      : JSON.stringify({ metadata: { name: 'my-project' }, spec: { description: '', sourceRepos: ['*'], destinations: [{ server: '*', namespace: '*' }] } }, null, 2);
+    const edited = await openEditorDialog(document, { title: isAppSet ? 'Create ApplicationSet' : 'Create Project', initialText: template, mode: 'object', confirmLabel: 'Create' });
+    if (!edited?.object || disposed) return;
+    await execManagementAction(
+      isAppSet ? { operation: 'createApplicationSet', applicationSet: edited.object, upsert: Boolean(edited.upsert) }
+        : { operation: 'createProject', project: edited.object, upsert: Boolean(edited.upsert) },
+      isAppSet ? 'ApplicationSet created.' : 'Project created.',
+    );
+  }
   async function load(): Promise<void> {
     if (!enabled || !context || hidden() || disposed) return;
     reset(); const version = generation; const controller = start(); button.update({ loading: true }); status.replaceChildren(); element(status, 'p', "Reading management data…");
     const command: ManagementCommand = domain === 'applicationSets' ? { operation: domain, context, ...(namespace ? { appsetNamespace: namespace } : {}) } : { operation: domain, context };
     try {
       const result = await queryTask<{ items: Row[]; namespaceScope?: string }>(request, command, controller.signal);
-      if (!current(version, controller)) return; status.replaceChildren(); if (!response(status, result)) return; rows = result.data.items;
+      if (!current(version, controller)) return; status.replaceChildren();
+      if (result.identityEpoch) currentEpoch = result.identityEpoch;
+      if (!response(status, result)) return; rows = result.data.items;
       if (domain === 'applicationSets') element(status, 'p', t`ApplicationSet scope: ${result.data.namespaceScope ?? t("Unknown")}; the default scope is not a global list.`);
       list.update({ emptyText: "No management entries in the visible scope; not proof of no global configuration", items: rows.map((item) => ({ id: item.id, title: 'repo' in item ? item.repo : 'server' in item ? item.name || item.server : 'generators' in item ? `${item.namespace}/${item.name}` : item.name, meta: 'connection' in item ? `${item.connection.status} · ${t(item.connection.summary)}` : 'generators' in item ? `${item.generators.map((generator) => generator.type).join(', ')} · ${item.conditions.length} Conditions` : `${item.roles.length} roles · ${item.syncWindows.length} windows` })) });
     } catch { if (current(version, controller)) { status.replaceChildren(); element(status, 'p', "Management read failed; this is not an empty success. Applications remain available."); } }
@@ -88,6 +120,7 @@ export function mountManagement(root: HTMLElement, request: PanelRequest, option
       try {
         const command: ManagementCommand = 'generators' in row ? { operation: 'applicationSet', context, name: row.name, appsetNamespace: row.namespace } : { operation: 'project', context, project: row.name };
         const result = await queryTask<ApplicationSet | Project>(request, command, controller.signal);
+        if (result.identityEpoch) currentEpoch = result.identityEpoch;
         if (!current(version, controller, selection) || !response(detail, result)) return; selected = result.data;
       } catch { if (current(version, controller, selection)) element(detail, 'p', "Management details failed to load; the previous record will not be displayed."); return; }
       finally { controllers.delete(controller); selectedControllers.delete(controller); }
@@ -98,12 +131,37 @@ export function mountManagement(root: HTMLElement, request: PanelRequest, option
     const display = 'connection' in item ? { ...item, connection: { ...item.connection, summary: t(item.connection.summary) } }
       : 'generators' in item ? { ...item, conditions: item.conditions.map((condition) => ({ ...condition, summary: t(condition.summary) })) } : item;
     element(detail, 'pre', JSON.stringify(display, null, 2));
-    const actions = element(detail, 'div'); const extra = element(detail, 'section');
-    if ('repo' in item) addButton(actions, "Show applications for this repository", () => options.applications?.({ repo: item.repo }));
-    else if ('server' in item) addButton(actions, "Show applications for this cluster", () => options.applications?.({ cluster: item.server || item.name }));
-    else if ('roles' in item) {
+    const actions = element(detail, 'div'); actions.className = 'argocd-action-bar'; const extra = element(detail, 'section');
+    if ('repo' in item) {
+      addButton(actions, "Show applications for this repository", () => options.applications?.({ repo: item.repo }));
+      addButton(actions, "Validate access", () => { void execManagementAction({ operation: 'validateRepository', repo: item.repo, ...(item.type ? { type: item.type } : {}) }, 'Repository access validated.', false); });
+      addButton(actions, "Delete", () => {
+        void openConfirmDialog(document, { title: 'Delete repository', description: 'Remove this repository configuration from Argo CD?', targetLabel: item.repo, confirmLabel: 'Delete', danger: true }).then((ok) => {
+          if (ok) void execManagementAction({ operation: 'deleteRepository', repo: item.repo }, 'Repository deleted.');
+        });
+      });
+    } else if ('server' in item) {
+      addButton(actions, "Show applications for this cluster", () => options.applications?.({ cluster: item.server || item.name }));
+      addButton(actions, "Invalidate cache", () => { void execManagementAction({ operation: 'invalidateClusterCache', server: item.server }, 'Cluster cache invalidated.', false); });
+      addButton(actions, "Delete", () => {
+        void openConfirmDialog(document, { title: 'Delete cluster', description: 'Remove this cluster registration from Argo CD?', targetLabel: item.server, confirmLabel: 'Delete', danger: true, requireInput: item.server }).then((ok) => {
+          if (ok) void execManagementAction({ operation: 'deleteCluster', server: item.server }, 'Cluster deleted.');
+        });
+      });
+    } else if ('roles' in item) {
       addButton(actions, "Show applications for this Project", () => options.applications?.({ project: item.name }));
       addButton(actions, "Read active Project sync windows", () => { void extraQuery<WindowState>({ operation: 'projectWindows', context, project: item.name }, extra, renderWindowState, version, selection); });
+      addButton(actions, "Edit", () => {
+        const template = JSON.stringify({ metadata: { name: item.name }, spec: { description: item.description, sourceRepos: item.sourceRepos, destinations: item.destinations } }, null, 2);
+        void openEditorDialog(document, { title: 'Update Project', targetLabel: item.name, initialText: template, mode: 'object', confirmLabel: 'Save' }).then((edited) => {
+          if (edited?.object) void execManagementAction({ operation: 'updateProject', name: item.name, project: edited.object }, 'Project updated.');
+        });
+      });
+      addButton(actions, "Delete", () => {
+        void openConfirmDialog(document, { title: 'Delete Project', description: 'Permanently delete this Argo CD Project?', targetLabel: item.name, confirmLabel: 'Delete', danger: true, requireInput: item.name }).then((ok) => {
+          if (ok) void execManagementAction({ operation: 'deleteProject', name: item.name }, 'Project deleted.');
+        });
+      });
     } else {
       const appset = item;
       element(detail, 'p', "Only generator structure/type and counts are shown; expressions and values are withheld. applicationStatus without Namespace is metadata only, not a navigation target.");
@@ -113,6 +171,11 @@ export function mountManagement(root: HTMLElement, request: PanelRequest, option
         for (const item of data.items) addButton(parent, t`View application ${item.appNamespace}/${item.name}`, () => options.application?.(item), true);
       }, version, selection); });
       addButton(actions, "Read ApplicationSet events (optional API)", () => { void extraQuery<EventList>({ operation: 'applicationSetEvents', context, name: appset.name, appsetNamespace: appset.namespace }, extra, renderEvents, version, selection); });
+      addButton(actions, "Delete", () => {
+        void openConfirmDialog(document, { title: 'Delete ApplicationSet', description: 'Permanently delete this ApplicationSet?', targetLabel: `${appset.namespace}/${appset.name}`, confirmLabel: 'Delete', danger: true, requireInput: appset.name }).then((ok) => {
+          if (ok) void execManagementAction({ operation: 'deleteApplicationSet', name: appset.name, appsetNamespace: appset.namespace }, 'ApplicationSet deleted.');
+        });
+      });
     }
   }
   async function extraQuery<T>(command: ManagementCommand, parent: HTMLElement, render: (parent: HTMLElement, data: T) => void, version: number, selection: number): Promise<void> {
@@ -128,5 +191,5 @@ export function mountManagement(root: HTMLElement, request: PanelRequest, option
   const Observer = document.defaultView?.IntersectionObserver;
   if (Observer) { const observer = new Observer((entries) => { intersecting = entries[0]?.isIntersecting ?? false; visibility(); }); observer.observe(root); disposers.push(() => observer.disconnect()); }
   const timer = setInterval(() => paintAges(root, !hidden()), 1000); disposers.push(() => clearInterval(timer));
-  return { setVisible(value: boolean): void { active = value; visibility(); }, setConnection(next: string, networkEnabled: boolean): void { context = next; enabled = networkEnabled; reset(); button.update({ disabled: !context || !enabled }); }, dispose(): void { if (disposed) return; disposed = true; cancel(); clearDetail(); for (const dispose of disposers) dispose(); root.replaceChildren(); } };
+  return { setVisible(value: boolean): void { active = value; visibility(); }, setConnection(next: string, networkEnabled: boolean): void { context = next; enabled = networkEnabled; currentEpoch = ''; reset(); button.update({ disabled: !context || !enabled }); createBtn.update({ disabled: !context || !enabled || !['applicationSets', 'projects'].includes(domain) }); }, dispose(): void { if (disposed) return; disposed = true; cancel(); clearDetail(); for (const dispose of disposers) dispose(); root.replaceChildren(); } };
 }
