@@ -103,7 +103,7 @@ export function renderApplicationDetail(root: HTMLElement, app: ApplicationDetai
   }
 }
 
-export function mountApplications(root: HTMLElement, request: PanelRequest, options: { now?: () => number; tickMs?: number; refreshMs?: number; copy?: (text: string) => Promise<void>; evidence?: EvidenceStore; toolbar?: HTMLElement; diagnosticRoot?: HTMLElement; changed?: () => void } = {}) {
+export function mountApplications(root: HTMLElement, request: PanelRequest, options: { now?: () => number; tickMs?: number; refreshMs?: number; copy?: (text: string) => Promise<void>; evidence?: EvidenceStore; toolbar?: HTMLElement; diagnosticRoot?: HTMLElement; changed?: () => void; readOnlySurface?: boolean } = {}) {
   const document = root.ownerDocument;
   root.classList.add('applications-view');
   const actions = options.toolbar ?? element('div', '', root); actions.classList.add('observer-toolbar'); actions.setAttribute('role', 'toolbar'); actions.setAttribute('aria-label', t("Application toolbar"));
@@ -125,8 +125,10 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
   const disposers: Array<() => void> = [];
   let context = '';
   let enabled = false;
+  let connectionGeneration = 0;
   let generation = 0;
-  let detailGeneration = 0;
+  let detailLoadGeneration = 0;
+  let detailSelectionGeneration = 0;
   let applications: ApplicationSummary[] = [];
   let selected = '';
   let snapshot: { sampledAt: string; expiresAt: string; source: string } | null = null;
@@ -142,6 +144,8 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
   let automatic = false;
   let lastAttemptAt = 0;
   let activeTask: AbortController | undefined;
+  let createDialogController = new AbortController();
+  let detailDialogController = new AbortController();
   let intersecting = true;
   let disposed = false;
   let pendingContextLoad = false; let wasPaused = false;
@@ -156,8 +160,10 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
   const filters: ApplicationFilters = {};
   const filterUpdates = new Map<string, (value: string) => void>();
   const stopOpWatch = () => { if (opWatchTimer) { clearTimeout(opWatchTimer); opWatchTimer = undefined; } };
+  const resetCreateDialogs = () => { createDialogController.abort(); createDialogController = new AbortController(); };
+  const resetDetailDialogs = () => { detailDialogController.abort(); detailDialogController = new AbortController(); };
   const queryButton = mountIconButton(actions, { icon: 'reload', label: "Reload applications", tooltip: "Read applications again without requesting an Argo refresh", disabled: true, onClick: () => { void load(false, true); } });
-  const createButton = mountButton(actions, { label: "New application", disabled: true, variant: 'secondary', onClick: () => { void runCreateApplication(); } });
+  const createButton = options.readOnlySurface ? null : mountButton(actions, { label: "New application", disabled: true, variant: 'secondary', onClick: () => { void runCreateApplication(); } });
   const backgroundButton = mountButton(advancedActions, { label: "Query applications in background", disabled: true, variant: 'secondary', onClick: () => { void load(true); } });
   const cancelButton = mountButton(advancedActions, { label: "Cancel background query", disabled: true, variant: 'ghost', onClick: () => {
     generation++; activeTask?.abort(); activeTask = undefined; busy = false; forceStale = true;
@@ -171,10 +177,19 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
   function setAutomatic(value: boolean): void { automatic = value; autoSwitch.update({ checked: value }); autoButton.update({ pressed: value, tooltip: t`Auto-update: ${t(value ? "on" : "off")} (every 15 seconds, visible only)` }); }
   const list = mountApplicationList(listRoot, (id) => { pendingNavigation = undefined; void detail(id); });
   const clearButton = mountIconButton(clearRoot, { icon: 'reset', label: "Clear filters", onClick: () => { pendingNavigation = undefined; for (const key of Object.keys(filters)) delete filters[key as keyof ApplicationFilters]; for (const update of filterUpdates.values()) update(''); updateChoices(); paint(); options.changed?.(); } });
-  disposers.push(() => stopOpWatch(), () => queryButton.dispose(), () => createButton.dispose(), () => backgroundButton.dispose(), () => cancelButton.dispose(), () => autoSwitch.dispose(), () => autoButton.dispose(), () => clearButton.dispose(), () => list.dispose(), () => split.dispose(), () => advanced.remove());
+  disposers.push(() => stopOpWatch(), () => createDialogController.abort(), () => detailDialogController.abort(), () => queryButton.dispose(), () => createButton?.dispose(), () => backgroundButton.dispose(), () => cancelButton.dispose(), () => autoSwitch.dispose(), () => autoButton.dispose(), () => clearButton.dispose(), () => list.dispose(), () => split.dispose(), () => advanced.remove());
 
   async function runCreateApplication(): Promise<void> {
-    if (!enabled || !context || !currentEpoch) return;
+    if (!enabled || !context || options.readOnlySurface) return;
+    if (!currentEpoch) {
+      status.hidden = false;
+      status.textContent = t('Session identity unavailable. Reload applications first.');
+      return;
+    }
+    const capturedConn = connectionGeneration;
+    const capturedContext = context;
+    const capturedEpoch = currentEpoch;
+    resetCreateDialogs();
     const template = JSON.stringify({
       metadata: { name: 'my-app', namespace: 'argocd' },
       spec: {
@@ -183,18 +198,25 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
         destination: { server: 'https://kubernetes.default.svc', namespace: 'default' },
       },
     }, null, 2);
-    const edited = await openEditorDialog(document, { title: 'Create application', initialText: template, mode: 'object', confirmLabel: 'Create' });
-    if (!edited?.object || disposed) return;
+    const edited = await openEditorDialog(document, { title: 'Create application', initialText: template, mode: 'object', confirmLabel: 'Create', signal: createDialogController.signal });
+    if (!edited?.object || disposed || capturedConn !== connectionGeneration || context !== capturedContext) return;
+    if (currentEpoch !== capturedEpoch) {
+      status.hidden = false;
+      status.textContent = t('Session identity unavailable. Reload applications first.');
+      return;
+    }
     status.hidden = false; status.textContent = t('Creating application…');
     try {
       const res = await request<ActionResult<ApplicationDetail>>('/v1/actions/application-create', undefined, {
         method: 'POST',
-        body: { context, identityEpoch: currentEpoch, application: edited.object, upsert: Boolean(edited.upsert), validate: true },
+        body: { context: capturedContext, identityEpoch: capturedEpoch, application: edited.object, upsert: Boolean(edited.upsert), validate: true },
       });
+      if (disposed || capturedConn !== connectionGeneration || context !== capturedContext) return;
+      if (res.identityEpoch) currentEpoch = res.identityEpoch;
       if (!res.ok) { status.textContent = `${res.error.code}: ${res.error.message}`; return; }
       status.textContent = t('Application created.');
       void load(false, true);
-    } catch { status.textContent = t('Action failed.'); }
+    } catch { if (!disposed && capturedConn === connectionGeneration && context === capturedContext) status.textContent = t('Action failed.'); }
   }
 
   const searchRoot = element('div', '', root); searchRoot.className = 'application-search'; root.insertBefore(searchRoot, filterRoot);
@@ -221,7 +243,8 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
   }
 
   function clear(): void {
-    detailGeneration++;
+    detailLoadGeneration++;
+    detailSelectionGeneration++;
     applications = []; selected = ''; split.reset(); updateChoices();
     snapshot = null; forceStale = false; paintSnapshot();
     detailSnapshot = null; detailAgeNode = undefined;
@@ -230,7 +253,9 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
     clearDetail();
   }
   function clearDetail(): void {
+    detailSelectionGeneration++;
     stopOpWatch();
+    resetDetailDialogs();
     for (const dispose of detailActionDisposers.splice(0)) dispose();
     split.setHeader();
     split.setDetailOnly(false);
@@ -247,11 +272,11 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
     let visible: ApplicationSummary[];
     try { visible = filterApplications(applications, filters); }
     catch {
-      detailGeneration++; selected = ''; clearDetail();
+      detailLoadGeneration++; selected = ''; clearDetail();
       list.update({ items: [], selectedId: null, emptyText: "Invalid label selector" });
       counts.textContent = t("The filter is invalid; this is not an empty query result."); split.reset(); return;
     }
-    if (!(reconcile ? applications : visible).some((app) => app.id === selected)) { selected = ''; detailGeneration++; clearDetail(); split.reset(); }
+    if (!(reconcile ? applications : visible).some((app) => app.id === selected)) { selected = ''; detailLoadGeneration++; clearDetail(); split.reset(); }
     counts.textContent = t`Showing ${visible.length} / ${applications.length} · OutOfSync ${visible.filter((app) => app.sync === 'OutOfSync').length} · Degraded/Missing ${visible.filter((app) => ['Degraded', 'Missing'].includes(app.health)).length} · Unknown ${visible.filter((app) => !app.healthKnown || !app.syncKnown || app.health === 'Unknown').length} · With Conditions ${visible.filter((app) => app.conditionsCount).length}`;
     counts.title = counts.textContent;
     list.update({ selectedId: selected || null, emptyText: "No applications match the current filters", items: visible });
@@ -277,6 +302,8 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
   }
   async function load(background = false, navigation = false): Promise<void> {
     if (!enabled || !context || (navigation ? document.hidden : hidden()) || busy) return;
+    const capturedConn = connectionGeneration;
+    const capturedContext = context;
     const version = ++generation;
     busy = true; lastAttemptAt = now(); forceStale = true; paintSnapshot();
     queryButton.update({ loading: !background }); backgroundButton.update({ loading: background });
@@ -286,9 +313,9 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
     status.hidden = false;
     try {
       const response = background
-        ? await queryTask<ApplicationList>(request, { operation: 'applications', context, filters: {} }, activeTask!.signal)
-        : await request<ApplicationList>('/v1/applications', { context });
-      if (version !== generation) return;
+        ? await queryTask<ApplicationList>(request, { operation: 'applications', context: capturedContext, filters: {} }, activeTask!.signal)
+        : await request<ApplicationList>('/v1/applications', { context: capturedContext });
+      if (version !== generation || capturedConn !== connectionGeneration || context !== capturedContext) return;
       if (response.identityEpoch) currentEpoch = response.identityEpoch;
       if (!response.ok) {
         if (invalidateSensitive(response.error.code)) clear();
@@ -300,22 +327,31 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
       status.textContent = ''; status.hidden = true;
       paint(true);
       restoreSelection();
-    } catch { if (version === generation) status.textContent = t("Query failed. Check host connection/authorization; application health is unknown."); }
+    } catch { if (version === generation && capturedConn === connectionGeneration) status.textContent = t("Query failed. Check host connection/authorization; application health is unknown."); }
     finally { if (version === generation) {
       busy = false; activeTask = undefined;
       queryButton.update({ loading: false }); backgroundButton.update({ loading: false }); cancelButton.update({ disabled: true }); paintSnapshot();
     } }
   }
-  function scheduleOpWatch(id: string, appRef: ApplicationReference, remaining = 15): void {
+  function captureCurrentNavigation(): ApplicationNavigationState {
+    return {
+      filters: { ...filters },
+      selected: selectedReference ? { ...selectedReference } : pendingNavigation?.selected ?? null,
+      detailTab: (pendingNavigation?.detailTab ?? detailTab) as ApplicationNavigationState['detailTab'],
+      split: split.captureState(),
+      resources: resourceView?.captureNavigation() ?? openingNavigation?.resources ?? pendingNavigation?.resources ?? null,
+    };
+  }
+  function scheduleOpWatch(id: string, appRef: ApplicationReference, watchConn: number, watchContext: string, remaining = 15): void {
     stopOpWatch();
-    if (remaining <= 0 || disposed || hidden() || selected !== id) return;
+    if (remaining <= 0 || disposed || hidden() || selected !== id || watchConn !== connectionGeneration || context !== watchContext) return;
     opWatchTimer = setTimeout(() => {
-      if (disposed || hidden() || selected !== id) return;
-      void request<ApplicationDetail>('/v1/application', { context, name: appRef.name, appNamespace: appRef.appNamespace }).then((res) => {
-        if (disposed || selected !== id || !res.ok) return;
+      if (disposed || hidden() || selected !== id || watchConn !== connectionGeneration || context !== watchContext) return;
+      void request<ApplicationDetail>('/v1/application', { context: watchContext, name: appRef.name, appNamespace: appRef.appNamespace }).then((res) => {
+        if (disposed || selected !== id || watchConn !== connectionGeneration || context !== watchContext || !res.ok) return;
         if (res.identityEpoch) currentEpoch = res.identityEpoch;
-        if (res.data.operation?.phase === 'Running') scheduleOpWatch(id, appRef, remaining - 1);
-        else { void detail(id, appRef, true, undefined, true); void load(false, true); }
+        if (res.data.operation?.phase === 'Running') scheduleOpWatch(id, appRef, watchConn, watchContext, remaining - 1);
+        else { void detail(id, appRef, true, captureCurrentNavigation(), true); void load(false, true); }
       }).catch(() => {});
     }, 2000);
   }
@@ -324,15 +360,19 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
     if (!app || !enabled || (navigation ? document.hidden : hidden())) return;
     if (selected === id && detailTabs && !restore && !forceReload) { split.openDetail(); return; }
     selected = id; list.update({ selectedId: id }); split.openDetail();
-    const version = ++detailGeneration;
-    clearDetail(); element('p', "Reading details…", detailRoot);
+    const capturedConn = connectionGeneration;
+    const capturedContext = context;
+    const loadVersion = ++detailLoadGeneration;
+    clearDetail();
+    const selectionVersion = detailSelectionGeneration;
+    element('p', "Reading details…", detailRoot);
     selectedReference = { name: app.name, appNamespace: app.appNamespace }; openingNavigation = restore;
     detailTab = restore?.detailTab ?? 'overview'; if (restore) split.restoreState(restore.split);
     options.changed?.();
-    options.evidence?.reset(context, { name: app.name, appNamespace: app.appNamespace });
+    options.evidence?.reset(capturedContext, { name: app.name, appNamespace: app.appNamespace });
     try {
-      const response = await request<ApplicationDetail>('/v1/application', { context, name: app.name, appNamespace: app.appNamespace });
-      if (version !== detailGeneration) return;
+      const response = await request<ApplicationDetail>('/v1/application', { context: capturedContext, name: app.name, appNamespace: app.appNamespace });
+      if (loadVersion !== detailLoadGeneration || selectionVersion !== detailSelectionGeneration || capturedConn !== connectionGeneration || context !== capturedContext) return;
       if (response.identityEpoch) currentEpoch = response.identityEpoch;
       detailRoot.replaceChildren();
       if (!response.ok) { element('p', `${response.error.code}: ${response.error.message}`, detailRoot); return; }
@@ -340,69 +380,96 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
       const appRef: ApplicationReference = { name: app.name, appNamespace: app.appNamespace };
       const header = element('header', '', detailRoot); header.className = 'application-detail-header';
       const title = element('h2', `${app.appNamespace}/${app.name}`, header); title.className = 'application-current-title'; title.title = title.textContent!;
-      const actionBar = element('div', '', header); actionBar.className = 'argocd-action-bar'; actionBar.setAttribute('role', 'toolbar'); actionBar.setAttribute('aria-label', t('Application actions'));
-      const actionStatus = element('p', '', detailRoot); actionStatus.className = 'argocd-action-status'; actionStatus.setAttribute('role', 'status'); actionStatus.hidden = true;
-      const showActionStatus = (text: string) => { actionStatus.hidden = false; actionStatus.textContent = text; };
-      const execAction = async (path: string, body: Record<string, unknown>, pendingText: string, doneText: string, watchAfter = false, deleted = false) => {
-        if (!currentEpoch) { showActionStatus(t('Session identity unavailable. Reload applications first.')); return; }
-        showActionStatus(t(pendingText));
-        try {
-          const res = await request<ActionResult>(path, undefined, { method: 'POST', body: { context, identityEpoch: currentEpoch, ...body } });
-          if (version !== detailGeneration) return;
-          if (res.identityEpoch) currentEpoch = res.identityEpoch;
-          if (!res.ok) { showActionStatus(`${res.error.code}: ${res.error.message}`); return; }
-          showActionStatus(t(doneText));
-          if (deleted) { selected = ''; clearDetail(); void load(false, true); return; }
-          void detail(id, appRef, true, undefined, true);
-          void load(false, true);
-          if (watchAfter) scheduleOpWatch(id, appRef);
-        } catch { if (version === detailGeneration) showActionStatus(t('Action failed.')); }
-      };
-      const syncBtn = mountButton(actionBar, { label: 'Sync', variant: 'default', onClick: () => {
-        void openSyncDialog(document, `${app.appNamespace}/${app.name}`).then((opts) => {
-          if (!opts || version !== detailGeneration) return;
-          void execAction('/v1/actions/sync', { name: app.name, appNamespace: app.appNamespace, ...opts }, 'Syncing application…', 'Sync requested.', true);
-        });
-      } });
-      const refreshBtn = mountButton(actionBar, { label: 'Refresh', variant: 'secondary', onClick: () => {
-        void execAction('/v1/actions/refresh', { name: app.name, appNamespace: app.appNamespace, mode: 'normal' }, 'Refreshing application…', 'Application refreshed.');
-      } });
-      const hardRefreshBtn = mountButton(actionBar, { label: 'Hard refresh', variant: 'ghost', onClick: () => {
-        void execAction('/v1/actions/refresh', { name: app.name, appNamespace: app.appNamespace, mode: 'hard' }, 'Hard refreshing application…', 'Application hard refreshed.');
-      } });
-      const terminateBtn = mountButton(actionBar, { label: 'Terminate', variant: 'secondary', disabled: appData.operation?.phase !== 'Running', onClick: () => {
-        void openConfirmDialog(document, { title: 'Terminate operation', description: 'Terminate the currently running operation for this application?', targetLabel: `${app.appNamespace}/${app.name}`, confirmLabel: 'Terminate', danger: true }).then((ok) => {
-          if (!ok || version !== detailGeneration) return;
-          void execAction('/v1/actions/terminate', { name: app.name, appNamespace: app.appNamespace }, 'Terminating operation…', 'Operation termination requested.', true);
-        });
-      } });
-      const rollbackBtn = mountButton(actionBar, { label: 'Rollback', variant: 'secondary', disabled: !appData.history.length, onClick: () => {
-        void openRollbackDialog(document, `${app.appNamespace}/${app.name}`, appData.history).then((opts) => {
-          if (!opts || version !== detailGeneration) return;
-          void execAction('/v1/actions/rollback', { name: app.name, appNamespace: app.appNamespace, ...opts }, 'Rolling back application…', 'Rollback requested.', true);
-        });
-      } });
-      const patchBtn = mountButton(actionBar, { label: 'Patch', variant: 'ghost', onClick: () => {
-        void openEditorDialog(document, { title: 'Patch application', targetLabel: `${app.appNamespace}/${app.name}`, initialText: '{\n  "metadata": {\n    "labels": {}\n  }\n}', mode: 'patch', confirmLabel: 'Apply patch' }).then((edited) => {
-          if (!edited?.patch || !edited.patchType || version !== detailGeneration) return;
-          void execAction('/v1/actions/application-patch', { name: app.name, appNamespace: app.appNamespace, patch: edited.patch, patchType: edited.patchType }, 'Patching application…', 'Application patched.');
-        });
-      } });
-      const deleteBtn = mountButton(actionBar, { label: 'Delete', variant: 'ghost', onClick: () => {
-        void openConfirmDialog(document, {
-          title: 'Delete application', description: 'This permanently deletes the Argo CD application.',
-          targetLabel: `${app.appNamespace}/${app.name}`, confirmLabel: 'Delete', danger: true, requireInput: app.name,
-          checkboxes: [{ id: 'cascade', label: 'Cascade delete managed resources', checked: true }],
-          selects: [{ id: 'propagationPolicy', label: 'Propagation policy', value: 'foreground', options: PROPAGATION_POLICY_OPTIONS }],
-        }).then((ok) => {
-          if (!ok || version !== detailGeneration) return;
-          void execAction('/v1/actions/application-delete', {
-            name: app.name, appNamespace: app.appNamespace,
-            cascade: Boolean(ok.flags.cascade), propagationPolicy: ok.selects.propagationPolicy as PropagationPolicy,
-          }, 'Deleting application…', 'Application deleted.', false, true);
-        });
-      } });
-      detailActionDisposers.push(() => syncBtn.dispose(), () => refreshBtn.dispose(), () => hardRefreshBtn.dispose(), () => terminateBtn.dispose(), () => rollbackBtn.dispose(), () => patchBtn.dispose(), () => deleteBtn.dispose());
+      if (!options.readOnlySurface) {
+        const actionBar = element('div', '', header); actionBar.className = 'argocd-action-bar'; actionBar.setAttribute('role', 'toolbar'); actionBar.setAttribute('aria-label', t('Application actions'));
+        const actionStatus = element('p', '', detailRoot); actionStatus.className = 'argocd-action-status'; actionStatus.setAttribute('role', 'status'); actionStatus.hidden = true;
+        const showActionStatus = (text: string) => { actionStatus.hidden = false; actionStatus.textContent = text; };
+        const stillMounted = () => !disposed && selectionVersion === detailSelectionGeneration && capturedConn === connectionGeneration && context === capturedContext;
+        const requireEpoch = (): string | null => {
+          if (!stillMounted()) return null;
+          if (!currentEpoch) { showActionStatus(t('Session identity unavailable. Reload applications first.')); return null; }
+          return currentEpoch;
+        };
+        const execAction = async (path: string, expectedEpoch: string, body: Record<string, unknown>, pendingText: string, doneText: string, watchAfter = false, deleted = false) => {
+          if (!stillMounted()) return;
+          if (currentEpoch !== expectedEpoch) { showActionStatus(t('Session identity unavailable. Reload applications first.')); return; }
+          showActionStatus(t(pendingText));
+          try {
+            const res = await request<ActionResult>(path, undefined, { method: 'POST', body: { context: capturedContext, identityEpoch: expectedEpoch, ...body } });
+            if (!stillMounted()) return;
+            if (res.identityEpoch) currentEpoch = res.identityEpoch;
+            if (!res.ok) { showActionStatus(`${res.error.code}: ${res.error.message}`); return; }
+            showActionStatus(t(doneText));
+            if (deleted) { selected = ''; clearDetail(); void load(false, true); return; }
+            void detail(id, appRef, true, captureCurrentNavigation(), true);
+            void load(false, true);
+            if (watchAfter) scheduleOpWatch(id, appRef, capturedConn, capturedContext);
+          } catch { if (stillMounted()) showActionStatus(t('Action failed.')); }
+        };
+        const syncBtn = mountButton(actionBar, { label: 'Sync', variant: 'default', onClick: () => {
+          const epoch = requireEpoch(); if (!epoch) return;
+          resetDetailDialogs();
+          void openSyncDialog(document, `${app.appNamespace}/${app.name}`, undefined, {
+            signal: detailDialogController.signal,
+            multipleSources: appData.multipleSources,
+            sourceCount: appData.sources.length,
+          }).then((opts) => {
+            if (!opts || !stillMounted()) return;
+            void execAction('/v1/actions/sync', epoch, { name: app.name, appNamespace: app.appNamespace, ...opts }, 'Syncing application…', 'Sync requested.', true);
+          });
+        } });
+        const refreshBtn = mountButton(actionBar, { label: 'Refresh', variant: 'secondary', onClick: () => {
+          const epoch = requireEpoch(); if (!epoch) return;
+          void execAction('/v1/actions/refresh', epoch, { name: app.name, appNamespace: app.appNamespace, mode: 'normal' }, 'Refreshing application…', 'Application refreshed.');
+        } });
+        const hardRefreshBtn = mountButton(actionBar, { label: 'Hard refresh', variant: 'ghost', onClick: () => {
+          const epoch = requireEpoch(); if (!epoch) return;
+          void execAction('/v1/actions/refresh', epoch, { name: app.name, appNamespace: app.appNamespace, mode: 'hard' }, 'Hard refreshing application…', 'Application hard refreshed.');
+        } });
+        const terminateBtn = mountButton(actionBar, { label: 'Terminate', variant: 'secondary', disabled: appData.operation?.phase !== 'Running', onClick: () => {
+          const epoch = requireEpoch(); if (!epoch) return;
+          resetDetailDialogs();
+          void openConfirmDialog(document, { title: 'Terminate operation', description: 'Terminate the currently running operation for this application?', targetLabel: `${app.appNamespace}/${app.name}`, confirmLabel: 'Terminate', danger: true, signal: detailDialogController.signal }).then((ok) => {
+            if (!ok || !stillMounted()) return;
+            void execAction('/v1/actions/terminate', epoch, { name: app.name, appNamespace: app.appNamespace }, 'Terminating operation…', 'Operation termination requested.', true);
+          });
+        } });
+        const rollbackBtn = mountButton(actionBar, { label: 'Rollback', variant: 'secondary', disabled: !appData.history.length, onClick: () => {
+          const epoch = requireEpoch(); if (!epoch) return;
+          resetDetailDialogs();
+          void openRollbackDialog(document, `${app.appNamespace}/${app.name}`, appData.history, undefined, detailDialogController.signal).then((opts) => {
+            if (!opts || !stillMounted()) return;
+            void execAction('/v1/actions/rollback', epoch, { name: app.name, appNamespace: app.appNamespace, ...opts }, 'Rolling back application…', 'Rollback requested.', true);
+          });
+        } });
+        const patchBtn = mountButton(actionBar, { label: 'Patch', variant: 'ghost', onClick: () => {
+          const epoch = requireEpoch(); if (!epoch) return;
+          resetDetailDialogs();
+          void openEditorDialog(document, { title: 'Patch application', targetLabel: `${app.appNamespace}/${app.name}`, initialText: '{\n  "metadata": {\n    "labels": {}\n  }\n}', mode: 'patch', patchTypes: ['merge', 'json'], confirmLabel: 'Apply patch', signal: detailDialogController.signal }).then((edited) => {
+            if (!edited?.patch || !edited.patchType || !stillMounted()) return;
+            void execAction('/v1/actions/application-patch', epoch, { name: app.name, appNamespace: app.appNamespace, patch: edited.patch, patchType: edited.patchType }, 'Patching application…', 'Application patched.');
+          });
+        } });
+        const deleteBtn = mountButton(actionBar, { label: 'Delete', variant: 'ghost', onClick: () => {
+          const epoch = requireEpoch(); if (!epoch) return;
+          resetDetailDialogs();
+          void openConfirmDialog(document, {
+            title: 'Delete application', description: 'This permanently deletes the Argo CD application.',
+            targetLabel: `${app.appNamespace}/${app.name}`, confirmLabel: 'Delete', danger: true, requireInput: app.name,
+            checkboxes: [{ id: 'cascade', label: 'Cascade delete managed resources', checked: true }],
+            selects: [{ id: 'propagationPolicy', label: 'Propagation policy', value: 'foreground', options: PROPAGATION_POLICY_OPTIONS, disabledWhenUnchecked: 'cascade' }],
+            signal: detailDialogController.signal,
+          }).then((ok) => {
+            if (!ok || !stillMounted()) return;
+            const cascade = Boolean(ok.flags.cascade);
+            void execAction('/v1/actions/application-delete', epoch, {
+              name: app.name, appNamespace: app.appNamespace, cascade,
+              ...(cascade ? { propagationPolicy: ok.selects.propagationPolicy as PropagationPolicy } : {}),
+            }, 'Deleting application…', 'Application deleted.', false, true);
+          });
+        } });
+        detailActionDisposers.push(() => syncBtn.dispose(), () => refreshBtn.dispose(), () => hardRefreshBtn.dispose(), () => terminateBtn.dispose(), () => rollbackBtn.dispose(), () => patchBtn.dispose(), () => deleteBtn.dispose());
+      }
 
       split.setHeader(header);
       const nav = element('nav', '', detailRoot); nav.className = 'application-tabs'; nav.setAttribute('aria-label', t("Application troubleshooting views"));
@@ -410,13 +477,13 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
       renderApplicationDetail(overview, appData, { heading: false }); options.evidence?.app(response);
       detailSnapshot = { sampledAt: response.sampledAt, expiresAt: response.expiresAt ?? new Date(Date.parse(response.sampledAt) + 15_000).toISOString(), source: response.source ?? 'argo-api' };
       detailAgeNode = element('p', '', detailRoot); paintSnapshot();
-      resourceView = mountResources(resources, request, context, appRef, appData.project, { ...(options.copy ? { copy: options.copy } : {}), ...(options.evidence ? { evidence: options.evidence } : {}), ...(restore?.resources ? { initialState: restore.resources } : {}), changed: () => options.changed?.(), getEpoch: () => currentEpoch });
-      manifestView = mountManifests(manifests, request, context, appData, options.evidence);
-      windowView = mountWindowStatus(windows, request, { operation: 'applicationWindows', context, name: app.name, appNamespace: app.appNamespace });
+      resourceView = mountResources(resources, request, capturedContext, appRef, appData.project, { ...(options.copy ? { copy: options.copy } : {}), ...(options.evidence ? { evidence: options.evidence } : {}), ...(restore?.resources ? { initialState: restore.resources } : {}), changed: () => options.changed?.(), getEpoch: () => currentEpoch, readOnlySurface: Boolean(options.readOnlySurface) });
+      manifestView = mountManifests(manifests, request, capturedContext, appData, options.evidence);
+      windowView = mountWindowStatus(windows, request, { operation: 'applicationWindows', context: capturedContext, name: app.name, appNamespace: app.appNamespace });
       openingNavigation = undefined;
       detailTabs = mountSections(nav, [{ id: 'overview', label: "Application overview", pane: overview }, { id: 'resources', label: "Resources / Events / Logs", pane: resources }, { id: 'manifests', label: 'Manifest / Diff', pane: manifests }, { id: 'windows', label: "Sync windows", pane: windows }], detailTab, (id) => { detailTab = id; syncDetailVisibility(); options.changed?.(); });
       syncDetailVisibility();
-    } catch { if (version === detailGeneration) { split.setHeader(); detailRoot.replaceChildren(); element('p', "Could not read details. Data from the previous application will not be shown.", detailRoot); } }
+    } catch { if (loadVersion === detailLoadGeneration && selectionVersion === detailSelectionGeneration) { split.setHeader(); detailRoot.replaceChildren(); element('p', "Could not read details. Data from the previous application will not be shown.", detailRoot); } }
   }
   function syncDetailVisibility(): void {
     const resourceFocus = Boolean(detailTabs && detailTab === 'resources');
@@ -431,7 +498,9 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
     const paused = document.hidden || !active;
     if (paused && !wasPaused) {
       split.stopResize();
-      generation++; detailGeneration++; activeTask?.abort(); activeTask = undefined; busy = false; forceStale = true;
+      stopOpWatch();
+      generation++; detailLoadGeneration++; activeTask?.abort(); activeTask = undefined; busy = false; forceStale = true;
+      if (selected && !detailTabs) { selected = ''; clearDetail(); list.update({ selectedId: null }); }
       queryButton.update({ loading: false }); backgroundButton.update({ loading: false }); cancelButton.update({ disabled: true });
       if (enabled && context) status.textContent = t("Updates paused.");
     } else if (!paused && wasPaused && enabled && context) {
@@ -475,7 +544,7 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
     restoreNavigation,
     loadWhenVisible(): void { if (!enabled || !context) return; pendingContextLoad = true; if (!hidden()) { pendingContextLoad = false; void load(false, true); } },
     captureNavigation(): ApplicationNavigationState {
-      return { filters: { ...filters }, selected: selectedReference ? { ...selectedReference } : pendingNavigation?.selected ?? null, detailTab: (pendingNavigation?.detailTab ?? detailTab) as ApplicationNavigationState['detailTab'], split: split.captureState(), resources: resourceView?.captureNavigation() ?? openingNavigation?.resources ?? pendingNavigation?.resources ?? null };
+      return captureCurrentNavigation();
     },
     captureState(): ApplicationViewState { return structuredClone({ applications, filters, snapshot, forceStale }); },
     restoreState(state: ApplicationViewState): void {
@@ -500,12 +569,14 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
     },
     setConnection(nextContext: string, networkEnabled: boolean, loadApplications = false, restore?: ApplicationNavigationState): void {
       pendingNavigation = undefined;
+      connectionGeneration++;
+      resetCreateDialogs();
       for (const key of Object.keys(filters)) delete filters[key as keyof ApplicationFilters];
       for (const update of filterUpdates.values()) update('');
       generation++; activeTask?.abort(); activeTask = undefined; busy = false; clear(); context = nextContext; enabled = networkEnabled; currentEpoch = ''; setAutomatic(false);
       pendingContextLoad = false;
       queryButton.update({ disabled: !enabled || !context, loading: false });
-      createButton.update({ disabled: !enabled || !context });
+      createButton?.update({ disabled: !enabled || !context });
       backgroundButton.update({ disabled: !enabled || !context, loading: false }); cancelButton.update({ disabled: true });
       autoSwitch.update({ disabled: !enabled || !context, checked: false });
       autoButton.update({ disabled: !enabled || !context }); status.hidden = false;
@@ -515,6 +586,6 @@ export function mountApplications(root: HTMLElement, request: PanelRequest, opti
         if (document.hidden || !active) pendingContextLoad = true; else void load(false, true);
       }
     },
-    dispose(): void { if (disposed) return; disposed = true; generation++; detailGeneration++; activeTask?.abort(); resourceView?.dispose(); manifestView?.dispose(); windowView?.dispose(); detailTabs?.dispose(); options.evidence?.reset(); for (const dispose of disposers) dispose(); root.replaceChildren(); },
+    dispose(): void { if (disposed) return; disposed = true; connectionGeneration++; generation++; detailLoadGeneration++; detailSelectionGeneration++; activeTask?.abort(); resourceView?.dispose(); manifestView?.dispose(); windowView?.dispose(); detailTabs?.dispose(); options.evidence?.reset(); for (const dispose of disposers) dispose(); root.replaceChildren(); },
   };
 }

@@ -179,10 +179,24 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
       ['argocd/platform-set', { metadata: { name: 'platform-set', namespace: 'argocd', uid: 'uid-appset-1' }, spec: { generators: [{ list: {} }] }, status: { conditions: [] } }],
     ]),
     projects: new Map([
-      ['default', { metadata: { name: 'default', namespace: 'argocd', uid: 'uid-proj-default' }, spec: { description: 'Default project', sourceRepos: ['*'], destinations: [{ server: '*', namespace: '*' }], syncWindows: [], roles: [] } }],
+      ['default', {
+        metadata: { name: 'default', namespace: 'argocd', uid: 'uid-proj-default', resourceVersion: '10' },
+        spec: {
+          description: 'Default project',
+          sourceRepos: ['https://user:proj-secret@git.example.test/platform/*'],
+          sourceNamespaces: ['argocd'],
+          destinations: [{ name: 'in-cluster', server: 'https://kubernetes.default.svc', namespace: '*' }],
+          clusterResourceWhitelist: [{ group: '*', kind: '*' }],
+          namespaceResourceBlacklist: [{ group: '', kind: 'ResourceQuota' }],
+          orphanedResources: { warn: true },
+          syncWindows: [{ kind: 'allow', schedule: '0 * * * *', duration: '1h', applications: ['*'] }],
+          roles: [{ name: 'ops', description: 'Operators', policies: ['p, proj:default:ops, applications, *, default/*, allow'], groups: ['ops'], jwtTokens: [{ id: 'jwt-keep-1', iat: 1700000000 }] }],
+        },
+      }],
     ]),
     repositories: new Map([
       ['https://git.example.test/platform/demo.git', { repo: 'https://git.example.test/platform/demo.git', type: 'git', connectionState: { status: 'Successful', message: '' } }],
+      ['git@git.example.test:platform/ssh-demo.git', { repo: 'git@git.example.test:platform/ssh-demo.git', type: 'git', project: 'default', connectionState: { status: 'Successful', message: '' } }],
     ]),
     clusters: new Map([
       ['https://kubernetes.default.svc', { name: 'in-cluster', server: 'https://kubernetes.default.svc', connectionState: { status: 'Successful', message: '' }, info: { serverVersion: '1.31', applicationsCount: 1 } }],
@@ -272,7 +286,10 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
       const appName = decodeURIComponent(appMatch[1]!);
       const sub = appMatch[2] ?? '';
       const bodyRec = (body && typeof body === 'object' && !Array.isArray(body) ? body : {}) as Record<string, unknown>;
-      const appNs = url.searchParams.get('appNamespace') ?? (typeof bodyRec.appNamespace === 'string' ? bodyRec.appNamespace : options.defaultNamespace ?? 'argocd');
+      const bodyMeta = (bodyRec.metadata && typeof bodyRec.metadata === 'object' ? bodyRec.metadata : {}) as Record<string, unknown>;
+      const appNs = sub === '' && method === 'PUT'
+        ? (typeof bodyMeta.namespace === 'string' && bodyMeta.namespace ? bodyMeta.namespace : options.defaultNamespace ?? 'argocd')
+        : (url.searchParams.get('appNamespace') ?? (typeof bodyRec.appNamespace === 'string' ? bodyRec.appNamespace : options.defaultNamespace ?? 'argocd'));
       const key = `${appNs}/${appName}`;
       const app = state.applications.get(key);
       if (!app) { grpcError(res, 404, 5, `applications.argoproj.io "${appName}" not found`); return; }
@@ -289,20 +306,33 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
         jsonOk(res, app); return;
       }
       if (sub === '' && method === 'PUT') {
+        if (url.searchParams.has('appNamespace')) { grpcError(res, 400, 3, 'unexpected appNamespace query parameter on ApplicationUpdateRequest'); return; }
         if (!isAllowed('applications', 'update', rbacSub)) { grpcError(res, 403, 7, 'permission denied'); return; }
-        const updated = { ...app, ...bodyRec, metadata: { ...(app.metadata as Record<string, unknown>), ...((bodyRec.metadata as Record<string, unknown>) ?? {}), name: appName, namespace: appNs } };
+        const updated = { ...app, ...bodyRec, metadata: { ...(app.metadata as Record<string, unknown>), ...bodyMeta, name: appName, namespace: appNs } };
         state.applications.set(key, updated);
         jsonOk(res, updated); return;
       }
       if (sub === '' && method === 'PATCH') {
         if (!isAllowed('applications', 'update', rbacSub)) { grpcError(res, 403, 7, 'permission denied'); return; }
-        const patch = JSON.parse(String(bodyRec.patch ?? '{}')) as Record<string, unknown>;
-        const updated = deepMerge(app, patch);
+        const patchType = String(bodyRec.patchType ?? '');
+        if (patchType !== '' && patchType !== 'json' && patchType !== 'merge') {
+          grpcError(res, 400, 3, `Patch type '${patchType}' is not supported`); return;
+        }
+        const rawPatch = JSON.parse(String(bodyRec.patch ?? '{}')) as unknown;
+        const updated = patchType === 'merge' ? deepMerge(app, rawPatch as Record<string, unknown>) : app;
         state.applications.set(key, updated);
         jsonOk(res, updated); return;
       }
       if (sub === '' && method === 'DELETE') {
         if (!isAllowed('applications', 'delete', rbacSub)) { grpcError(res, 403, 7, 'permission denied'); return; }
+        const cascadeParam = url.searchParams.get('cascade');
+        const policyParam = url.searchParams.get('propagationPolicy') ?? '';
+        if (cascadeParam === 'false' && policyParam !== '') {
+          grpcError(res, 400, 3, 'cannot set propagation policy when cascading is disabled'); return;
+        }
+        if (policyParam !== '' && policyParam !== 'foreground' && policyParam !== 'background') {
+          grpcError(res, 400, 3, `invalid propagation policy: ${policyParam}`); return;
+        }
         state.applications.delete(key);
         state.trees.delete(key);
         jsonOk(res, {}); return;
@@ -390,10 +420,14 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
         }
         if (method === 'POST') {
           if (!isAllowed('applications', 'update', rbacSub)) { grpcError(res, 403, 7, 'permission denied'); return; }
+          const k8sPatchType = url.searchParams.get('patchType') ?? '';
+          if (!['application/json-patch+json', 'application/merge-patch+json', 'application/strategic-merge-patch+json'].includes(k8sPatchType)) {
+            grpcError(res, 400, 3, `unsupported Kubernetes patch media type: ${k8sPatchType}`); return;
+          }
           const live = state.liveResources.get(resKey);
           if (!live) { grpcError(res, 404, 5, 'resource not found'); return; }
-          const patch = JSON.parse(typeof body === 'string' ? body : '{}') as Record<string, unknown>;
-          const merged = deepMerge(live, patch);
+          const parsedPatch = JSON.parse(typeof body === 'string' ? body : '{}') as unknown;
+          const merged = Array.isArray(parsedPatch) ? live : deepMerge(live, parsedPatch as Record<string, unknown>);
           state.liveResources.set(resKey, merged);
           jsonOk(res, { manifest: JSON.stringify(merged) }); return;
         }
@@ -419,6 +453,11 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
       const name = decodeURIComponent(appsetMatch[1]!);
       const ns = url.searchParams.get('appsetNamespace') ?? options.defaultNamespace ?? 'argocd';
       const key = `${ns}/${name}`;
+      if (method === 'GET') {
+        const found = state.applicationSets.get(key);
+        if (!found) { grpcError(res, 404, 5, 'not found'); return; }
+        jsonOk(res, found); return;
+      }
       if (method === 'DELETE') {
         if (!isAllowed('applicationsets', 'delete', `*/${ns}/${name}`)) { grpcError(res, 403, 7, 'permission denied'); return; }
         if (!state.applicationSets.has(key)) { grpcError(res, 404, 5, 'not found'); return; }
@@ -436,7 +475,7 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
         const meta = (proj.metadata ?? {}) as Record<string, unknown>;
         const name = String(meta.name ?? '');
         if (!isAllowed('projects', 'create', name)) { grpcError(res, 403, 7, 'permission denied'); return; }
-        const created = { ...proj, metadata: { ...meta, name, namespace: 'argocd', uid: `uid-proj-${name}` } };
+        const created = { ...proj, metadata: { ...meta, name, namespace: 'argocd', uid: `uid-proj-${name}`, resourceVersion: '1' } };
         state.projects.set(name, created);
         jsonOk(res, created); return;
       }
@@ -444,13 +483,26 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
     const projMatch = url.pathname.match(/^\/api\/v1\/projects\/([^/]+)$/);
     if (projMatch) {
       const name = decodeURIComponent(projMatch[1]!);
+      if (method === 'GET') {
+        const existing = state.projects.get(name);
+        if (!existing) { grpcError(res, 404, 5, 'project not found'); return; }
+        jsonOk(res, existing); return;
+      }
       if (method === 'PUT') {
         if (!isAllowed('projects', 'update', name)) { grpcError(res, 403, 7, 'permission denied'); return; }
+        const existing = state.projects.get(name);
+        if (!existing) { grpcError(res, 404, 5, 'project not found'); return; }
         const wrapper = (body && typeof body === 'object' ? body : {}) as Record<string, unknown>;
         const proj = (wrapper.project ?? wrapper) as Record<string, unknown>;
-        const updated = { ...(state.projects.get(name) ?? {}), ...proj };
-        state.projects.set(name, updated);
-        jsonOk(res, updated); return;
+        const existingRv = ((existing.metadata ?? {}) as Record<string, unknown>).resourceVersion;
+        const incomingRv = ((proj.metadata ?? {}) as Record<string, unknown>).resourceVersion;
+        if (existingRv !== undefined && incomingRv !== existingRv) {
+          grpcError(res, 422, 3, 'metadata.resourceVersion must be preserved on Project update'); return;
+        }
+        // Full replacement like upstream Kubernetes AppProject.Update (no server-side merge!)
+        const replaced = { ...proj, metadata: { ...((proj.metadata ?? {}) as Record<string, unknown>), name } };
+        state.projects.set(name, replaced);
+        jsonOk(res, replaced); return;
       }
       if (method === 'DELETE') {
         if (!isAllowed('projects', 'delete', name)) { grpcError(res, 403, 7, 'permission denied'); return; }
@@ -460,33 +512,62 @@ export async function startMockArgoServer(t: TestContext, initialOptions: MockAr
     }
 
     // Repositories
-    const repoValidateMatch = url.pathname.match(/^\/api\/v1\/repositories\/(.+)\/validate$/);
+    if (url.pathname === '/api/v1/repositories' && method === 'GET') {
+      jsonOk(res, { items: [...state.repositories.values()] }); return;
+    }
+    const repoValidateMatch = url.pathname.match(/^\/api\/v1\/repositories\/([^/]+)\/validate$/);
     if (repoValidateMatch && method === 'POST') {
+      if (body !== undefined && typeof body !== 'string') {
+        grpcError(res, 400, 3, 'json: cannot unmarshal non-string body into RepoAccessQuery.repo'); return;
+      }
       const repo = decodeURIComponent(repoValidateMatch[1]!);
-      if (!isAllowed('repositories', 'create', repo)) { grpcError(res, 403, 7, 'permission denied'); return; }
+      const proj = url.searchParams.get('project') ?? '';
+      const rbacTarget = proj ? `${proj}/${repo}` : repo;
+      if (!isAllowed('repositories', 'create', rbacTarget)) { grpcError(res, 403, 7, 'permission denied'); return; }
       jsonOk(res, {}); return;
     }
-    const repoMatch = url.pathname.match(/^\/api\/v1\/repositories\/(.+)$/);
+    const repoMatch = url.pathname.match(/^\/api\/v1\/repositories\/([^/]+)$/);
     if (repoMatch && method === 'DELETE') {
       const repo = decodeURIComponent(repoMatch[1]!);
-      if (!isAllowed('repositories', 'delete', repo)) { grpcError(res, 403, 7, 'permission denied'); return; }
+      const appProject = url.searchParams.get('appProject') ?? '';
+      const rbacTarget = appProject ? `${appProject}/${repo}` : repo;
+      if (!isAllowed('repositories', 'delete', rbacTarget)) { grpcError(res, 403, 7, 'permission denied'); return; }
+      const stored = state.repositories.get(repo);
+      if (!stored || (appProject && (stored.project ?? '') !== appProject)) {
+        grpcError(res, 404, 5, 'repository not found'); return;
+      }
       state.repositories.delete(repo);
       jsonOk(res, {}); return;
     }
 
     // Clusters
-    const clusterMatch = url.pathname.match(/^\/api\/v1\/clusters\/(.+)$/);
-    if (clusterMatch) {
-      const srv = decodeURIComponent(clusterMatch[1]!);
-      if (method === 'GET' && url.searchParams.get('refresh') === 'true') {
-        if (!isAllowed('clusters', 'update', srv)) { grpcError(res, 403, 7, 'permission denied'); return; }
-        jsonOk(res, state.clusters.get(srv) ?? { server: srv }); return;
-      }
-      if (method === 'DELETE') {
-        if (!isAllowed('clusters', 'delete', srv)) { grpcError(res, 403, 7, 'permission denied'); return; }
-        state.clusters.delete(srv);
-        jsonOk(res, {}); return;
-      }
+    if (url.pathname === '/api/v1/clusters' && method === 'GET') {
+      jsonOk(res, { items: [...state.clusters.values()] }); return;
+    }
+    const clusterInvalidateMatch = url.pathname.match(/^\/api\/v1\/clusters\/([^/]+)\/invalidate-cache$/);
+    if (clusterInvalidateMatch && method === 'POST') {
+      const idVal = decodeURIComponent(clusterInvalidateMatch[1]!);
+      const byName = url.searchParams.get('id.type') === 'name';
+      const found = byName
+        ? [...state.clusters.values()].find((c) => c.name === idVal)
+        : state.clusters.get(idVal);
+      if (!found) { grpcError(res, 403, 7, 'permission denied'); return; }
+      const srv = String(found.server ?? idVal);
+      if (!isAllowed('clusters', 'update', srv)) { grpcError(res, 403, 7, 'permission denied'); return; }
+      found.refreshRequestedAt = new Date().toISOString();
+      jsonOk(res, found); return;
+    }
+    const clusterMatch = url.pathname.match(/^\/api\/v1\/clusters\/([^/]+)$/);
+    if (clusterMatch && method === 'DELETE') {
+      const idVal = decodeURIComponent(clusterMatch[1]!);
+      const byName = url.searchParams.get('id.type') === 'name';
+      const entry = byName
+        ? [...state.clusters.entries()].find(([, c]) => c.name === idVal)
+        : (state.clusters.has(idVal) ? [idVal, state.clusters.get(idVal)!] as const : undefined);
+      if (!entry) { grpcError(res, 403, 7, 'permission denied'); return; }
+      if (!isAllowed('clusters', 'delete', String(entry[1].server ?? idVal))) { grpcError(res, 403, 7, 'permission denied'); return; }
+      state.clusters.delete(entry[0]);
+      jsonOk(res, {}); return;
     }
 
     grpcError(res, 404, 5, `unhandled route ${method} ${url.pathname}`);

@@ -67,6 +67,7 @@ export interface RollbackApplicationRequest extends ActionBase {
   prune?: boolean;
 }
 
+export type ApplicationPatchType = 'merge' | 'json';
 export type PatchType = 'merge' | 'json' | 'strategic';
 
 export interface CreateApplicationRequest extends ActionBase {
@@ -86,10 +87,10 @@ export interface PatchApplicationRequest extends ActionBase {
   name: string;
   appNamespace: string;
   patch: string;
-  patchType: PatchType;
+  patchType: ApplicationPatchType;
 }
 
-export type PropagationPolicy = 'foreground' | 'background' | 'orphan';
+export type PropagationPolicy = 'foreground' | 'background';
 
 export interface DeleteApplicationRequest extends ActionBase {
   name: string;
@@ -148,8 +149,8 @@ export type ManagementActionRequest =
   | (ActionBase & { operation: 'deleteProject'; name: string })
   | (ActionBase & { operation: 'validateRepository'; repo: string; type?: string; project?: string })
   | (ActionBase & { operation: 'deleteRepository'; repo: string; appProject?: string })
-  | (ActionBase & { operation: 'invalidateClusterCache'; server: string })
-  | (ActionBase & { operation: 'deleteCluster'; server: string });
+  | (ActionBase & { operation: 'invalidateClusterCache'; server: string; idType?: 'server' | 'name' })
+  | (ActionBase & { operation: 'deleteCluster'; server: string; idType?: 'server' | 'name' });
 
 export interface ActionResult<T = unknown> {
   operation: string;

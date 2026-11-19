@@ -2,7 +2,7 @@
 
 [English](../README.md) | [简体中文](README.zh-CN.md) | [العربية](README.ar.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [עברית](README.he.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | Português (Brasil) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [繁體中文](README.zh-TW.md)
 
-Uma **extensão do Argo CD somente leitura para o OpenChamber**. Navegue por aplicações, inspecione implantações e consulte logs e eventos de recursos sem sair do seu espaço de trabalho.
+Uma **extensão completa do Argo CD para o OpenChamber**. Navegue por aplicações, inspecione implantações, consulte logs e eventos de recursos e execute ações operacionais do Argo CD (Sync, Refresh, Terminate, Rollback, Resource Actions, Patch, criação, exclusão e operações de gerenciamento) diretamente no seu espaço de trabalho.
 
 ## Instalação
 
@@ -23,7 +23,7 @@ Você também pode baixar **openchamber-argocd.zip** em [Releases](https://githu
 ## Pré-requisitos
 
 - **OpenChamber com suporte a extensões**, introduzido na [v1.24.0](https://github.com/openchamber/openchamber/releases/tag/v1.24.0). Esta compilação exige atualmente **v2.2.0 ou posterior** para instalação; a compatibilidade com versões anteriores não foi verificada.
-- **CLI do Argo CD instalada e já configurada** para o usuário do sistema que executa o OpenChamber Server, com credenciais válidas e permissão de leitura das aplicações, recursos, logs e eventos necessários. A extensão lê essa configuração; não executa a CLI nem faz login separadamente.
+- **CLI do Argo CD instalada e já configurada** para o usuário do sistema que executa o OpenChamber Server, com credenciais válidas e permissões RBAC do Argo CD para as operações de leitura e escrita necessárias. A extensão lê essa configuração e chama diretamente a API REST oficial do Argo CD; não executa a CLI nem faz login separadamente.
 - O OpenChamber Server deve conseguir acessar a API do Argo CD configurada.
 
 ## Capturas de tela
@@ -43,8 +43,9 @@ Interface em inglês com dados de exemplo.
 - Alternar contextos do Argo CD e pesquisar ou filtrar aplicações.
 - Inspecionar configuração, status, histórico de implantações e árvores de recursos.
 - Ler logs de Pods/contêineres, eventos, manifestos e diferenças.
+- Executar ações operacionais do Argo CD (ativadas por padrão, governadas por RBAC e Sync Windows do Argo CD), baseadas na [CLI oficial do Argo CD](https://github.com/argoproj/argo-cd): Sync (com Prune, Dry-Run, Force, Replace, Server-Side Apply e recursos seletivos), Refresh / Hard Refresh, encerrar operação, Rollback, Resource Actions (V2 com fallback automático para V1), Patch, criação/exclusão de aplicações e recursos e gerenciamento de ApplicationSet/Project/repositórios/clusters.
 - Visualizar resumos de diagnóstico e confirmar antes de adicioná-los ao chat.
-- Somente leitura por definição, seguindo o idioma e o tema do OpenChamber.
+- Segue o idioma e o tema do OpenChamber em 15 localidades.
 
 ## Privacidade
 

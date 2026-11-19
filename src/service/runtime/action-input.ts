@@ -4,7 +4,7 @@
  * https://github.com/argoproj/argo-cd (commit 232fa2d123c0cef71de9251860289ee9a150172e)
  */
 import type {
-  ActionBase, CanIQuery, CreateApplicationRequest, DeleteApplicationRequest, DeleteResourceRequest,
+  ActionBase, ApplicationPatchType, CanIQuery, CreateApplicationRequest, DeleteApplicationRequest, DeleteResourceRequest,
   ManagementActionRequest, PatchApplicationRequest, PatchResourceRequest, PatchType, PropagationPolicy,
   RefreshApplicationRequest, RollbackApplicationRequest, RunResourceActionRequest, SyncApplicationRequest,
   SyncResourceTarget, TerminateOperationRequest, UpdateApplicationRequest,
@@ -15,8 +15,9 @@ import { parseResourceInput } from './resource-input.js';
 const K8S_NAME = /^[a-z0-9](?:[-a-z0-9.]{0,251}[a-z0-9])?$/;
 const K8S_NAMESPACE = /^[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?$/;
 const EPOCH_RE = /^[\w-]{43}$/;
+const APP_PATCH_TYPES = new Set<ApplicationPatchType>(['merge', 'json']);
 const PATCH_TYPES = new Set<PatchType>(['merge', 'json', 'strategic']);
-const PROPAGATION_POLICIES = new Set<PropagationPolicy>(['foreground', 'background', 'orphan']);
+const PROPAGATION_POLICIES = new Set<PropagationPolicy>(['foreground', 'background']);
 
 function asRecord(value: unknown, allowed: string[]): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ServiceError('BAD_REQUEST', 400);
@@ -62,13 +63,21 @@ function validObjectPayload(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
-function validPatch(patch: unknown, patchType: unknown): { patch: string; patchType: PatchType } {
-  if (typeof patchType !== 'string' || !PATCH_TYPES.has(patchType as PatchType)) throw new ServiceError('BAD_REQUEST', 400);
+function validPatch<T extends PatchType>(patch: unknown, patchType: unknown, allowedTypes: ReadonlySet<T>): { patch: string; patchType: T } {
+  if (typeof patchType !== 'string' || !allowedTypes.has(patchType as T)) throw new ServiceError('BAD_REQUEST', 400);
   if (typeof patch !== 'string' || !patch.trim() || patch.length > 200_000) throw new ServiceError('BAD_REQUEST', 400);
   let parsed: unknown;
   try { parsed = JSON.parse(patch); } catch { throw new ServiceError('BAD_REQUEST', 400); }
   if (patchType === 'json' ? !Array.isArray(parsed) : (!parsed || typeof parsed !== 'object' || Array.isArray(parsed))) throw new ServiceError('BAD_REQUEST', 400);
-  return { patch, patchType: patchType as PatchType };
+  return { patch, patchType: patchType as T };
+}
+
+export function validCanISubresource(subresource: string): boolean {
+  if (!subresource || subresource.length > 512 || /[\u0000-\u001f\u007f]/.test(subresource)) return false;
+  if (subresource.split('/').some((part) => part === '.' || part === '..')) return false;
+  const hasUrl = /^(?:[^/]+\/)?[a-z][a-z0-9+.-]*:\/\/[^\s]+$/i.test(subresource);
+  if (!hasUrl && subresource.split('/').some((part) => !part)) return false;
+  return true;
 }
 
 export function parseCanIQuery(params: Record<string, string>): CanIQuery {
@@ -78,8 +87,8 @@ export function parseCanIQuery(params: Record<string, string>): CanIQuery {
   const resource = params.resource ?? '';
   const action = params.action ?? '';
   const subresource = params.subresource ?? '';
-  if (!/^[a-z][a-z0-9-]{0,63}$/.test(resource) || !/^[a-z][a-z0-9/_-]{0,127}$/.test(action)) throw new ServiceError('BAD_REQUEST', 400);
-  if (!subresource || subresource.length > 512 || /[\u0000-\u001f\u007f]/.test(subresource) || subresource.split('/').some((part) => !part || part === '.' || part === '..')) throw new ServiceError('BAD_REQUEST', 400);
+  if (!/^[a-z][a-z0-9-]{0,63}$/.test(resource) || !/^[a-z][A-Za-z0-9/_.:-]{0,127}$/.test(action) || action.split('/').some((part) => part === '.' || part === '..')) throw new ServiceError('BAD_REQUEST', 400);
+  if (!validCanISubresource(subresource)) throw new ServiceError('BAD_REQUEST', 400);
   return { context, resource, action, subresource };
 }
 
@@ -176,13 +185,18 @@ export function parseCreateApplicationRequest(value: unknown): CreateApplication
 
 export function parseUpdateApplicationRequest(value: unknown): UpdateApplicationRequest {
   const record = asRecord(value, ['context', 'identityEpoch', 'name', 'appNamespace', 'application', 'validate']);
+  const name = validName(record.name);
+  const appNamespace = validNamespace(record.appNamespace);
   const application = validObjectPayload(record.application);
+  const metadata = validObjectPayload(application.metadata);
+  if (metadata.name !== undefined && validName(metadata.name) !== name) throw new ServiceError('BAD_REQUEST', 400);
+  if (metadata.namespace !== undefined && validNamespace(metadata.namespace) !== appNamespace) throw new ServiceError('BAD_REQUEST', 400);
   const validate = optionalBool(record.validate);
   return {
     ...validBase(record),
-    name: validName(record.name),
-    appNamespace: validNamespace(record.appNamespace),
-    application,
+    name,
+    appNamespace,
+    application: { ...application, metadata: { ...metadata, name, namespace: appNamespace } },
     ...(validate !== undefined ? { validate } : {}),
   };
 }
@@ -193,7 +207,7 @@ export function parsePatchApplicationRequest(value: unknown): PatchApplicationRe
     ...validBase(record),
     name: validName(record.name),
     appNamespace: validNamespace(record.appNamespace),
-    ...validPatch(record.patch, record.patchType),
+    ...validPatch(record.patch, record.patchType, APP_PATCH_TYPES),
   };
 }
 
@@ -201,6 +215,7 @@ export function parseDeleteApplicationRequest(value: unknown): DeleteApplication
   const record = asRecord(value, ['context', 'identityEpoch', 'name', 'appNamespace', 'cascade', 'propagationPolicy']);
   const cascade = optionalBool(record.cascade);
   if (record.propagationPolicy !== undefined && (typeof record.propagationPolicy !== 'string' || !PROPAGATION_POLICIES.has(record.propagationPolicy as PropagationPolicy))) throw new ServiceError('BAD_REQUEST', 400);
+  if (cascade === false && record.propagationPolicy !== undefined) throw new ServiceError('BAD_REQUEST', 400);
   return {
     ...validBase(record),
     name: validName(record.name),
@@ -210,10 +225,16 @@ export function parseDeleteApplicationRequest(value: unknown): DeleteApplication
   };
 }
 
+function validMutatedResource(raw: unknown) {
+  const resource = parseResourceInput(raw, 'resource');
+  if (!resource.uid) throw new ServiceError('BAD_REQUEST', 400);
+  return resource;
+}
+
 export function parseRunResourceActionRequest(value: unknown): RunResourceActionRequest {
   const record = asRecord(value, ['context', 'identityEpoch', 'name', 'appNamespace', 'resource', 'action', 'parameters']);
   if (typeof record.action !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_.:/-]{0,127}$/.test(record.action)) throw new ServiceError('BAD_REQUEST', 400);
-  const resource = parseResourceInput(record.resource, 'resource');
+  const resource = validMutatedResource(record.resource);
   let parameters: Array<{ name: string; value: string }> | undefined;
   if (record.parameters !== undefined) {
     if (!Array.isArray(record.parameters) || record.parameters.length > 50) throw new ServiceError('BAD_REQUEST', 400);
@@ -242,7 +263,7 @@ export function parseDeleteResourceRequest(value: unknown): DeleteResourceReques
     ...validBase(record),
     name: validName(record.name),
     appNamespace: validNamespace(record.appNamespace),
-    resource: parseResourceInput(record.resource, 'resource'),
+    resource: validMutatedResource(record.resource),
     ...(force !== undefined ? { force } : {}),
     ...(orphan !== undefined ? { orphan } : {}),
   };
@@ -254,8 +275,8 @@ export function parsePatchResourceRequest(value: unknown): PatchResourceRequest 
     ...validBase(record),
     name: validName(record.name),
     appNamespace: validNamespace(record.appNamespace),
-    resource: parseResourceInput(record.resource, 'resource'),
-    ...validPatch(record.patch, record.patchType),
+    resource: validMutatedResource(record.resource),
+    ...validPatch(record.patch, record.patchType, PATCH_TYPES),
   };
 }
 
@@ -291,7 +312,13 @@ export function parseManagementActionRequest(value: unknown): ManagementActionRe
     }
     case 'updateProject': {
       const record = asRecord(value, ['operation', 'context', 'identityEpoch', 'name', 'project']);
-      return { operation, ...validBase(record), name: validName(record.name), project: validObjectPayload(record.project) };
+      const name = validName(record.name);
+      const project = validObjectPayload(record.project);
+      if (project.metadata !== undefined) {
+        const meta = validObjectPayload(project.metadata);
+        if (meta.name !== undefined && validName(meta.name) !== name) throw new ServiceError('BAD_REQUEST', 400);
+      }
+      return { operation, ...validBase(record), name, project };
     }
     case 'deleteProject': {
       const record = asRecord(value, ['operation', 'context', 'identityEpoch', 'name']);
@@ -317,8 +344,12 @@ export function parseManagementActionRequest(value: unknown): ManagementActionRe
     }
     case 'invalidateClusterCache':
     case 'deleteCluster': {
-      const record = asRecord(value, ['operation', 'context', 'identityEpoch', 'server']);
-      return { operation, ...validBase(record), server: validUrlLike(record.server) };
+      const record = asRecord(value, ['operation', 'context', 'identityEpoch', 'server', 'idType']);
+      if (record.idType !== undefined && record.idType !== 'server' && record.idType !== 'name') throw new ServiceError('BAD_REQUEST', 400);
+      return {
+        operation, ...validBase(record), server: validUrlLike(record.server),
+        ...(record.idType ? { idType: record.idType } : {}),
+      };
     }
     default:
       throw new ServiceError('BAD_REQUEST', 400);

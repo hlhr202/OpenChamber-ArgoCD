@@ -2,7 +2,7 @@
 
 [English](../README.md) | [简体中文](README.zh-CN.md) | [العربية](README.ar.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [עברית](README.he.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Português (Brasil)](README.pt-BR.md) | Türkçe | [Українська](README.uk.md) | [繁體中文](README.zh-TW.md)
 
-**OpenChamber için salt okunur bir Argo CD eklentisi**. Çalışma alanınızdan ayrılmadan uygulamalara göz atın, dağıtımları inceleyin, kaynak günlüklerini ve olaylarını okuyun.
+**OpenChamber için tam özellikli Argo CD eklentisi**. Çalışma alanınızdan ayrılmadan uygulamalara göz atın, dağıtımları inceleyin, kaynak günlüklerini ve olaylarını okuyun ve Argo CD operasyonel işlemlerini (Sync, Refresh, Terminate, Rollback, Resource Actions, Patch, oluşturma, silme ve yönetim işlemleri) doğrudan çalıştırın.
 
 ## Kurulum
 
@@ -23,7 +23,7 @@ Alternatif olarak [Releases](https://github.com/hlhr202/OpenChamber-ArgoCD/relea
 ## Ön koşullar
 
 - [v1.24.0](https://github.com/openchamber/openchamber/releases/tag/v1.24.0) ile sunulan **eklenti desteğine sahip OpenChamber**. Bu derleme şu anda kurulum için **v2.2.0 veya üstünü** gerektirir; eski sürümlerle uyumluluk doğrulanmamıştır.
-- OpenChamber Server'ı çalıştıran işletim sistemi kullanıcısı için **Argo CD CLI kurulu ve yapılandırılmış** olmalıdır; geçerli kimlik bilgileri ve gerekli uygulama, kaynak, günlük ve olayları okuma izinleri gerekir. Eklenti mevcut yapılandırmayı okur; CLI'yi çalıştırmaz ve ayrıca oturum açmaz.
+- OpenChamber Server'ı çalıştıran işletim sistemi kullanıcısı için **Argo CD CLI kurulu ve yapılandırılmış** olmalı, geçerli kimlik bilgileri ve gerekli okuma/yazma işlemleri için Argo CD RBAC izinleri bulunmalıdır. Eklenti mevcut yapılandırmayı okur ve doğrudan Argo CD'nin resmi REST API'sini çağırır; CLI ikilisini çalıştırmaz ve ayrıca oturum açmaz.
 - OpenChamber Server, yapılandırılmış Argo CD API'sine erişebilmelidir.
 
 ## Ekran görüntüleri
@@ -43,8 +43,9 @@ Alternatif olarak [Releases](https://github.com/hlhr202/OpenChamber-ArgoCD/relea
 - Argo CD bağlamlarını değiştirin, uygulamaları arayın veya filtreleyin.
 - Uygulama yapılandırmasını, durumunu, dağıtım geçmişini ve kaynak ağaçlarını inceleyin.
 - Pod/konteyner günlüklerini, olayları, manifestleri ve farkları okuyun.
+- Resmi [Argo CD CLI](https://github.com/argoproj/argo-cd) model alınarak tasarlanan Argo CD operasyonel işlemlerini yürütün (varsayılan olarak etkindir, Argo CD RBAC ve Sync Windows tarafından yönetilir): Sync (Prune, Dry-Run, Force, Replace, Server-Side Apply, seçili kaynaklar), Refresh / Hard Refresh, işlemi sonlandırma, Rollback, Resource Actions (otomatik V1 geri dönüşlü V2), Patch, uygulama ve kaynak oluşturma/silme ile ApplicationSet/Project/depo/küme yönetimi.
 - Sorun giderme özetlerini önizleyin ve sohbete eklemeden önce onaylayın.
-- Tasarım gereği salt okunurdur; OpenChamber'ın dilini ve temasını izler.
+- 15 dilde OpenChamber'ın dilini ve temasını izler.
 
 ## Gizlilik
 

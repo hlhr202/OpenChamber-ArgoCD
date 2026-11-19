@@ -55,7 +55,7 @@ export const WRITE_OPERATIONS = {
   deleteProject:          { method: 'DELETE', path: '/api/v1/projects/{project}' },
   validateRepository:     { method: 'POST',   path: '/api/v1/repositories/{repo}/validate' },
   deleteRepository:       { method: 'DELETE', path: '/api/v1/repositories/{repo}' },
-  invalidateClusterCache: { method: 'GET',    path: '/api/v1/clusters/{server}' },
+  invalidateClusterCache: { method: 'POST',   path: '/api/v1/clusters/{server}/invalidate-cache' },
   deleteCluster:          { method: 'DELETE', path: '/api/v1/clusters/{server}' },
 } as const;
 export type WriteOperation = keyof typeof WRITE_OPERATIONS;
@@ -70,14 +70,14 @@ export interface ReadParameters {
 
 export interface WriteParameters {
   name?: string; appNamespace?: string; project?: string;
-  refresh?: 'normal' | 'hard' | 'true';
+  refresh?: 'normal' | 'hard';
   resourceName?: string; namespace?: string; kind?: string; group?: string; version?: string;
   force?: boolean; orphan?: boolean; patchType?: string;
   cascade?: boolean; propagationPolicy?: string;
   upsert?: boolean; validate?: boolean;
   appsetNamespace?: string;
   repo?: string; repoType?: string; appProject?: string;
-  server?: string;
+  server?: string; idType?: 'server' | 'name';
 }
 
 const K8S_NAME = /^[a-z0-9](?:[-a-z0-9.]{0,251}[a-z0-9])?$/;
@@ -89,6 +89,18 @@ const GROUP_RE = /^[a-z0-9][a-z0-9.-]{0,252}$/;
 
 function validUrlLike(value: string | undefined): boolean {
   return typeof value === 'string' && value.length > 0 && value.length <= 1024 && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
+function encodeCanISubresource(sub: string): string {
+  const schemeIdx = sub.indexOf('://');
+  if (schemeIdx >= 0) {
+    const slashIdx = sub.indexOf('/');
+    if (slashIdx >= 0 && slashIdx < schemeIdx) {
+      return `${encodeURIComponent(sub.slice(0, slashIdx))}/${encodeURIComponent(sub.slice(slashIdx + 1))}`;
+    }
+    return encodeURIComponent(sub);
+  }
+  return sub.split('/').map((part) => encodeURIComponent(part)).join('/');
 }
 
 export function operationUrl(baseUrl: string, operation: ReadOperation, parameters: ReadParameters = {}): URL {
@@ -117,9 +129,11 @@ export function operationUrl(baseUrl: string, operation: ReadOperation, paramete
   }
   if (operation === 'events' && !parameters.resourceName && (parameters.resourceUID || parameters.namespace)) throw new ServiceError('BAD_REQUEST', 400);
   if (operation === 'canI') {
-    if (!/^[a-z][a-z0-9-]{0,63}$/.test(parameters.rbacResource ?? '') || !/^[a-z][a-z0-9/_-]{0,127}$/.test(parameters.rbacAction ?? '')) throw new ServiceError('BAD_REQUEST', 400);
+    const act = parameters.rbacAction ?? '';
+    if (!/^[a-z][a-z0-9-]{0,63}$/.test(parameters.rbacResource ?? '') || !/^[a-z][A-Za-z0-9/_.:-]{0,127}$/.test(act) || act.split('/').some((part) => part === '.' || part === '..')) throw new ServiceError('BAD_REQUEST', 400);
     const sub = parameters.rbacSubresource ?? '';
-    if (!sub || sub.length > 512 || /[\u0000-\u001f\u007f]/.test(sub) || sub.split('/').some((part) => !part || part === '.' || part === '..')) throw new ServiceError('BAD_REQUEST', 400);
+    const hasUrl = /^(?:[^/]+\/)?[a-z][a-z0-9+.-]*:\/\/[^\s]+$/i.test(sub);
+    if (!sub || sub.length > 512 || /[\u0000-\u001f\u007f]/.test(sub) || sub.split('/').some((part) => part === '.' || part === '..') || (!hasUrl && sub.split('/').some((part) => !part))) throw new ServiceError('BAD_REQUEST', 400);
   }
   const validRevision = (value: unknown) => typeof value === 'string' && Boolean(value.trim()) && value.length <= 512 && !/[\u0000-\u001f\u007f]/.test(value);
   if (parameters.revision !== undefined && !validRevision(parameters.revision)) throw new ServiceError('BAD_REQUEST', 400);
@@ -127,7 +141,7 @@ export function operationUrl(baseUrl: string, operation: ReadOperation, paramete
     const positions = parameters.sourcePositions; const revisions = parameters.revisions;
     if (parameters.revision !== undefined || !Array.isArray(positions) || !Array.isArray(revisions) || !positions.length || positions.length > 20 || positions.length !== revisions.length || new Set(positions).size !== positions.length || positions.some((value) => !Number.isSafeInteger(value) || value < 1 || value > 20) || revisions.some((value) => !validRevision(value))) throw new ServiceError('BAD_REQUEST', 400);
   }
-  const encodedSubresource = (parameters.rbacSubresource ?? '').split('/').map((part) => encodeURIComponent(part)).join('/');
+  const encodedSubresource = encodeCanISubresource(parameters.rbacSubresource ?? '');
   const path = READ_OPERATIONS[operation]
     .replace('{name}', encodeURIComponent(name))
     .replace('{project}', encodeURIComponent(parameters.project ?? ''))
@@ -162,18 +176,18 @@ export function writeOperationUrl(baseUrl: string, operation: WriteOperation, pa
   if (operation === 'deleteApplicationSet' && (!K8S_NAME.test(name) || !parameters.appsetNamespace || !K8S_NAMESPACE.test(parameters.appsetNamespace))) throw new ServiceError('BAD_REQUEST', 400);
   if (['updateProject', 'deleteProject'].includes(operation) && !K8S_NAME.test(parameters.project ?? '')) throw new ServiceError('BAD_REQUEST', 400);
   if (['validateRepository', 'deleteRepository'].includes(operation) && !validUrlLike(parameters.repo)) throw new ServiceError('BAD_REQUEST', 400);
-  if (['invalidateClusterCache', 'deleteCluster'].includes(operation) && !validUrlLike(parameters.server)) throw new ServiceError('BAD_REQUEST', 400);
+  if (['invalidateClusterCache', 'deleteCluster'].includes(operation) && (!validUrlLike(parameters.server) || (parameters.idType !== undefined && parameters.idType !== 'server' && parameters.idType !== 'name'))) throw new ServiceError('BAD_REQUEST', 400);
   const path = spec.path
     .replace('{name}', encodeURIComponent(name))
     .replace('{project}', encodeURIComponent(parameters.project ?? ''))
     .replace('{repo}', encodeURIComponent(parameters.repo ?? ''))
     .replace('{server}', encodeURIComponent(parameters.server ?? ''));
   const url = new URL(baseUrl + path);
-  if (appNamespace && ['refreshApplication', 'terminateOperation', 'updateApplication', 'deleteApplication', 'runResourceActionV1', 'deleteResource', 'patchResource'].includes(operation)) {
+  if (appNamespace && ['refreshApplication', 'terminateOperation', 'deleteApplication', 'runResourceActionV1', 'deleteResource', 'patchResource'].includes(operation)) {
     url.searchParams.set('appNamespace', appNamespace);
   }
   if (operation === 'refreshApplication' && parameters.refresh) url.searchParams.set('refresh', parameters.refresh);
-  if (operation === 'invalidateClusterCache') url.searchParams.set('refresh', 'true');
+  if (['invalidateClusterCache', 'deleteCluster'].includes(operation) && parameters.idType === 'name') url.searchParams.set('id.type', 'name');
   if (['runResourceActionV1', 'deleteResource', 'patchResource'].includes(operation)) {
     for (const key of ['resourceName', 'namespace', 'kind', 'group', 'version'] as const) {
       const value = parameters[key];

@@ -9,10 +9,9 @@ export class ServiceGateway {
   private generation = 0; private instance = ''; private readonly epochs = new Map<string, string>();
   constructor(private readonly transport: PanelRequest, private readonly boundary: (reason: string) => void) {}
   invalidate(): void { this.generation++; this.instance = ''; this.epochs.clear(); }
-  epoch(context: string): string | undefined { return this.epochs.get(context); }
   bind(): PanelRequest {
     const generation = this.generation;
-    const fn = async <T>(path: string, query?: Record<string, string>, options?: PanelRequestOptions): Promise<Envelope<T>> => {
+    return async <T>(path: string, query?: Record<string, string>, options?: PanelRequestOptions): Promise<Envelope<T>> => {
       if (generation !== this.generation) throw new Error('Retired host view');
       const result = await this.transport<T>(path, query, options);
       if (generation !== this.generation) throw new Error('Retired response');
@@ -34,6 +33,5 @@ export class ServiceGateway {
       if (context && result.identityEpoch) { if (this.epochs.size >= 128 && !this.epochs.has(context)) this.epochs.clear(); this.epochs.set(context, result.identityEpoch); }
       return result.ok ? result : { ...result, error: { ...result.error, message: t(result.error.message) } };
     };
-    return fn;
   }
 }

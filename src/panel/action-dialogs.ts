@@ -1,14 +1,23 @@
 /**
  * Accessible, zero-dependency operational dialogs for Argo CD mutations.
- * Supports keyboard Escape dismissal, danger name-typing confirmation,
- * Sync options (mirroring argocd app sync), Rollback, Resource Action params,
- * and JSON/YAML manifest or patch editing.
+ * Supports keyboard Escape dismissal, abort/disposal cleanup, danger name-typing
+ * confirmation, Sync options (mirroring argocd app sync, including multi-source
+ * revisions and retry-limit validation), Rollback, Resource Action params, and
+ * JSON/YAML manifest or patch editing.
  */
 import { parse as parseYaml } from 'yaml';
 import { t } from './i18n.js';
 import type { PatchType, PropagationPolicy, ResourceActionItem, SyncResourceTarget } from '../shared/actions.js';
 import type { ApplicationDetail } from '../shared/applications.js';
 type DeploymentHistoryEntry = ApplicationDetail['history'][number];
+
+const activeDialogs = new Set<{ doc: Document; close: () => void }>();
+
+export function closeAllDialogs(doc?: Document): void {
+  for (const entry of [...activeDialogs]) {
+    if (!doc || entry.doc === doc) entry.close();
+  }
+}
 
 export interface ConfirmCheckbox {
   id: string;
@@ -21,6 +30,7 @@ export interface ConfirmSelect {
   label: string;
   options: Array<{ value: string; label: string }>;
   value: string;
+  disabledWhenUnchecked?: string;
 }
 
 export interface ConfirmDialogOptions {
@@ -32,6 +42,7 @@ export interface ConfirmDialogOptions {
   requireInput?: string;
   checkboxes?: ConfirmCheckbox[];
   selects?: ConfirmSelect[];
+  signal?: AbortSignal;
 }
 
 export interface ConfirmDialogResult {
@@ -60,6 +71,26 @@ function createModal(doc: Document, title: string, danger = false) {
   return { backdrop, box, body, footer };
 }
 
+function bindModalDismiss<T>(doc: Document, backdrop: HTMLElement, resolve: (value: T | null) => void, signal?: AbortSignal): (result: T | null) => void {
+  let settled = false;
+  const finish = (result: T | null) => {
+    if (settled) return;
+    settled = true;
+    activeDialogs.delete(entry);
+    doc.removeEventListener('keydown', onKey);
+    signal?.removeEventListener('abort', onAbort);
+    backdrop.remove();
+    resolve(result);
+  };
+  const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') finish(null); };
+  const onAbort = () => finish(null);
+  const entry = { doc, close: () => finish(null) };
+  activeDialogs.add(entry);
+  doc.addEventListener('keydown', onKey);
+  signal?.addEventListener('abort', onAbort, { once: true });
+  return finish;
+}
+
 function makeButton(doc: Document, label: string, className: string, onClick: () => void): HTMLButtonElement {
   const button = doc.createElement('button');
   button.type = 'button';
@@ -70,6 +101,7 @@ function makeButton(doc: Document, label: string, className: string, onClick: ()
 }
 
 export function openConfirmDialog(doc: Document, options: ConfirmDialogOptions): Promise<ConfirmDialogResult | null> {
+  if (options.signal?.aborted) return Promise.resolve(null);
   return new Promise((resolve) => {
     const { backdrop, body, footer } = createModal(doc, options.title, options.danger);
     const desc = doc.createElement('p');
@@ -82,6 +114,12 @@ export function openConfirmDialog(doc: Document, options: ConfirmDialogOptions):
       body.append(target);
     }
     const flags: Record<string, boolean> = {};
+    const selectNodes = new Map<string, { el: HTMLSelectElement; dep?: string }>();
+    const syncDependentSelects = () => {
+      for (const { el, dep } of selectNodes.values()) {
+        if (dep) el.disabled = !flags[dep];
+      }
+    };
     for (const item of options.checkboxes ?? []) {
       flags[item.id] = Boolean(item.checked);
       const row = doc.createElement('label');
@@ -89,7 +127,7 @@ export function openConfirmDialog(doc: Document, options: ConfirmDialogOptions):
       const input = doc.createElement('input');
       input.type = 'checkbox';
       input.checked = Boolean(item.checked);
-      input.addEventListener('change', () => { flags[item.id] = input.checked; });
+      input.addEventListener('change', () => { flags[item.id] = input.checked; syncDependentSelects(); });
       const text = doc.createElement('span');
       text.textContent = t(item.label);
       row.append(input, text);
@@ -111,9 +149,11 @@ export function openConfirmDialog(doc: Document, options: ConfirmDialogOptions):
         select.append(option);
       }
       select.addEventListener('change', () => { selects[item.id] = select.value; });
+      selectNodes.set(item.id, { el: select, ...(item.disabledWhenUnchecked ? { dep: item.disabledWhenUnchecked } : {}) });
       row.append(label, select);
       body.append(row);
     }
+    syncDependentSelects();
     let confirmBtn!: HTMLButtonElement;
     if (options.requireInput) {
       const row = doc.createElement('label');
@@ -128,13 +168,7 @@ export function openConfirmDialog(doc: Document, options: ConfirmDialogOptions):
       row.append(prompt, input);
       body.append(row);
     }
-    const finish = (result: ConfirmDialogResult | null) => {
-      doc.removeEventListener('keydown', onKey);
-      backdrop.remove();
-      resolve(result);
-    };
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') finish(null); };
-    doc.addEventListener('keydown', onKey);
+    const finish = bindModalDismiss(doc, backdrop, resolve, options.signal);
     const cancelBtn = makeButton(doc, 'Cancel', 'argocd-btn', () => finish(null));
     confirmBtn = makeButton(doc, options.confirmLabel ?? 'Confirm', options.danger ? 'argocd-btn argocd-btn-danger' : 'argocd-btn argocd-btn-primary', () => finish({ confirmed: true, flags, selects }));
     if (options.requireInput) confirmBtn.disabled = true;
@@ -142,8 +176,16 @@ export function openConfirmDialog(doc: Document, options: ConfirmDialogOptions):
   });
 }
 
+export interface SyncDialogOptions {
+  signal?: AbortSignal;
+  multipleSources?: boolean;
+  sourceCount?: number;
+}
+
 export interface SyncDialogResult {
   revision?: string;
+  sourcePositions?: number[];
+  revisions?: string[];
   prune: boolean;
   dryRun: boolean;
   force: boolean;
@@ -154,7 +196,8 @@ export interface SyncDialogResult {
   resources?: SyncResourceTarget[];
 }
 
-export function openSyncDialog(doc: Document, target: string, resources?: SyncResourceTarget[]): Promise<SyncDialogResult | null> {
+export function openSyncDialog(doc: Document, target: string, resources?: SyncResourceTarget[], options: SyncDialogOptions = {}): Promise<SyncDialogResult | null> {
+  if (options.signal?.aborted) return Promise.resolve(null);
   return new Promise((resolve) => {
     const { backdrop, body, footer } = createModal(doc, 'Sync application');
     const targetEl = doc.createElement('code');
@@ -163,10 +206,24 @@ export function openSyncDialog(doc: Document, target: string, resources?: SyncRe
     body.append(targetEl);
 
     const state: SyncDialogResult = { prune: false, dryRun: false, force: false, replace: false, serverSideApply: false, applyOutOfSyncOnly: false, ...(resources?.length ? { resources } : {}) };
-    const revRow = doc.createElement('label'); revRow.className = 'argocd-dialog-field';
-    const revLabel = doc.createElement('span'); revLabel.textContent = t('Target revision (optional)');
-    const revInput = doc.createElement('input'); revInput.type = 'text'; revInput.placeholder = 'HEAD';
-    revRow.append(revLabel, revInput); body.append(revRow);
+    let revInput: HTMLInputElement | undefined;
+    const sourceInputs: Array<{ position: number; input: HTMLInputElement }> = [];
+
+    if (options.multipleSources && (options.sourceCount ?? 0) > 0) {
+      const count = Math.min(options.sourceCount!, 20);
+      for (let i = 1; i <= count; i++) {
+        const row = doc.createElement('label'); row.className = 'argocd-dialog-field';
+        const label = doc.createElement('span'); label.textContent = `${t('Target revision (optional)')} #${i}`;
+        const input = doc.createElement('input'); input.type = 'text'; input.placeholder = 'HEAD';
+        sourceInputs.push({ position: i, input });
+        row.append(label, input); body.append(row);
+      }
+    } else if (!options.multipleSources) {
+      const revRow = doc.createElement('label'); revRow.className = 'argocd-dialog-field';
+      const revLabel = doc.createElement('span'); revLabel.textContent = t('Target revision (optional)');
+      revInput = doc.createElement('input'); revInput.type = 'text'; revInput.placeholder = 'HEAD';
+      revRow.append(revLabel, revInput); body.append(revRow);
+    }
 
     const retryRow = doc.createElement('label'); retryRow.className = 'argocd-dialog-field';
     const retryLabel = doc.createElement('span'); retryLabel.textContent = t('Retry limit (optional)');
@@ -188,18 +245,38 @@ export function openSyncDialog(doc: Document, target: string, resources?: SyncRe
       row.append(input, span); body.append(row);
     }
 
-    const finish = (result: SyncDialogResult | null) => { doc.removeEventListener('keydown', onKey); backdrop.remove(); resolve(result); };
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') finish(null); };
-    doc.addEventListener('keydown', onKey);
+    const errorEl = doc.createElement('p');
+    errorEl.className = 'argocd-dialog-error';
+    errorEl.hidden = true;
+    body.append(errorEl);
+
+    const finish = bindModalDismiss(doc, backdrop, resolve, options.signal);
     footer.append(
       makeButton(doc, 'Cancel', 'argocd-btn', () => finish(null)),
       makeButton(doc, 'Sync', 'argocd-btn argocd-btn-primary', () => {
-        const rev = revInput.value.trim();
         const retryRaw = retryInput.value.trim();
+        let retryLimit: number | undefined;
+        if (retryRaw !== '') {
+          const parsedRetry = Number(retryRaw);
+          if (!/^\d+$/.test(retryRaw) || !Number.isSafeInteger(parsedRetry) || parsedRetry < 0 || parsedRetry > 100) {
+            errorEl.textContent = t('Invalid retry limit (0–100).');
+            errorEl.hidden = false;
+            return;
+          }
+          retryLimit = parsedRetry;
+        }
+        const rev = revInput?.value.trim() ?? '';
+        const selectedSources = sourceInputs
+          .map(({ position, input }) => ({ position, revision: input.value.trim() }))
+          .filter((entry) => entry.revision !== '');
         finish({
           ...state,
           ...(rev ? { revision: rev } : {}),
-          ...(retryRaw !== '' && Number.isInteger(Number(retryRaw)) && Number(retryRaw) >= 0 ? { retryLimit: Number(retryRaw) } : {}),
+          ...(selectedSources.length ? {
+            sourcePositions: selectedSources.map((s) => s.position),
+            revisions: selectedSources.map((s) => s.revision),
+          } : {}),
+          ...(retryLimit !== undefined ? { retryLimit } : {}),
         });
       }),
     );
@@ -212,7 +289,8 @@ export interface RollbackDialogResult {
   dryRun: boolean;
 }
 
-export function openRollbackDialog(doc: Document, target: string, history: DeploymentHistoryEntry[], initialId?: number): Promise<RollbackDialogResult | null> {
+export function openRollbackDialog(doc: Document, target: string, history: DeploymentHistoryEntry[], initialId?: number, signal?: AbortSignal): Promise<RollbackDialogResult | null> {
+  if (signal?.aborted) return Promise.resolve(null);
   return new Promise((resolve) => {
     const entries = [...history].reverse();
     const { backdrop, body, footer } = createModal(doc, 'Rollback application', true);
@@ -236,9 +314,7 @@ export function openRollbackDialog(doc: Document, target: string, history: Deplo
       const span = doc.createElement('span'); span.textContent = t(text);
       checkRow.append(input, span); body.append(checkRow);
     }
-    const finish = (result: RollbackDialogResult | null) => { doc.removeEventListener('keydown', onKey); backdrop.remove(); resolve(result); };
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') finish(null); };
-    doc.addEventListener('keydown', onKey);
+    const finish = bindModalDismiss(doc, backdrop, resolve, signal);
     footer.append(
       makeButton(doc, 'Cancel', 'argocd-btn', () => finish(null)),
       makeButton(doc, 'Rollback', 'argocd-btn argocd-btn-danger', () => finish({ id: Number(select.value), prune, dryRun })),
@@ -246,7 +322,8 @@ export function openRollbackDialog(doc: Document, target: string, history: Deplo
   });
 }
 
-export function openResourceActionDialog(doc: Document, target: string, action: ResourceActionItem): Promise<Array<{ name: string; value: string }> | null> {
+export function openResourceActionDialog(doc: Document, target: string, action: ResourceActionItem, signal?: AbortSignal): Promise<Array<{ name: string; value: string }> | null> {
+  if (signal?.aborted) return Promise.resolve(null);
   return new Promise((resolve) => {
     const { backdrop, body, footer } = createModal(doc, 'Run resource action');
     const targetEl = doc.createElement('code'); targetEl.className = 'argocd-dialog-target'; targetEl.textContent = `${target} · ${action.displayName || action.name}`; body.append(targetEl);
@@ -258,9 +335,7 @@ export function openResourceActionDialog(doc: Document, target: string, action: 
       inputs.set(param.name, input);
       row.append(label, input); body.append(row);
     }
-    const finish = (result: Array<{ name: string; value: string }> | null) => { doc.removeEventListener('keydown', onKey); backdrop.remove(); resolve(result); };
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') finish(null); };
-    doc.addEventListener('keydown', onKey);
+    const finish = bindModalDismiss(doc, backdrop, resolve, signal);
     footer.append(
       makeButton(doc, 'Cancel', 'argocd-btn', () => finish(null)),
       makeButton(doc, 'Run action', 'argocd-btn argocd-btn-primary', () => finish([...inputs.entries()].map(([name, input]) => ({ name, value: input.value })))),
@@ -274,6 +349,9 @@ export interface EditorDialogOptions {
   initialText: string;
   mode: 'object' | 'patch';
   confirmLabel?: string;
+  allowUpsert?: boolean;
+  patchTypes?: PatchType[];
+  signal?: AbortSignal;
 }
 
 export interface EditorDialogResult {
@@ -284,23 +362,25 @@ export interface EditorDialogResult {
 }
 
 export function openEditorDialog(doc: Document, options: EditorDialogOptions): Promise<EditorDialogResult | null> {
+  if (options.signal?.aborted) return Promise.resolve(null);
   return new Promise((resolve) => {
     const { backdrop, body, footer } = createModal(doc, options.title);
     if (options.targetLabel) {
       const targetEl = doc.createElement('code'); targetEl.className = 'argocd-dialog-target'; targetEl.textContent = options.targetLabel; body.append(targetEl);
     }
-    let patchType: PatchType = 'merge';
+    const allowedPatchTypes = options.patchTypes?.length ? options.patchTypes : (['merge', 'strategic', 'json'] as const);
+    let patchType: PatchType = allowedPatchTypes[0]!;
     let upsert = false;
     if (options.mode === 'patch') {
       const row = doc.createElement('label'); row.className = 'argocd-dialog-field';
       const label = doc.createElement('span'); label.textContent = t('Patch type');
       const select = doc.createElement('select');
-      for (const value of ['merge', 'strategic', 'json'] as const) {
+      for (const value of allowedPatchTypes) {
         const opt = doc.createElement('option'); opt.value = value; opt.textContent = value; select.append(opt);
       }
       select.addEventListener('change', () => { patchType = select.value as PatchType; });
       row.append(label, select); body.append(row);
-    } else {
+    } else if (options.allowUpsert !== false) {
       const row = doc.createElement('label'); row.className = 'argocd-dialog-check';
       const input = doc.createElement('input'); input.type = 'checkbox';
       input.addEventListener('change', () => { upsert = input.checked; });
@@ -316,14 +396,12 @@ export function openEditorDialog(doc: Document, options: EditorDialogOptions): P
     errorEl.hidden = true;
     body.append(textarea, errorEl);
 
-    const finish = (result: EditorDialogResult | null) => { doc.removeEventListener('keydown', onKey); backdrop.remove(); resolve(result); };
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') finish(null); };
-    doc.addEventListener('keydown', onKey);
+    const finish = bindModalDismiss(doc, backdrop, resolve, options.signal);
     footer.append(
       makeButton(doc, 'Cancel', 'argocd-btn', () => finish(null)),
       makeButton(doc, options.confirmLabel ?? 'Submit', 'argocd-btn argocd-btn-primary', () => {
         try {
-          const parsed = parseYaml(textarea.value) as unknown;
+          const parsed = parseYaml(textarea.value, { maxAliasCount: 32 }) as unknown;
           if (options.mode === 'patch') {
             if (patchType === 'json' ? !Array.isArray(parsed) : (!parsed || typeof parsed !== 'object' || Array.isArray(parsed))) {
               throw new Error('Invalid patch structure');
@@ -331,7 +409,7 @@ export function openEditorDialog(doc: Document, options: EditorDialogOptions): P
             finish({ patch: JSON.stringify(parsed), patchType });
           } else {
             if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Expected YAML/JSON object');
-            finish({ object: parsed as Record<string, unknown>, upsert });
+            finish({ object: parsed as Record<string, unknown>, ...(options.allowUpsert !== false ? { upsert } : {}) });
           }
         } catch {
           errorEl.textContent = t('Invalid JSON or YAML content.');
@@ -345,5 +423,4 @@ export function openEditorDialog(doc: Document, options: EditorDialogOptions): P
 export const PROPAGATION_POLICY_OPTIONS: Array<{ value: PropagationPolicy; label: string }> = [
   { value: 'foreground', label: 'Foreground' },
   { value: 'background', label: 'Background' },
-  { value: 'orphan', label: 'Non-cascading (orphan)' },
 ];

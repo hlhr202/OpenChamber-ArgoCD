@@ -7,7 +7,7 @@ import { RefreshCoordinator } from '../auth/refresh.js';
 import { ServiceError } from '../security/errors.js';
 import { redactResult } from '../security/redact.js';
 import { mutateJson, operationUrl, requestJson, type ReadOperation, type ReadParameters, type WriteOperation, type WriteParameters } from './transport.js';
-import { applicationCounts, applicationDetail, applicationSummaries } from '../domains/applications.js';
+import { applicationCounts, applicationDetail, applicationSummaries, metadataURL } from '../domains/applications.js';
 import { QueryCoordinator } from '../runtime/queries.js';
 import type { ApplicationReference, EventList, LiveResource, OrphanedMonitoring, ResourceReference, ResourceTree } from '../../shared/resources.js';
 import { resourceCoordinate, resourceId } from '../../shared/resources.js';
@@ -27,10 +27,93 @@ import type { SummaryEvidence, SummaryPreview } from '../../shared/summary.js';
 import type { Language } from '../../shared/language.js';
 import type {
   ActionResult, CanIQuery, CanIResult, CreateApplicationRequest, DeleteApplicationRequest,
-  DeleteResourceRequest, ManagementActionRequest, PatchApplicationRequest, PatchResourceRequest,
+  DeleteResourceRequest, ManagementActionRequest, PatchApplicationRequest, PatchResourceRequest, PatchType,
   RefreshApplicationRequest, ResourceActionItem, ResourceActionList, RollbackApplicationRequest,
   RunResourceActionRequest, SyncApplicationRequest, TerminateOperationRequest, UpdateApplicationRequest,
 } from '../../shared/actions.js';
+
+const K8S_PATCH_CONTENT_TYPE: Record<PatchType, string> = {
+  merge: 'application/merge-patch+json',
+  json: 'application/json-patch+json',
+  strategic: 'application/strategic-merge-patch+json',
+};
+
+function safeMetadataUrl(raw: string): string {
+  try { return metadataURL(raw); } catch { return raw; }
+}
+
+function mergeProjectForUpdate(existingRaw: unknown, patchProject: Record<string, unknown>, expectedName: string): Record<string, unknown> {
+  if (!existingRaw || typeof existingRaw !== 'object' || Array.isArray(existingRaw)) throw new ServiceError('UPSTREAM_INVALID', 502);
+  const existing = existingRaw as Record<string, unknown>;
+  const existingMeta = existing.metadata && typeof existing.metadata === 'object' && !Array.isArray(existing.metadata) ? existing.metadata as Record<string, unknown> : {};
+  if (existingMeta.name !== expectedName) throw new ServiceError('UPSTREAM_INVALID', 502);
+  const existingSpec = existing.spec && typeof existing.spec === 'object' && !Array.isArray(existing.spec) ? existing.spec as Record<string, unknown> : {};
+  const editedMeta = patchProject.metadata && typeof patchProject.metadata === 'object' && !Array.isArray(patchProject.metadata) ? patchProject.metadata as Record<string, unknown> : {};
+  const editedSpec = patchProject.spec && typeof patchProject.spec === 'object' && !Array.isArray(patchProject.spec) ? { ...(patchProject.spec as Record<string, unknown>) } : {};
+
+  if (Array.isArray(editedSpec.sourceRepos) && Array.isArray(existingSpec.sourceRepos)) {
+    const rawRepos = existingSpec.sourceRepos.filter((r): r is string => typeof r === 'string');
+    editedSpec.sourceRepos = editedSpec.sourceRepos.map((item) => {
+      if (typeof item !== 'string' || rawRepos.includes(item)) return item;
+      const matches = rawRepos.filter((orig) => safeMetadataUrl(orig) === item);
+      return matches.length === 1 ? matches[0]! : item;
+    });
+  }
+  if (Array.isArray(editedSpec.destinations) && Array.isArray(existingSpec.destinations)) {
+    const rawServers = existingSpec.destinations
+      .flatMap((d) => d && typeof d === 'object' && typeof (d as { server?: unknown }).server === 'string' ? [(d as { server: string }).server] : []);
+    editedSpec.destinations = editedSpec.destinations.map((dest) => {
+      if (!dest || typeof dest !== 'object' || Array.isArray(dest)) return dest;
+      const d = { ...(dest as Record<string, unknown>) };
+      if (typeof d.server === 'string' && d.server && !rawServers.includes(d.server)) {
+        const matches = rawServers.filter((orig) => safeMetadataUrl(orig) === d.server);
+        if (matches.length === 1) d.server = matches[0]!;
+      }
+      return d;
+    });
+  }
+  if (Array.isArray(editedSpec.roles) && Array.isArray(existingSpec.roles)) {
+    const byName = new Map<string, Record<string, unknown>>();
+    for (const r of existingSpec.roles) {
+      if (r && typeof r === 'object' && !Array.isArray(r) && typeof (r as { name?: unknown }).name === 'string') {
+        byName.set((r as { name: string }).name, r as Record<string, unknown>);
+      }
+    }
+    editedSpec.roles = editedSpec.roles.map((role) => {
+      if (!role || typeof role !== 'object' || Array.isArray(role)) return role;
+      const r = { ...(role as Record<string, unknown>) };
+      const prev = typeof r.name === 'string' ? byName.get(r.name) : undefined;
+      if (prev && !('jwtTokens' in r) && 'jwtTokens' in prev) r.jwtTokens = prev.jwtTokens;
+      return r;
+    });
+  }
+  if (Array.isArray(editedSpec.syncWindows)) {
+    editedSpec.syncWindows = editedSpec.syncWindows.map((win) => {
+      if (!win || typeof win !== 'object' || Array.isArray(win)) return win;
+      const w = { ...(win as Record<string, unknown>) };
+      if (w.manualSync === null) delete w.manualSync;
+      if (w.andOperator === null) delete w.andOperator;
+      return w;
+    });
+  }
+
+  return {
+    ...existing,
+    metadata: {
+      ...existingMeta,
+      ...(editedMeta.labels && typeof editedMeta.labels === 'object' && !Array.isArray(editedMeta.labels) ? { labels: editedMeta.labels } : {}),
+      ...(editedMeta.annotations && typeof editedMeta.annotations === 'object' && !Array.isArray(editedMeta.annotations) ? { annotations: editedMeta.annotations } : {}),
+      name: expectedName,
+      ...(existingMeta.namespace !== undefined ? { namespace: existingMeta.namespace } : {}),
+      ...(existingMeta.resourceVersion !== undefined ? { resourceVersion: existingMeta.resourceVersion } : {}),
+      ...(existingMeta.uid !== undefined ? { uid: existingMeta.uid } : {}),
+    },
+    spec: {
+      ...existingSpec,
+      ...editedSpec,
+    },
+  };
+}
 
 export class ArgoClient {
   private readonly scopes = new Map<string, string>();
@@ -388,6 +471,69 @@ export class ArgoClient {
     return data;
   }
 
+  private async verifyMutationEpoch(context: string, expectedEpoch: string, signal: AbortSignal): Promise<{ scope: string; connection: Connection }> {
+    if (this.closed || signal.aborted) throw new ServiceError('CANCELLED', 499);
+    if (!this.networkEnabled) throw new ServiceError('NETWORK_DISABLED', 403);
+    const scope = await this.scope(context);
+    if (this.publicEpoch(scope) !== expectedEpoch) throw new ServiceError('EXPIRED', 410);
+    const connection = await this.credentials.resolve(context);
+    if (this.connectionScope(connection) !== scope) throw new ServiceError('EXPIRED', 410);
+    return { scope, connection };
+  }
+
+  private async verifyResourceFresh(connection: Connection, context: string, app: ApplicationReference, resource: ResourceReference, signal: AbortSignal): Promise<void> {
+    if (!resource.uid) throw new ServiceError('BAD_REQUEST', 400);
+    const rawTree = await requestJson(connection, 'resourceTree', signal, { ...app });
+    if ((await this.credentials.resolve(context)).generation !== connection.generation) throw new ServiceError('AUTH_REQUIRED', 401);
+    const tree = resourceTree(rawTree);
+    const matching = tree.nodes.filter((node) => resourceCoordinate(node) === resourceCoordinate(resource) && node.uid === resource.uid);
+    if (matching.length !== 1) throw new ServiceError('RESOURCE_CHANGED', 409);
+    try {
+      const rawLive = await requestJson(connection, 'resource', signal, {
+        ...app, group: resource.group, kind: resource.kind, version: resource.version, namespace: resource.namespace, resourceName: resource.name,
+      });
+      if ((await this.credentials.resolve(context)).generation !== connection.generation) throw new ServiceError('AUTH_REQUIRED', 401);
+      liveResource(rawLive, resource);
+    } catch (error) {
+      if (error instanceof ServiceError && error.code === 'NOT_FOUND') throw new ServiceError('RESOURCE_CHANGED', 409);
+      throw error;
+    }
+  }
+
+  private async resolveRepositoryKey(connection: Connection, repo: string, project: string | undefined, signal: AbortSignal): Promise<string> {
+    try {
+      const raw = await requestJson(connection, 'repositories', signal);
+      const list = raw && typeof raw === 'object' && !Array.isArray(raw) && Array.isArray((raw as { items?: unknown }).items)
+        ? (raw as { items: unknown[] }).items : [];
+      const entries = list.flatMap((item) => item && typeof item === 'object' && !Array.isArray(item) && typeof (item as { repo?: unknown }).repo === 'string'
+        ? [{ repo: (item as { repo: string }).repo, project: typeof (item as { project?: unknown }).project === 'string' ? (item as { project: string }).project : '' }]
+        : []);
+      const inScope = project !== undefined ? entries.filter((item) => item.project === project) : entries;
+      if (inScope.some((item) => item.repo === repo)) return repo;
+      const sanitizedMatches = inScope.filter((item) => safeMetadataUrl(item.repo) === repo);
+      if (sanitizedMatches.length === 1) return sanitizedMatches[0]!.repo;
+    } catch (error) {
+      if (error instanceof ServiceError && ['AUTH_REQUIRED', 'CANCELLED', 'TIMEOUT'].includes(error.code)) throw error;
+    }
+    return repo;
+  }
+
+  private async resolveClusterServer(connection: Connection, server: string, signal: AbortSignal): Promise<string> {
+    try {
+      const raw = await requestJson(connection, 'clusters', signal);
+      const list = raw && typeof raw === 'object' && !Array.isArray(raw) && Array.isArray((raw as { items?: unknown }).items)
+        ? (raw as { items: unknown[] }).items : [];
+      const servers = list.flatMap((item) => item && typeof item === 'object' && !Array.isArray(item) && typeof (item as { server?: unknown }).server === 'string'
+        ? [(item as { server: string }).server] : []);
+      if (servers.includes(server)) return server;
+      const sanitizedMatches = servers.filter((orig) => safeMetadataUrl(orig) === server);
+      if (sanitizedMatches.length === 1) return sanitizedMatches[0]!;
+    } catch (error) {
+      if (error instanceof ServiceError && ['AUTH_REQUIRED', 'CANCELLED', 'TIMEOUT'].includes(error.code)) throw error;
+    }
+    return server;
+  }
+
   /**
    * Non-cached, non-retried write path. Verifies identityEpoch before dispatch
    * and invalidates cached observations for the scope upon completion.
@@ -401,12 +547,7 @@ export class ArgoClient {
     body?: unknown,
     project: (value: unknown) => T = (value) => value as T,
   ): Promise<T> {
-    if (this.closed || signal.aborted) throw new ServiceError('CANCELLED', 499);
-    if (!this.networkEnabled) throw new ServiceError('NETWORK_DISABLED', 403);
-    const scope = await this.scope(context);
-    if (this.publicEpoch(scope) !== expectedEpoch) throw new ServiceError('EXPIRED', 410);
-    const connection = await this.credentials.resolve(context);
-    if (this.connectionScope(connection) !== scope) throw new ServiceError('EXPIRED', 410);
+    const { scope, connection } = await this.verifyMutationEpoch(context, expectedEpoch, signal);
     const raw = await mutateJson(connection, operation, signal, parameters, body);
     this.queries.invalidateScope(scope);
     return this.safe(project(raw), connection) as T;
@@ -483,7 +624,7 @@ export class ArgoClient {
     await this.mutate(req.context, req.identityEpoch, 'deleteApplication', signal, {
       name: req.name, appNamespace: req.appNamespace,
       ...(req.cascade !== undefined ? { cascade: req.cascade } : {}),
-      ...(req.propagationPolicy ? { propagationPolicy: req.propagationPolicy } : {}),
+      ...(req.cascade !== false && req.propagationPolicy ? { propagationPolicy: req.propagationPolicy } : {}),
     });
     return { operation: 'deleteApplication', accepted: true };
   }
@@ -491,7 +632,8 @@ export class ArgoClient {
   /** Mirrors argoproj/argo-cd cmd/argocd/commands/app_actions.go RunResourceActionV2 -> V1 fallback. */
   async runResourceAction(req: RunResourceActionRequest, signal: AbortSignal): Promise<ActionResult> {
     const app = { name: req.name, appNamespace: req.appNamespace };
-    await this.verifyResource(req.context, app, req.resource, signal);
+    const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+    await this.verifyResourceFresh(connection, req.context, app, req.resource, signal);
     const v2Body: Record<string, unknown> = {
       name: req.name,
       appNamespace: req.appNamespace,
@@ -508,7 +650,10 @@ export class ArgoClient {
       return { operation: 'resourceAction', accepted: true, fallbackUsed: false };
     } catch (error) {
       if (!(error instanceof ServiceError) || !['NOT_FOUND', 'CAPABILITY_UNAVAILABLE'].includes(error.code)) throw error;
-      if (req.parameters?.length) throw new ServiceError('CAPABILITY_UNAVAILABLE', 501);
+      if (req.parameters?.length) {
+        if (error.code === 'NOT_FOUND') await requestJson(connection, 'application', signal, app);
+        throw new ServiceError('CAPABILITY_UNAVAILABLE', 501);
+      }
       await this.mutate(req.context, req.identityEpoch, 'runResourceActionV1', signal, {
         ...app,
         namespace: req.resource.namespace,
@@ -523,7 +668,8 @@ export class ArgoClient {
 
   async deleteResource(req: DeleteResourceRequest, signal: AbortSignal): Promise<ActionResult> {
     const app = { name: req.name, appNamespace: req.appNamespace };
-    await this.verifyResource(req.context, app, req.resource, signal);
+    const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+    await this.verifyResourceFresh(connection, req.context, app, req.resource, signal);
     await this.mutate(req.context, req.identityEpoch, 'deleteResource', signal, {
       ...app,
       namespace: req.resource.namespace,
@@ -539,7 +685,8 @@ export class ArgoClient {
 
   async patchResource(req: PatchResourceRequest, signal: AbortSignal): Promise<ActionResult<LiveResource>> {
     const app = { name: req.name, appNamespace: req.appNamespace };
-    await this.verifyResource(req.context, app, req.resource, signal);
+    const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+    await this.verifyResourceFresh(connection, req.context, app, req.resource, signal);
     const data = await this.mutate(req.context, req.identityEpoch, 'patchResource', signal, {
       ...app,
       namespace: req.resource.namespace,
@@ -547,7 +694,7 @@ export class ArgoClient {
       version: req.resource.version,
       group: req.resource.group,
       kind: req.resource.kind,
-      patchType: req.patchType,
+      patchType: K8S_PATCH_CONTENT_TYPE[req.patchType],
     }, req.patch, (value) => liveResource(value, req.resource));
     return { operation: 'patchResource', accepted: true, data };
   }
@@ -566,24 +713,40 @@ export class ArgoClient {
         return { operation: req.operation, accepted: true, data };
       }
       case 'updateProject': {
-        const data = await this.mutate(req.context, req.identityEpoch, 'updateProject', signal, { project: req.name }, { project: req.project }, management.project);
+        const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+        const existingRaw = await requestJson(connection, 'project', signal, { project: req.name });
+        if ((await this.credentials.resolve(req.context)).generation !== connection.generation) throw new ServiceError('AUTH_REQUIRED', 401);
+        const merged = mergeProjectForUpdate(existingRaw, req.project, req.name);
+        const data = await this.mutate(req.context, req.identityEpoch, 'updateProject', signal, { project: req.name }, { project: merged }, management.project);
         return { operation: req.operation, accepted: true, data };
       }
       case 'deleteProject':
         await this.mutate(req.context, req.identityEpoch, 'deleteProject', signal, { project: req.name });
         return { operation: req.operation, accepted: true };
-      case 'validateRepository':
-        await this.mutate(req.context, req.identityEpoch, 'validateRepository', signal, { repo: req.repo, ...(req.type ? { repoType: req.type } : {}), ...(req.project ? { project: req.project } : {}) }, {});
+      case 'validateRepository': {
+        const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+        const repo = await this.resolveRepositoryKey(connection, req.repo, req.project, signal);
+        await this.mutate(req.context, req.identityEpoch, 'validateRepository', signal, { repo, ...(req.type ? { repoType: req.type } : {}), ...(req.project ? { project: req.project } : {}) }, repo);
         return { operation: req.operation, accepted: true };
-      case 'deleteRepository':
-        await this.mutate(req.context, req.identityEpoch, 'deleteRepository', signal, { repo: req.repo, ...(req.appProject ? { appProject: req.appProject } : {}) });
+      }
+      case 'deleteRepository': {
+        const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+        const repo = await this.resolveRepositoryKey(connection, req.repo, req.appProject, signal);
+        await this.mutate(req.context, req.identityEpoch, 'deleteRepository', signal, { repo, ...(req.appProject ? { appProject: req.appProject } : {}) });
         return { operation: req.operation, accepted: true };
-      case 'invalidateClusterCache':
-        await this.mutate(req.context, req.identityEpoch, 'invalidateClusterCache', signal, { server: req.server });
+      }
+      case 'invalidateClusterCache': {
+        const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+        const server = req.idType === 'name' ? req.server : await this.resolveClusterServer(connection, req.server, signal);
+        await this.mutate(req.context, req.identityEpoch, 'invalidateClusterCache', signal, { server, ...(req.idType ? { idType: req.idType } : {}) });
         return { operation: req.operation, accepted: true };
-      case 'deleteCluster':
-        await this.mutate(req.context, req.identityEpoch, 'deleteCluster', signal, { server: req.server });
+      }
+      case 'deleteCluster': {
+        const { connection } = await this.verifyMutationEpoch(req.context, req.identityEpoch, signal);
+        const server = req.idType === 'name' ? req.server : await this.resolveClusterServer(connection, req.server, signal);
+        await this.mutate(req.context, req.identityEpoch, 'deleteCluster', signal, { server, ...(req.idType ? { idType: req.idType } : {}) });
         return { operation: req.operation, accepted: true };
+      }
     }
   }
 

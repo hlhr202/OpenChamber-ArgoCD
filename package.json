@@ -2,7 +2,7 @@
   "name": "openchamber-argocd",
   "version": "1.2.0",
   "private": false,
-  "description": "Read-only Argo CD extension for OpenChamber with context switching, application filtering, deployment and resource inspection, logs, events, and manifest diffs.",
+  "description": "Argo CD extension for OpenChamber with context switching, application filtering, deployment and resource inspection, logs, events, manifest diffs, and RBAC-governed operational actions.",
   "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@10.30.3",
