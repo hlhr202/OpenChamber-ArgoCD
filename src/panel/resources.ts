@@ -214,8 +214,10 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
     eventPane = element(selection, 'section'); eventPane.setAttribute('aria-label', t("Resource events"));
     manifest = element(selection, 'section'); manifest.setAttribute('aria-label', 'Live Manifest'); logs = element(selection, 'section');
     const reload = mountIconButton(identity, { icon: 'reload', label: "Reload resource details", onClick: () => { if (detailTab === 'logs') logView?.reload(); else void activateDetail(true); } }); detailDisposers.push(() => reload.dispose());
-    const actionBar = element(selection, 'div'); actionBar.className = 'argocd-action-bar'; actionBar.setAttribute('role', 'toolbar'); actionBar.setAttribute('aria-label', t('Resource actions'));
-    const actionStatus = element(selection, 'p'); actionStatus.className = 'argocd-action-status'; actionStatus.setAttribute('role', 'status'); actionStatus.hidden = true;
+    const actionBar = document.createElement('div'); actionBar.className = 'argocd-action-bar'; actionBar.setAttribute('role', 'toolbar'); actionBar.setAttribute('aria-label', t('Resource actions'));
+    const actionStatus = document.createElement('p'); actionStatus.className = 'argocd-action-status'; actionStatus.setAttribute('role', 'status'); actionStatus.hidden = true;
+    selection.insertBefore(actionBar, detailNav);
+    selection.insertBefore(actionStatus, detailNav);
     const ref = reference(node);
     const localSelection = selectionVersion;
     const runResourceMutation = async (path: string, body: Record<string, unknown>, pendingText: string, doneText: string, reloadTree = true) => {

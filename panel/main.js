@@ -18226,14 +18226,16 @@ ${end.comment}` : end.comment;
         else void activateDetail(true);
       } });
       detailDisposers.push(() => reload.dispose());
-      const actionBar = element2(selection2, "div");
+      const actionBar = document2.createElement("div");
       actionBar.className = "argocd-action-bar";
       actionBar.setAttribute("role", "toolbar");
       actionBar.setAttribute("aria-label", t("Resource actions"));
-      const actionStatus = element2(selection2, "p");
+      const actionStatus = document2.createElement("p");
       actionStatus.className = "argocd-action-status";
       actionStatus.setAttribute("role", "status");
       actionStatus.hidden = true;
+      selection2.insertBefore(actionBar, detailNav);
+      selection2.insertBefore(actionStatus, detailNav);
       const ref = reference(node);
       const localSelection = selectionVersion;
       const runResourceMutation = async (path2, body, pendingText, doneText, reloadTree = true) => {
