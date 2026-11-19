@@ -1388,7 +1388,8 @@ test('tab and visibility switches keep Application & Resource actions alive, Pro
   resourceButton(resToolbar, 'Restart').click();
   await until(() => Boolean(document.querySelector('.argocd-dialog')));
   document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-primary')!.click();
-  await until(() => argo.requests.some((r) => r.method === 'POST' && r.path === '/api/v1/applications/demo/resource/actions/v2'));
+  await until(() => argo.requests.some((r) => r.method === 'POST' && r.path === '/api/v1/applications/demo/resource/actions/v2')
+    && root.textContent!.includes('Resource action completed.'));
 
   // 3. Switch to Management -> Project -> Edit 'default' -> verify full spec round-trip preserves jwtTokens & resourceVersion
   navTabs.find((el) => el.textContent === 'Management')!.click();
@@ -1399,6 +1400,7 @@ test('tab and visibility switches keep Application & Resource actions alive, Pro
   root.querySelector<HTMLElement>('[aria-label="Management entries"] [role="option"]')!.click();
   await until(() => [...root.querySelectorAll('[aria-label="Management details"] button')].some((b) => b.textContent === 'Edit'));
 
+  const projListsBeforeSave = argo.requests.filter((r) => r.method === 'GET' && r.path === '/api/v1/projects').length;
   resourceButton(root.querySelector('[aria-label="Management details"]')!, 'Edit').click();
   await until(() => Boolean(document.querySelector('.argocd-dialog-editor')));
   const textarea = document.querySelector<HTMLTextAreaElement>('.argocd-dialog-editor')!;
@@ -1408,13 +1410,14 @@ test('tab and visibility switches keep Application & Resource actions alive, Pro
   initialDraft.spec.description = 'Edited via Management UI';
   textarea.value = JSON.stringify(initialDraft, null, 2);
   document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-primary')!.click();
-  await until(() => argo.requests.some((r) => r.method === 'PUT' && r.path === '/api/v1/projects/default'));
+  await until(() => argo.requests.some((r) => r.method === 'PUT' && r.path === '/api/v1/projects/default')
+    && argo.requests.filter((r) => r.method === 'GET' && r.path === '/api/v1/projects').length > projListsBeforeSave
+    && Boolean(root.querySelector('[aria-label="Management entries"] [role="option"]')));
   const updatedProj = argo.state.projects.get('default')!;
   assert.equal((updatedProj.spec as Record<string, unknown>).description, 'Edited via Management UI');
   assert.deepEqual((((updatedProj.spec as Record<string, unknown>).roles as Array<Record<string, unknown>>)[0]!).jwtTokens, [{ id: 'jwt-keep-1', iat: 1700000000 }]);
 
   // 4. Open Delete Project dialog, then switch Management module -> open dialog must abort and close immediately
-  await until(() => Boolean(root.querySelector('[aria-label="Management entries"] [role="option"]')));
   root.querySelector<HTMLElement>('[aria-label="Management entries"] [role="option"]')!.click();
   await until(() => [...root.querySelectorAll('[aria-label="Management details"] button')].some((b) => b.textContent === 'Delete'));
   resourceButton(root.querySelector('[aria-label="Management details"]')!, 'Delete').click();
@@ -1427,6 +1430,7 @@ test('tab and visibility switches keep Application & Resource actions alive, Pro
 
   // 5. Back on Applications: non-cascading Delete disables propagation policy select and omits propagationPolicy query param
   navTabs.find((el) => el.textContent === 'Applications')!.click();
+  await until(() => Boolean(root.querySelector('[aria-label="Application actions"]')));
   resourceButton(root.querySelector('[aria-label="Application actions"]')!, 'Delete').click();
   await until(() => Boolean(document.querySelector('.argocd-dialog-danger')));
   const cascadeCheckbox = document.querySelector<HTMLInputElement>('.argocd-dialog-check input[type="checkbox"]')!;
@@ -1437,7 +1441,7 @@ test('tab and visibility switches keep Application & Resource actions alive, Pro
   const confirmInput = document.querySelector<HTMLInputElement>('.argocd-dialog input[type="text"]')!;
   confirmInput.value = 'demo'; confirmInput.dispatchEvent(new Event('input'));
   document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-danger')!.click();
-  await until(() => !argo.state.applications.has('argocd/demo'));
+  await until(() => !argo.state.applications.has('argocd/demo') && root.querySelector('[aria-label="Application actions"]') === null);
   const delReq = [...argo.requests].reverse().find((r) => r.method === 'DELETE' && r.path === '/api/v1/applications/demo')!;
   assert.equal(delReq.query.cascade?.[0], 'false');
   assert.equal(delReq.query.propagationPolicy, undefined);
