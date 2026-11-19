@@ -2,7 +2,7 @@
 
 [English](../README.md) | [简体中文](README.zh-CN.md) | [العربية](README.ar.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [עברית](README.he.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | Nederlands | [Polski](README.pl.md) | [Português (Brasil)](README.pt-BR.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [繁體中文](README.zh-TW.md)
 
-Een **alleen-lezen Argo CD-extensie voor OpenChamber**. Blader door applicaties, inspecteer deployments en lees resourcelogboeken en gebeurtenissen zonder uw werkruimte te verlaten.
+Een **volledige Argo CD-extensie voor OpenChamber**. Blader door applicaties, inspecteer deployments, lees resourcelogboeken en gebeurtenissen en voer operationele Argo CD-acties (Sync, Refresh, Terminate, Rollback, Resource Actions, Patch, aanmaken, verwijderen en beheeracties) rechtstreeks vanuit uw werkruimte uit.
 
 ## Installatie
 
@@ -23,7 +23,7 @@ U kunt ook **openchamber-argocd.zip** downloaden uit de [Releases](https://githu
 ## Vereisten
 
 - **OpenChamber met extensieondersteuning**, geïntroduceerd in [v1.24.0](https://github.com/openchamber/openchamber/releases/tag/v1.24.0). Deze build vereist momenteel **v2.2.0 of nieuwer** voor installatie; compatibiliteit met oudere versies is niet geverifieerd.
-- **Argo CD CLI geïnstalleerd en al geconfigureerd** voor de systeemgebruiker die OpenChamber Server uitvoert, met geldige aanmeldgegevens en leesrechten voor de benodigde applicaties, resources, logboeken en gebeurtenissen. De extensie leest deze configuratie; ze voert de CLI niet uit en meldt zich niet apart aan.
+- **Argo CD CLI geïnstalleerd en al geconfigureerd** voor de systeemgebruiker die OpenChamber Server uitvoert, met geldige aanmeldgegevens en Argo CD RBAC-rechten voor de vereiste lees- en schrijfbewerkingen. De extensie leest deze configuratie en roept rechtstreeks de officiële REST API van Argo CD aan; ze voert de CLI niet uit en meldt zich niet apart aan.
 - OpenChamber Server moet de geconfigureerde Argo CD API kunnen bereiken.
 
 ## Schermafbeeldingen
@@ -43,8 +43,9 @@ Engelstalige interface met voorbeeldgegevens.
 - Wissel tussen Argo CD-contexten en zoek of filter applicaties.
 - Inspecteer applicatieconfiguratie, status, deploymentgeschiedenis en resourcebomen.
 - Lees Pod-/containerlogboeken, gebeurtenissen, manifesten en verschillen.
+- Operationele Argo CD-acties uitvoeren (standaard ingeschakeld, beheerd via Argo CD RBAC en Sync Windows), gemodelleerd naar de officiële [Argo CD CLI](https://github.com/argoproj/argo-cd): Sync (met Prune, Dry-Run, Force, Replace, Server-Side Apply en selectieve resources), Refresh / Hard Refresh, Terminate, Rollback, Resource Actions (V2 met automatische V1-terugval), Patch, applicaties en resources aanmaken/verwijderen en ApplicationSet-/Project-/repository-/clusterbeheer.
 - Bekijk probleemoplossingssamenvattingen vooraf en bevestig voordat ze aan de chat worden toegevoegd.
-- Standaard alleen-lezen; volgt de taal en het thema van OpenChamber.
+- Volgt de taal en het thema van OpenChamber in 15 talen.
 
 ## Privacy
 

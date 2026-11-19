@@ -2,7 +2,7 @@
 
 [English](../README.md) | 简体中文 | [العربية](README.ar.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [עברית](README.he.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Português (Brasil)](README.pt-BR.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [繁體中文](README.zh-TW.md)
 
-一个 **OpenChamber 的只读 Argo CD 扩展**。无需离开工作区，即可浏览应用、查看部署详情，以及读取资源日志和事件。
+一个功能完整的 **OpenChamber Argo CD 扩展**。无需离开工作区，即可浏览应用、查看部署详情、读取资源日志和事件，并直接执行 Argo CD 运维操作（同步、刷新、终止、回滚、资源动作、修补、创建、删除及管理域操作）。
 
 ## 安装
 
@@ -23,7 +23,7 @@
 ## 前置条件
 
 - **支持扩展的 OpenChamber**：扩展功能从 [v1.24.0](https://github.com/openchamber/openchamber/releases/tag/v1.24.0) 引入。本构建当前声明的安装下限为 **v2.2.0**，更早版本的兼容性尚未验证。
-- **已安装并配置 Argo CD CLI**：运行 OpenChamber Server 的系统用户需已有有效凭据，以及读取所需应用、资源、日志和事件的权限。扩展直接读取这些已有配置，不执行 CLI，也无需单独登录。
+- **已安装并配置 Argo CD CLI**：运行 OpenChamber Server 的系统用户需已有有效凭据，并具备所需读写操作的 Argo CD RBAC 权限。扩展直接读取现有配置并调用 Argo CD 官方 REST API，不执行 CLI 二进制，也无需单独登录。
 - OpenChamber Server 能访问所配置的 Argo CD API。
 
 ## 截图
@@ -43,8 +43,9 @@
 - 切换 Argo CD context，搜索和筛选应用。
 - 查看应用配置、运行状态、部署历史和资源树。
 - 读取 Pod／容器日志、事件、Manifest 和 Diff。
+- 执行与官方 [Argo CD CLI](https://github.com/argoproj/argo-cd) 一致的运维操作（默认启用，受 Argo CD RBAC 与同步窗口管控）：同步（支持 Prune、Dry-Run、Force、Replace、Server-Side Apply、指定资源同步）、刷新／强制刷新、终止操作、回滚、资源动作（V2 及自动 V1 回退）、修补、创建／删除应用与资源，以及 ApplicationSet／Project／仓库／集群管理操作。
 - 预览排障摘要，并确认后添加到聊天。
-- 全程只读，跟随 OpenChamber 的语言和主题。
+- 跟随 OpenChamber 的语言和主题，内置 15 种语言。
 
 ## 隐私
 

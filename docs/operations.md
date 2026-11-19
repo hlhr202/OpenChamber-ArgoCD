@@ -32,6 +32,14 @@ The host right-side rail uses panel/argocd.svg, a bundled Argo mark declared in 
 
 The Service does **not execute CLI commands, log in, renew credentials, or write configuration**. The manifest requests no exec permission. Invalid/expired credentials produce an explicit error. Legacy networkEnabled is no longer a second gate, even if an existing file says false. These policies supersede the earlier default-disabled network/CLI-renewal design recorded in validation history.
 
+## Operational actions
+
+Operational actions are **enabled by default** (`Diagnostics.readOnly = false`) and follow the semantics of the official [argoproj/argo-cd](https://github.com/argoproj/argo-cd) CLI (`cmd/argocd/commands/app.go`, `app_actions.go`, `app_resources.go`, `applicationset.go`, `project.go`, `repo.go`, `cluster.go`, `account.go`) directly over Argo CD's `/api/v1/...` REST endpoints:
+
+- **Authorization**: Delegated entirely to Argo CD RBAC (`403 FORBIDDEN`) and Sync Windows; `/v1/can-i` exposes Argo CD's `AccountService.CanI` endpoint.
+- **Safety guardrails**: Fixed write-endpoint allowlist (no arbitrary URLs/methods), mandatory `identityEpoch` verification (`410 EXPIRED` on context/credential drift), resource UID verification before resource mutations (`409 RESOURCE_CHANGED`), zero automatic retries on non-idempotent mutations, immediate cache invalidation after success, and explicit confirmation dialogs (including exact name typing for destructive deletions).
+- **Test isolation**: Automated tests run exclusively against the in-repo Mock Argo CD API Server fixture (`tests/argocd-server-fixture.ts` on `127.0.0.1:0` with isolated temporary synthetic configuration) and never touch host Kubernetes or host Argo CD instances.
+
 ## Acceptance and authorization
 
 The package is **openchamber-argocd 1.2.0**, with private=false and the MIT license. This metadata does not imply npm publication, real host acceptance or production compatibility. Remote acceptance remains **human-agreed skip, not verified**, retained in these documents. The former release.json hash inventory is no longer generated; removing it does not turn build checks into real host acceptance.
@@ -60,7 +68,7 @@ There is no version/hash suffix, checksum sidecar or release.json hash inventory
 
 Existing hash-named historical directories/ZIPs/checksum files and unrelated dist content are **not** automatically deleted: an installed extension may still reference an old directory. After explicitly replacing that installation, an operator may separately remove unused historical outputs. The new build never creates more of them. Replacing files is not an automatic host re-enable/reinstall or a filesystem-wide atomic transaction.
 
-Exactly 18 allowlisted files ship in the directory/ZIP: minimal manifest, bundled JS, HTML/CSS/Argo SVG, seven English Markdown files, the Simplified Chinese README, two English application screenshots (desktop and mobile), MIT LICENSE and runtime/icon notices. No source/tests/scripts/node_modules/config/credentials/logs ship in those outputs. Catalogs are bundled into JS. THIRD_PARTY_NOTICES.txt is generated at the repository root as well, so Git URL installs include dependency/icon licenses without a target build. The application's own license is MIT; see the separate LICENSE file.
+Exactly 31 allowlisted files ship in the directory/ZIP: minimal manifest, bundled JS, HTML/CSS/Argo SVG, seven English Markdown files, 14 translated README files, two English application screenshots (desktop and mobile), MIT LICENSE and runtime/icon notices. No source/tests/scripts/node_modules/config/credentials/logs ship in those outputs. Catalogs are bundled into JS. THIRD_PARTY_NOTICES.txt is generated at the repository root as well, so Git URL installs include dependency/icon licenses without a target build. The application's own license is MIT; see the separate LICENSE file.
 
 ## Installation sources
 

@@ -1,7 +1,9 @@
 /** Authored English message keys. Resource values and logs are never catalog keys. */
 import { deploymentEnglish, deploymentChinese } from './deployment.js';
+import { actionsEnglish, actionsChinese } from './actions.js';
 export const english: Record<string, string> = {
   ...deploymentEnglish,
+  ...actionsEnglish,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "Opening the Logs tab reads a recent fragment; following is off by default.",
   "Reload logs": "Reload logs",
   "Invalid log options. Check the line count and time range.": "Invalid log options. Check the line count and time range.",
@@ -284,7 +286,7 @@ export const english: Record<string, string> = {
   "Reading additional information…": "Reading additional information…",
   "Additional information unavailable; main details remain available. Do not infer an empty result.": "Additional information unavailable; main details remain available. Do not infer an empty result.",
   "Management paused; the existing list is an old snapshot.": "Management paused; the existing list is an old snapshot.",
-  "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.",
+  "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.",
   "The server reported connection details; their contents may contain credentials and are withheld.": "The server reported connection details; their contents may contain credentials and are withheld.",
   "No displayable connection details were provided; do not infer success.": "No displayable connection details were provided; do not infer success.",
   "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Reconciliation details may contain generator values or credentials; bodies are withheld.",
@@ -391,6 +393,7 @@ export const english: Record<string, string> = {
 };
 export const chinese: Record<string, string> = {
   ...deploymentChinese,
+  ...actionsChinese,
   "Opening the Logs tab reads a recent fragment; following is off by default.": "打开日志标签后读取近期片段；连续查看默认关闭。",
   "Reload logs": "重新查询日志",
   "Invalid log options. Check the line count and time range.": "日志参数无效；请检查行数和时间范围。",
@@ -673,7 +676,7 @@ export const chinese: Record<string, string> = {
   "Reading additional information…": "正在读取附加信息…",
   "Additional information unavailable; main details remain available. Do not infer an empty result.": "附加信息不可用；不影响主详情，不能推断为空。",
   "Management paused; the existing list is an old snapshot.": "管理域已暂停，已有列表仅为旧快照。",
-  "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "仅展示服务端此份响应的窗口判定，不使用浏览器时钟重算 cron。Project 活跃窗口不等于任意应用可同步；官方 v3.1.8 的 canSync 使用手动同步窗口判定，不能外推自动同步或 RBAC 权限，也不是本扩展提供同步操作的承诺。",
+  "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "仅展示服务端此份响应的窗口判定，不使用浏览器时钟重算 cron。Project 活跃窗口不等于任意应用可同步；官方 v3.1.8 的 canSync 使用手动同步窗口判定，不能外推自动同步或 RBAC 权限。",
   "The server reported connection details; their contents may contain credentials and are withheld.": "服务端存在连接说明；原文可能含认证信息，未传输。",
   "No displayable connection details were provided; do not infer success.": "服务端未提供可显示的连接说明；不据此判断成功。",
   "Reconciliation details may contain generator values or credentials; bodies are withheld.": "服务端协调说明可能包含生成参数或凭据；正文未传输。",

@@ -2,7 +2,7 @@
 
 [English](../README.md) | [简体中文](README.zh-CN.md) | [العربية](README.ar.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [עברית](README.he.md) | 日本語 | [한국어](README.ko.md) | [Nederlands](README.nl.md) | [Polski](README.pl.md) | [Português (Brasil)](README.pt-BR.md) | [Türkçe](README.tr.md) | [Українська](README.uk.md) | [繁體中文](README.zh-TW.md)
 
-**OpenChamber 向けの読み取り専用 Argo CD 拡張機能**です。ワークスペースを離れずに、アプリケーションやデプロイの確認、リソースのログやイベントの閲覧ができます。
+**OpenChamber 向けのフル機能 Argo CD 拡張機能**です。ワークスペースを離れずに、アプリケーションやデプロイの確認、ログやイベントの閲覧に加え、Argo CD の運用操作（Sync、Refresh、Terminate、Rollback、Resource Actions、Patch、作成・削除、管理操作）を直接実行できます。
 
 ## インストール
 
@@ -23,7 +23,7 @@
 ## 前提条件
 
 - **拡張機能に対応した OpenChamber**。拡張機能は [v1.24.0](https://github.com/openchamber/openchamber/releases/tag/v1.24.0) で導入されました。このビルドのインストール要件は現在 **v2.2.0 以降**で、それ以前のバージョンとの互換性は未検証です。
-- OpenChamber Server を実行する OS ユーザーで **Argo CD CLI がインストール・設定済み**であること。有効な認証情報と、必要なアプリケーション、リソース、ログ、イベントの読み取り権限が必要です。拡張機能は既存の設定を読み取るだけで、CLI の実行や別途のログインは行いません。
+- OpenChamber Server を実行する OS ユーザーで **Argo CD CLI がインストール・設定済み**であり、有効な認証情報と必要な読み書き操作の Argo CD RBAC 権限があること。拡張機能は既存の設定を読み取って Argo CD の公式 REST API を直接呼び出し、CLI バイナリの実行や別途のログインは行いません。
 - OpenChamber Server から設定済みの Argo CD API にアクセスできること。
 
 ## スクリーンショット
@@ -43,8 +43,9 @@
 - Argo CD コンテキストの切り替え、アプリケーションの検索と絞り込み。
 - アプリケーション設定、状態、デプロイ履歴、リソースツリーの確認。
 - Pod／コンテナのログ、イベント、マニフェスト、差分の閲覧。
+- 公式 [Argo CD CLI](https://github.com/argoproj/argo-cd) に準拠した運用操作を実行（デフォルト有効、Argo CD RBAC と Sync Windows により制御）：Sync（Prune、Dry-Run、Force、Replace、Server-Side Apply、個別リソース指定）、Refresh／Hard Refresh、操作の停止、Rollback、Resource Actions（V2 と V1 自動フォールバック）、Patch、アプリケーション／リソースの作成・削除、ApplicationSet／Project／リポジトリ／クラスターの管理操作。
 - トラブルシューティング要約のプレビューと、確認後のチャットへの追加。
-- 設計上読み取り専用で、OpenChamber の言語とテーマに追従。
+- 15 ロケールで OpenChamber の言語とテーマに追従。
 
 ## プライバシー
 

@@ -2360,9 +2360,222 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
     "Related resource events": "\u5173\u8054\u8D44\u6E90\u4E8B\u4EF6"
   };
 
+  // src/shared/locales/actions.ts
+  var actionsEnglish = {
+    "Another operation is already in progress or the object state conflicted.": "Another operation is already in progress or the object state conflicted.",
+    "New application": "New application",
+    "Create application": "Create application",
+    "Create": "Create",
+    "Creating application\u2026": "Creating application\u2026",
+    "Application created.": "Application created.",
+    "Action failed.": "Action failed.",
+    "Application actions": "Application actions",
+    "Session identity unavailable. Reload applications first.": "Session identity unavailable. Reload applications first.",
+    "Session identity unavailable. Read management data first.": "Session identity unavailable. Read management data first.",
+    "Sync": "Sync",
+    "Sync application": "Sync application",
+    "Syncing application\u2026": "Syncing application\u2026",
+    "Sync requested.": "Sync requested.",
+    "Refresh": "Refresh",
+    "Refreshing application\u2026": "Refreshing application\u2026",
+    "Application refreshed.": "Application refreshed.",
+    "Hard refresh": "Hard refresh",
+    "Hard refreshing application\u2026": "Hard refreshing application\u2026",
+    "Application hard refreshed.": "Application hard refreshed.",
+    "Terminate": "Terminate",
+    "Terminate operation": "Terminate operation",
+    "Terminate the currently running operation for this application?": "Terminate the currently running operation for this application?",
+    "Terminating operation\u2026": "Terminating operation\u2026",
+    "Operation termination requested.": "Operation termination requested.",
+    "Rollback": "Rollback",
+    "Rollback application": "Rollback application",
+    "Rolling back application\u2026": "Rolling back application\u2026",
+    "Rollback requested.": "Rollback requested.",
+    "Patch": "Patch",
+    "Patch application": "Patch application",
+    "Patching application\u2026": "Patching application\u2026",
+    "Application patched.": "Application patched.",
+    "Apply patch": "Apply patch",
+    "Delete": "Delete",
+    "Delete application": "Delete application",
+    "This permanently deletes the Argo CD application.": "This permanently deletes the Argo CD application.",
+    "Cascade delete managed resources": "Cascade delete managed resources",
+    "Propagation policy": "Propagation policy",
+    "Foreground": "Foreground",
+    "Background": "Background",
+    "Invalid retry limit (0\u2013100).": "Invalid retry limit (0\u2013100).",
+    "Deleting application\u2026": "Deleting application\u2026",
+    "Application deleted.": "Application deleted.",
+    "Resource actions": "Resource actions",
+    "Syncing resource\u2026": "Syncing resource\u2026",
+    "Resource sync requested.": "Resource sync requested.",
+    "Patch resource": "Patch resource",
+    "Patching resource\u2026": "Patching resource\u2026",
+    "Resource patched.": "Resource patched.",
+    "Delete resource": "Delete resource",
+    "Delete this Kubernetes resource from the cluster?": "Delete this Kubernetes resource from the cluster?",
+    "Force delete": "Force delete",
+    "Orphan dependents": "Orphan dependents",
+    "Deleting resource\u2026": "Deleting resource\u2026",
+    "Resource deleted.": "Resource deleted.",
+    "Run resource action": "Run resource action",
+    "Execute this Argo CD resource action?": "Execute this Argo CD resource action?",
+    "Run action": "Run action",
+    "Running resource action\u2026": "Running resource action\u2026",
+    "Resource action completed.": "Resource action completed.",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
+    "Submit": "Submit",
+    "Save": "Save",
+    "Edit": "Edit",
+    "Type {0} to confirm": "Type {0} to confirm",
+    "Target revision (optional)": "Target revision (optional)",
+    "Retry limit (optional)": "Retry limit (optional)",
+    "Prune": "Prune",
+    "Dry run": "Dry run",
+    "Force": "Force",
+    "Replace": "Replace",
+    "Server-Side Apply": "Server-Side Apply",
+    "Apply Out-Of-Sync Only": "Apply Out-Of-Sync Only",
+    "Revision history": "Revision history",
+    "Patch type": "Patch type",
+    "Upsert if already exists": "Upsert if already exists",
+    "Invalid JSON or YAML content.": "Invalid JSON or YAML content.",
+    "Running management action\u2026": "Running management action\u2026",
+    "Create ApplicationSet": "Create ApplicationSet",
+    "Create Project": "Create Project",
+    "ApplicationSet created.": "ApplicationSet created.",
+    "Project created.": "Project created.",
+    "Validate access": "Validate access",
+    "Repository access validated.": "Repository access validated.",
+    "Delete repository": "Delete repository",
+    "Remove this repository configuration from Argo CD?": "Remove this repository configuration from Argo CD?",
+    "Repository deleted.": "Repository deleted.",
+    "Invalidate cache": "Invalidate cache",
+    "Cluster cache invalidated.": "Cluster cache invalidated.",
+    "Delete cluster": "Delete cluster",
+    "Remove this cluster registration from Argo CD?": "Remove this cluster registration from Argo CD?",
+    "Cluster deleted.": "Cluster deleted.",
+    "Update Project": "Update Project",
+    "Project updated.": "Project updated.",
+    "Delete Project": "Delete Project",
+    "Permanently delete this Argo CD Project?": "Permanently delete this Argo CD Project?",
+    "Project deleted.": "Project deleted.",
+    "Delete ApplicationSet": "Delete ApplicationSet",
+    "Permanently delete this ApplicationSet?": "Permanently delete this ApplicationSet?",
+    "ApplicationSet deleted.": "ApplicationSet deleted.",
+    "No resource actions available.": "No resource actions available."
+  };
+  var actionsChinese = {
+    "Another operation is already in progress or the object state conflicted.": "\u5DF2\u6709\u5176\u4ED6\u64CD\u4F5C\u6B63\u5728\u6267\u884C\uFF0C\u6216\u5BF9\u8C61\u72B6\u6001\u53D1\u751F\u51B2\u7A81\u3002",
+    "New application": "\u65B0\u5EFA\u5E94\u7528",
+    "Create application": "\u521B\u5EFA\u5E94\u7528",
+    "Create": "\u521B\u5EFA",
+    "Creating application\u2026": "\u6B63\u5728\u521B\u5EFA\u5E94\u7528\u2026",
+    "Application created.": "\u5E94\u7528\u5DF2\u521B\u5EFA\u3002",
+    "Action failed.": "\u64CD\u4F5C\u5931\u8D25\u3002",
+    "Application actions": "\u5E94\u7528\u64CD\u4F5C",
+    "Session identity unavailable. Reload applications first.": "\u4F1A\u8BDD\u8EAB\u4EFD\u4E0D\u53EF\u7528\uFF0C\u8BF7\u5148\u91CD\u65B0\u52A0\u8F7D\u5E94\u7528\u3002",
+    "Session identity unavailable. Read management data first.": "\u4F1A\u8BDD\u8EAB\u4EFD\u4E0D\u53EF\u7528\uFF0C\u8BF7\u5148\u8BFB\u53D6\u7BA1\u7406\u6570\u636E\u3002",
+    "Sync": "\u540C\u6B65",
+    "Sync application": "\u540C\u6B65\u5E94\u7528",
+    "Syncing application\u2026": "\u6B63\u5728\u540C\u6B65\u5E94\u7528\u2026",
+    "Sync requested.": "\u5DF2\u53D1\u8D77\u540C\u6B65\u3002",
+    "Refresh": "\u5237\u65B0",
+    "Refreshing application\u2026": "\u6B63\u5728\u5237\u65B0\u5E94\u7528\u2026",
+    "Application refreshed.": "\u5E94\u7528\u5DF2\u5237\u65B0\u3002",
+    "Hard refresh": "\u5F3A\u5236\u5237\u65B0",
+    "Hard refreshing application\u2026": "\u6B63\u5728\u5F3A\u5236\u5237\u65B0\u5E94\u7528\u2026",
+    "Application hard refreshed.": "\u5E94\u7528\u5DF2\u5F3A\u5236\u5237\u65B0\u3002",
+    "Terminate": "\u7EC8\u6B62",
+    "Terminate operation": "\u7EC8\u6B62\u64CD\u4F5C",
+    "Terminate the currently running operation for this application?": "\u786E\u5B9A\u7EC8\u6B62\u8BE5\u5E94\u7528\u5F53\u524D\u6B63\u5728\u6267\u884C\u7684\u64CD\u4F5C\uFF1F",
+    "Terminating operation\u2026": "\u6B63\u5728\u7EC8\u6B62\u64CD\u4F5C\u2026",
+    "Operation termination requested.": "\u5DF2\u8BF7\u6C42\u7EC8\u6B62\u64CD\u4F5C\u3002",
+    "Rollback": "\u56DE\u6EDA",
+    "Rollback application": "\u56DE\u6EDA\u5E94\u7528",
+    "Rolling back application\u2026": "\u6B63\u5728\u56DE\u6EDA\u5E94\u7528\u2026",
+    "Rollback requested.": "\u5DF2\u53D1\u8D77\u56DE\u6EDA\u3002",
+    "Patch": "\u8865\u4E01",
+    "Patch application": "\u4FEE\u8865\u5E94\u7528",
+    "Patching application\u2026": "\u6B63\u5728\u4FEE\u8865\u5E94\u7528\u2026",
+    "Application patched.": "\u5E94\u7528\u5DF2\u4FEE\u8865\u3002",
+    "Apply patch": "\u5E94\u7528\u8865\u4E01",
+    "Delete": "\u5220\u9664",
+    "Delete application": "\u5220\u9664\u5E94\u7528",
+    "This permanently deletes the Argo CD application.": "\u6B64\u64CD\u4F5C\u5C06\u6C38\u4E45\u5220\u9664\u8BE5 Argo CD \u5E94\u7528\u3002",
+    "Cascade delete managed resources": "\u7EA7\u8054\u5220\u9664\u6258\u7BA1\u8D44\u6E90",
+    "Propagation policy": "\u4F20\u64AD\u7B56\u7565",
+    "Foreground": "Foreground\uFF08\u524D\u53F0\u7EA7\u8054\uFF09",
+    "Background": "Background\uFF08\u540E\u53F0\u7EA7\u8054\uFF09",
+    "Invalid retry limit (0\u2013100).": "\u91CD\u8BD5\u6B21\u6570\u4E0A\u9650\u65E0\u6548\uFF08\u9700\u4E3A 0\u2013100 \u7684\u6574\u6570\uFF09\u3002",
+    "Deleting application\u2026": "\u6B63\u5728\u5220\u9664\u5E94\u7528\u2026",
+    "Application deleted.": "\u5E94\u7528\u5DF2\u5220\u9664\u3002",
+    "Resource actions": "\u8D44\u6E90\u64CD\u4F5C",
+    "Syncing resource\u2026": "\u6B63\u5728\u540C\u6B65\u8D44\u6E90\u2026",
+    "Resource sync requested.": "\u5DF2\u53D1\u8D77\u8D44\u6E90\u540C\u6B65\u3002",
+    "Patch resource": "\u4FEE\u8865\u8D44\u6E90",
+    "Patching resource\u2026": "\u6B63\u5728\u4FEE\u8865\u8D44\u6E90\u2026",
+    "Resource patched.": "\u8D44\u6E90\u5DF2\u4FEE\u8865\u3002",
+    "Delete resource": "\u5220\u9664\u8D44\u6E90",
+    "Delete this Kubernetes resource from the cluster?": "\u786E\u5B9A\u4ECE\u96C6\u7FA4\u5220\u9664\u6B64 Kubernetes \u8D44\u6E90\uFF1F",
+    "Force delete": "\u5F3A\u5236\u5220\u9664",
+    "Orphan dependents": "\u4FDD\u7559\u5B50\u8D44\u6E90\uFF08Orphan\uFF09",
+    "Deleting resource\u2026": "\u6B63\u5728\u5220\u9664\u8D44\u6E90\u2026",
+    "Resource deleted.": "\u8D44\u6E90\u5DF2\u5220\u9664\u3002",
+    "Run resource action": "\u6267\u884C\u8D44\u6E90\u52A8\u4F5C",
+    "Execute this Argo CD resource action?": "\u786E\u5B9A\u6267\u884C\u6B64 Argo CD \u8D44\u6E90\u52A8\u4F5C\uFF1F",
+    "Run action": "\u6267\u884C\u52A8\u4F5C",
+    "Running resource action\u2026": "\u6B63\u5728\u6267\u884C\u8D44\u6E90\u52A8\u4F5C\u2026",
+    "Resource action completed.": "\u8D44\u6E90\u52A8\u4F5C\u5DF2\u5B8C\u6210\u3002",
+    "Cancel": "\u53D6\u6D88",
+    "Confirm": "\u786E\u8BA4",
+    "Submit": "\u63D0\u4EA4",
+    "Save": "\u4FDD\u5B58",
+    "Edit": "\u7F16\u8F91",
+    "Type {0} to confirm": "\u8BF7\u8F93\u5165 {0} \u4EE5\u786E\u8BA4",
+    "Target revision (optional)": "\u76EE\u6807\u7248\u672C\uFF08\u53EF\u9009\uFF09",
+    "Retry limit (optional)": "\u91CD\u8BD5\u6B21\u6570\u4E0A\u9650\uFF08\u53EF\u9009\uFF09",
+    "Prune": "\u6E05\u7406\u591A\u4F59\u8D44\u6E90\uFF08Prune\uFF09",
+    "Dry run": "\u6F14\u7EC3\u6A21\u5F0F\uFF08Dry run\uFF09",
+    "Force": "\u5F3A\u5236\uFF08Force\uFF09",
+    "Replace": "\u66FF\u6362\uFF08Replace\uFF09",
+    "Server-Side Apply": "\u670D\u52A1\u7AEF\u5E94\u7528\uFF08Server-Side Apply\uFF09",
+    "Apply Out-Of-Sync Only": "\u4EC5\u5E94\u7528\u5931\u6B65\u8D44\u6E90\uFF08Apply Out-Of-Sync Only\uFF09",
+    "Revision history": "\u5386\u53F2\u7248\u672C",
+    "Patch type": "\u8865\u4E01\u7C7B\u578B",
+    "Upsert if already exists": "\u5982\u5DF2\u5B58\u5728\u5219\u66F4\u65B0\uFF08Upsert\uFF09",
+    "Invalid JSON or YAML content.": "JSON \u6216 YAML \u5185\u5BB9\u65E0\u6548\u3002",
+    "Running management action\u2026": "\u6B63\u5728\u6267\u884C\u7BA1\u7406\u64CD\u4F5C\u2026",
+    "Create ApplicationSet": "\u521B\u5EFA ApplicationSet",
+    "Create Project": "\u521B\u5EFA Project",
+    "ApplicationSet created.": "ApplicationSet \u5DF2\u521B\u5EFA\u3002",
+    "Project created.": "Project \u5DF2\u521B\u5EFA\u3002",
+    "Validate access": "\u9A8C\u8BC1\u8FDE\u63A5",
+    "Repository access validated.": "\u4ED3\u5E93\u8BBF\u95EE\u9A8C\u8BC1\u6210\u529F\u3002",
+    "Delete repository": "\u5220\u9664\u4ED3\u5E93",
+    "Remove this repository configuration from Argo CD?": "\u786E\u5B9A\u4ECE Argo CD \u79FB\u9664\u8BE5\u4ED3\u5E93\u914D\u7F6E\uFF1F",
+    "Repository deleted.": "\u4ED3\u5E93\u5DF2\u5220\u9664\u3002",
+    "Invalidate cache": "\u6E05\u9664\u7F13\u5B58",
+    "Cluster cache invalidated.": "\u96C6\u7FA4\u7F13\u5B58\u5DF2\u6E05\u9664\u3002",
+    "Delete cluster": "\u5220\u9664\u96C6\u7FA4",
+    "Remove this cluster registration from Argo CD?": "\u786E\u5B9A\u4ECE Argo CD \u79FB\u9664\u8BE5\u96C6\u7FA4\u6CE8\u518C\uFF1F",
+    "Cluster deleted.": "\u96C6\u7FA4\u5DF2\u5220\u9664\u3002",
+    "Update Project": "\u66F4\u65B0 Project",
+    "Project updated.": "Project \u5DF2\u66F4\u65B0\u3002",
+    "Delete Project": "\u5220\u9664 Project",
+    "Permanently delete this Argo CD Project?": "\u786E\u5B9A\u6C38\u4E45\u5220\u9664\u6B64 Argo CD Project\uFF1F",
+    "Project deleted.": "Project \u5DF2\u5220\u9664\u3002",
+    "Delete ApplicationSet": "\u5220\u9664 ApplicationSet",
+    "Permanently delete this ApplicationSet?": "\u786E\u5B9A\u6C38\u4E45\u5220\u9664\u6B64 ApplicationSet\uFF1F",
+    "ApplicationSet deleted.": "ApplicationSet \u5DF2\u5220\u9664\u3002",
+    "No resource actions available.": "\u5F53\u524D\u8D44\u6E90\u6CA1\u6709\u53EF\u7528\u7684\u52A8\u4F5C\u3002"
+  };
+
   // src/shared/locales/base.ts
   var english = {
     ...deploymentEnglish,
+    ...actionsEnglish,
     "Opening the Logs tab reads a recent fragment; following is off by default.": "Opening the Logs tab reads a recent fragment; following is off by default.",
     "Reload logs": "Reload logs",
     "Invalid log options. Check the line count and time range.": "Invalid log options. Check the line count and time range.",
@@ -2645,7 +2858,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
     "Reading additional information\u2026": "Reading additional information\u2026",
     "Additional information unavailable; main details remain available. Do not infer an empty result.": "Additional information unavailable; main details remain available. Do not infer an empty result.",
     "Management paused; the existing list is an old snapshot.": "Management paused; the existing list is an old snapshot.",
-    "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.",
+    "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.",
     "The server reported connection details; their contents may contain credentials and are withheld.": "The server reported connection details; their contents may contain credentials and are withheld.",
     "No displayable connection details were provided; do not infer success.": "No displayable connection details were provided; do not infer success.",
     "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Reconciliation details may contain generator values or credentials; bodies are withheld.",
@@ -2752,6 +2965,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
   };
   var chinese = {
     ...deploymentChinese,
+    ...actionsChinese,
     "Opening the Logs tab reads a recent fragment; following is off by default.": "\u6253\u5F00\u65E5\u5FD7\u6807\u7B7E\u540E\u8BFB\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u8FDE\u7EED\u67E5\u770B\u9ED8\u8BA4\u5173\u95ED\u3002",
     "Reload logs": "\u91CD\u65B0\u67E5\u8BE2\u65E5\u5FD7",
     "Invalid log options. Check the line count and time range.": "\u65E5\u5FD7\u53C2\u6570\u65E0\u6548\uFF1B\u8BF7\u68C0\u67E5\u884C\u6570\u548C\u65F6\u95F4\u8303\u56F4\u3002",
@@ -3034,7 +3248,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
     "Reading additional information\u2026": "\u6B63\u5728\u8BFB\u53D6\u9644\u52A0\u4FE1\u606F\u2026",
     "Additional information unavailable; main details remain available. Do not infer an empty result.": "\u9644\u52A0\u4FE1\u606F\u4E0D\u53EF\u7528\uFF1B\u4E0D\u5F71\u54CD\u4E3B\u8BE6\u60C5\uFF0C\u4E0D\u80FD\u63A8\u65AD\u4E3A\u7A7A\u3002",
     "Management paused; the existing list is an old snapshot.": "\u7BA1\u7406\u57DF\u5DF2\u6682\u505C\uFF0C\u5DF2\u6709\u5217\u8868\u4EC5\u4E3A\u65E7\u5FEB\u7167\u3002",
-    "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "\u4EC5\u5C55\u793A\u670D\u52A1\u7AEF\u6B64\u4EFD\u54CD\u5E94\u7684\u7A97\u53E3\u5224\u5B9A\uFF0C\u4E0D\u4F7F\u7528\u6D4F\u89C8\u5668\u65F6\u949F\u91CD\u7B97 cron\u3002Project \u6D3B\u8DC3\u7A97\u53E3\u4E0D\u7B49\u4E8E\u4EFB\u610F\u5E94\u7528\u53EF\u540C\u6B65\uFF1B\u5B98\u65B9 v3.1.8 \u7684 canSync \u4F7F\u7528\u624B\u52A8\u540C\u6B65\u7A97\u53E3\u5224\u5B9A\uFF0C\u4E0D\u80FD\u5916\u63A8\u81EA\u52A8\u540C\u6B65\u6216 RBAC \u6743\u9650\uFF0C\u4E5F\u4E0D\u662F\u672C\u6269\u5C55\u63D0\u4F9B\u540C\u6B65\u64CD\u4F5C\u7684\u627F\u8BFA\u3002",
+    "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "\u4EC5\u5C55\u793A\u670D\u52A1\u7AEF\u6B64\u4EFD\u54CD\u5E94\u7684\u7A97\u53E3\u5224\u5B9A\uFF0C\u4E0D\u4F7F\u7528\u6D4F\u89C8\u5668\u65F6\u949F\u91CD\u7B97 cron\u3002Project \u6D3B\u8DC3\u7A97\u53E3\u4E0D\u7B49\u4E8E\u4EFB\u610F\u5E94\u7528\u53EF\u540C\u6B65\uFF1B\u5B98\u65B9 v3.1.8 \u7684 canSync \u4F7F\u7528\u624B\u52A8\u540C\u6B65\u7A97\u53E3\u5224\u5B9A\uFF0C\u4E0D\u80FD\u5916\u63A8\u81EA\u52A8\u540C\u6B65\u6216 RBAC \u6743\u9650\u3002",
     "The server reported connection details; their contents may contain credentials and are withheld.": "\u670D\u52A1\u7AEF\u5B58\u5728\u8FDE\u63A5\u8BF4\u660E\uFF1B\u539F\u6587\u53EF\u80FD\u542B\u8BA4\u8BC1\u4FE1\u606F\uFF0C\u672A\u4F20\u8F93\u3002",
     "No displayable connection details were provided; do not infer success.": "\u670D\u52A1\u7AEF\u672A\u63D0\u4F9B\u53EF\u663E\u793A\u7684\u8FDE\u63A5\u8BF4\u660E\uFF1B\u4E0D\u636E\u6B64\u5224\u65AD\u6210\u529F\u3002",
     "Reconciliation details may contain generator values or credentials; bodies are withheld.": "\u670D\u52A1\u7AEF\u534F\u8C03\u8BF4\u660E\u53EF\u80FD\u5305\u542B\u751F\u6210\u53C2\u6570\u6216\u51ED\u636E\uFF1B\u6B63\u6587\u672A\u4F20\u8F93\u3002",
@@ -3143,9 +3357,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
   // src/shared/locales/generated.ts
   var translations = {
     "de": {
-      ...deploymentEnglish,
-      "Restarts": "Neustarts",
-      "Redaction notice": "Hinweis zur Schw\xE4rzung",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "Ein anderer Vorgang wird bereits ausgef\xFChrt oder der Objektstatus steht in Konflikt.",
+      "New application": "Neue Anwendung",
+      "Create application": "Anwendung erstellen",
+      "Create": "Erstellen",
+      "Creating application\u2026": "Anwendung wird erstellt\u2026",
+      "Application created.": "Anwendung erstellt.",
+      "Action failed.": "Aktion fehlgeschlagen.",
+      "Application actions": "Anwendungsaktionen",
+      "Session identity unavailable. Reload applications first.": "Sitzungsidentit\xE4t nicht verf\xFCgbar. Laden Sie zuerst die Anwendungen neu.",
+      "Session identity unavailable. Read management data first.": "Sitzungsidentit\xE4t nicht verf\xFCgbar. Lesen Sie zuerst die Verwaltungsdaten.",
+      "Sync": "Synchronisieren",
+      "Sync application": "Anwendung synchronisieren",
+      "Syncing application\u2026": "Anwendung wird synchronisiert\u2026",
+      "Sync requested.": "Synchronisierung angefordert.",
+      "Refresh": "Aktualisieren",
+      "Refreshing application\u2026": "Anwendung wird aktualisiert\u2026",
+      "Application refreshed.": "Anwendung aktualisiert.",
+      "Hard refresh": "Vollst\xE4ndig aktualisieren",
+      "Hard refreshing application\u2026": "Anwendung wird vollst\xE4ndig aktualisiert\u2026",
+      "Application hard refreshed.": "Anwendung vollst\xE4ndig aktualisiert.",
+      "Terminate": "Abbrechen",
+      "Terminate operation": "Vorgang abbrechen",
+      "Terminate the currently running operation for this application?": "Den aktuell laufenden Vorgang f\xFCr diese Anwendung abbrechen?",
+      "Terminating operation\u2026": "Vorgang wird abgebrochen\u2026",
+      "Operation termination requested.": "Abbruch des Vorgangs angefordert.",
+      "Rollback": "Rollback",
+      "Rollback application": "Anwendung zur\xFCcksetzen (Rollback)",
+      "Rolling back application\u2026": "Rollback der Anwendung l\xE4uft\u2026",
+      "Rollback requested.": "Rollback angefordert.",
+      "Patch": "Patchen",
+      "Patch application": "Anwendung patchen",
+      "Patching application\u2026": "Anwendung wird gepatcht\u2026",
+      "Application patched.": "Anwendung gepatcht.",
+      "Apply patch": "Patch anwenden",
+      "Delete": "L\xF6schen",
+      "Delete application": "Anwendung l\xF6schen",
+      "This permanently deletes the Argo CD application.": "Dadurch wird die Argo-CD-Anwendung dauerhaft gel\xF6scht.",
+      "Cascade delete managed resources": "Verwaltete Ressourcen kaskadierend l\xF6schen",
+      "Propagation policy": "Weitergaberichtlinie",
+      "Foreground": "Foreground (Vordergrund)",
+      "Background": "Background (Hintergrund)",
+      "Invalid retry limit (0\u2013100).": "Ung\xFCltiges Wiederholungslimit (0\u2013100).",
+      "Deleting application\u2026": "Anwendung wird gel\xF6scht\u2026",
+      "Application deleted.": "Anwendung gel\xF6scht.",
+      "Resource actions": "Ressourcenaktionen",
+      "Syncing resource\u2026": "Ressource wird synchronisiert\u2026",
+      "Resource sync requested.": "Ressourcensynchronisierung angefordert.",
+      "Patch resource": "Ressource patchen",
+      "Patching resource\u2026": "Ressource wird gepatcht\u2026",
+      "Resource patched.": "Ressource gepatcht.",
+      "Delete resource": "Ressource l\xF6schen",
+      "Delete this Kubernetes resource from the cluster?": "Diese Kubernetes-Ressource aus dem Cluster l\xF6schen?",
+      "Force delete": "L\xF6schen erzwingen",
+      "Orphan dependents": "Abh\xE4ngige Ressourcen verwaisen lassen",
+      "Deleting resource\u2026": "Ressource wird gel\xF6scht\u2026",
+      "Resource deleted.": "Ressource gel\xF6scht.",
+      "Run resource action": "Ressourcenaktion ausf\xFChren",
+      "Execute this Argo CD resource action?": "Diese Argo-CD-Ressourcenaktion ausf\xFChren?",
+      "Run action": "Aktion ausf\xFChren",
+      "Running resource action\u2026": "Ressourcenaktion wird ausgef\xFChrt\u2026",
+      "Resource action completed.": "Ressourcenaktion abgeschlossen.",
+      "Cancel": "Abbrechen",
+      "Confirm": "Best\xE4tigen",
+      "Submit": "Absenden",
+      "Save": "Speichern",
+      "Edit": "Bearbeiten",
+      "Type {0} to confirm": "Zur Best\xE4tigung {0} eingeben",
+      "Target revision (optional)": "Zielrevision (optional)",
+      "Retry limit (optional)": "Wiederholungslimit (optional)",
+      "Prune": "Bereinigen (Prune)",
+      "Dry run": "Probelauf (Dry run)",
+      "Force": "Erzwingen (Force)",
+      "Replace": "Ersetzen (Replace)",
+      "Server-Side Apply": "Server-Side Apply",
+      "Apply Out-Of-Sync Only": "Nur nicht synchronisierte Ressourcen anwenden",
+      "Revision history": "Revisionsverlauf",
+      "Patch type": "Patch-Typ",
+      "Upsert if already exists": "Aktualisieren, falls bereits vorhanden (Upsert)",
+      "Invalid JSON or YAML content.": "Ung\xFCltiger JSON- oder YAML-Inhalt.",
+      "Running management action\u2026": "Verwaltungsaktion wird ausgef\xFChrt\u2026",
+      "Create ApplicationSet": "ApplicationSet erstellen",
+      "Create Project": "Projekt erstellen",
+      "ApplicationSet created.": "ApplicationSet erstellt.",
+      "Project created.": "Projekt erstellt.",
+      "Validate access": "Zugriff pr\xFCfen",
+      "Repository access validated.": "Repository-Zugriff best\xE4tigt.",
+      "Delete repository": "Repository l\xF6schen",
+      "Remove this repository configuration from Argo CD?": "Diese Repository-Konfiguration aus Argo CD entfernen?",
+      "Repository deleted.": "Repository gel\xF6scht.",
+      "Invalidate cache": "Cache ung\xFCltig machen",
+      "Cluster cache invalidated.": "Cluster-Cache ung\xFCltig gemacht.",
+      "Delete cluster": "Cluster l\xF6schen",
+      "Remove this cluster registration from Argo CD?": "Diese Cluster-Registrierung aus Argo CD entfernen?",
+      "Cluster deleted.": "Cluster gel\xF6scht.",
+      "Update Project": "Projekt aktualisieren",
+      "Project updated.": "Projekt aktualisiert.",
+      "Delete Project": "Projekt l\xF6schen",
+      "Permanently delete this Argo CD Project?": "Dieses Argo-CD-Projekt dauerhaft l\xF6schen?",
+      "Project deleted.": "Projekt gel\xF6scht.",
+      "Delete ApplicationSet": "ApplicationSet l\xF6schen",
+      "Permanently delete this ApplicationSet?": "Dieses ApplicationSet dauerhaft l\xF6schen?",
+      "ApplicationSet deleted.": "ApplicationSet gel\xF6scht.",
+      "No resource actions available.": "Keine Ressourcenaktionen verf\xFCgbar.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Beim \xD6ffnen der Registerkarte \u201EProtokolle\u201C wird ein aktuelles Fragment gelesen. Folgendes ist standardm\xE4\xDFig deaktiviert.",
       "Reload logs": "Protokolle neu laden",
       "Invalid log options. Check the line count and time range.": "Ung\xFCltige Protokolloptionen. \xDCberpr\xFCfen Sie die Zeilenanzahl und den Zeitbereich.",
@@ -3337,6 +3668,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "Abgeschlossen",
       "Initiated by": "Initiiert von",
       "Automated": "Automatisiert",
+      "Restarts": "Neustarts",
+      "Redaction notice": "Hinweis zur Schw\xE4rzung",
       "{0} (unrecognized state)": "{0} (nicht erkannter Status)",
       "Default": "Standard",
       "None": "Keine",
@@ -3426,7 +3759,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "Weitere Informationen lesen\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "Zus\xE4tzliche Informationen nicht verf\xFCgbar; Die wichtigsten Details bleiben verf\xFCgbar. Schlie\xDFen Sie kein leeres Ergebnis ab.",
       "Management paused; the existing list is an old snapshot.": "Das Management hielt inne; Die vorhandene Liste ist ein alter Schnappschuss.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Es wird nur diese Serverantwort angezeigt; Cron wird nicht anhand der Browseruhr neu berechnet. Aktive Projektfenster beweisen nicht, dass eine Anwendung synchronisiert werden kann. Die offizielle Version 3.1.8 von canSync verwendet die Fensterauswertung f\xFCr die manuelle Synchronisierung, nicht die automatische Synchronisierung oder die RBAC-Berechtigung. Diese Erweiterung kann nicht synchronisiert werden.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Es wird nur diese Serverantwort angezeigt; Cron wird nicht anhand der Browseruhr neu berechnet. Aktive Projektfenster beweisen nicht, dass eine Anwendung synchronisiert werden kann. Das offizielle canSync ab v3.1.8 bewertet manuelle Synchronisationsfenster, nicht die automatische Synchronisation oder RBAC-Berechtigungen.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "Der Server hat Verbindungsdetails gemeldet; Ihr Inhalt kann Anmeldeinformationen enthalten und wird zur\xFCckgehalten.",
       "No displayable connection details were provided; do not infer success.": "Es wurden keine anzeigbaren Verbindungsdetails bereitgestellt; lassen keinen R\xFCckschluss auf Erfolg zu.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Abgleichsdetails k\xF6nnen Generatorwerte oder Anmeldeinformationen enthalten; Leichen werden zur\xFCckgehalten.",
@@ -3532,9 +3865,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Zusammenfassungsvorschau fehlgeschlagen oder Identit\xE4t/Host-Grenze ge\xE4ndert; Dem Chat-Eingabefeld wurde nichts hinzugef\xFCgt."
     },
     "fr": {
-      ...deploymentEnglish,
-      "Restarts": "Red\xE9marrages",
-      "Redaction notice": "Avis de masquage",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "Une autre op\xE9ration est d\xE9j\xE0 en cours ou l'\xE9tat de l'objet est en conflit.",
+      "New application": "Nouvelle application",
+      "Create application": "Cr\xE9er une application",
+      "Create": "Cr\xE9er",
+      "Creating application\u2026": "Cr\xE9ation de l'application\u2026",
+      "Application created.": "Application cr\xE9\xE9e.",
+      "Action failed.": "\xC9chec de l'action.",
+      "Application actions": "Actions sur l'application",
+      "Session identity unavailable. Reload applications first.": "Identit\xE9 de session indisponible. Rechargez d'abord les applications.",
+      "Session identity unavailable. Read management data first.": "Identit\xE9 de session indisponible. Lisez d'abord les donn\xE9es de gestion.",
+      "Sync": "Synchroniser",
+      "Sync application": "Synchroniser l'application",
+      "Syncing application\u2026": "Synchronisation de l'application\u2026",
+      "Sync requested.": "Synchronisation demand\xE9e.",
+      "Refresh": "Actualiser",
+      "Refreshing application\u2026": "Actualisation de l'application\u2026",
+      "Application refreshed.": "Application actualis\xE9e.",
+      "Hard refresh": "Actualisation forc\xE9e",
+      "Hard refreshing application\u2026": "Actualisation forc\xE9e de l'application\u2026",
+      "Application hard refreshed.": "Application actualis\xE9e de force.",
+      "Terminate": "Interrompre",
+      "Terminate operation": "Interrompre l'op\xE9ration",
+      "Terminate the currently running operation for this application?": "Interrompre l'op\xE9ration en cours pour cette application ?",
+      "Terminating operation\u2026": "Interruption de l'op\xE9ration\u2026",
+      "Operation termination requested.": "Interruption de l'op\xE9ration demand\xE9e.",
+      "Rollback": "Restaurer (Rollback)",
+      "Rollback application": "Restaurer l'application",
+      "Rolling back application\u2026": "Restauration de l'application\u2026",
+      "Rollback requested.": "Restauration demand\xE9e.",
+      "Patch": "Patcher",
+      "Patch application": "Patcher l'application",
+      "Patching application\u2026": "Application du patch\u2026",
+      "Application patched.": "Application patch\xE9e.",
+      "Apply patch": "Appliquer le patch",
+      "Delete": "Supprimer",
+      "Delete application": "Supprimer l'application",
+      "This permanently deletes the Argo CD application.": "Cette action supprime d\xE9finitivement l'application Argo CD.",
+      "Cascade delete managed resources": "Supprimer en cascade les ressources g\xE9r\xE9es",
+      "Propagation policy": "Politique de propagation",
+      "Foreground": "Foreground (premier plan)",
+      "Background": "Background (arri\xE8re-plan)",
+      "Invalid retry limit (0\u2013100).": "Limite de tentatives invalide (0\u2013100).",
+      "Deleting application\u2026": "Suppression de l'application\u2026",
+      "Application deleted.": "Application supprim\xE9e.",
+      "Resource actions": "Actions sur la ressource",
+      "Syncing resource\u2026": "Synchronisation de la ressource\u2026",
+      "Resource sync requested.": "Synchronisation de la ressource demand\xE9e.",
+      "Patch resource": "Patcher la ressource",
+      "Patching resource\u2026": "Application du patch \xE0 la ressource\u2026",
+      "Resource patched.": "Ressource patch\xE9e.",
+      "Delete resource": "Supprimer la ressource",
+      "Delete this Kubernetes resource from the cluster?": "Supprimer cette ressource Kubernetes du cluster ?",
+      "Force delete": "Forcer la suppression",
+      "Orphan dependents": "Rendre les ressources d\xE9pendantes orphelines",
+      "Deleting resource\u2026": "Suppression de la ressource\u2026",
+      "Resource deleted.": "Ressource supprim\xE9e.",
+      "Run resource action": "Ex\xE9cuter une action sur la ressource",
+      "Execute this Argo CD resource action?": "Ex\xE9cuter cette action de ressource Argo CD ?",
+      "Run action": "Ex\xE9cuter l'action",
+      "Running resource action\u2026": "Ex\xE9cution de l'action sur la ressource\u2026",
+      "Resource action completed.": "Action sur la ressource termin\xE9e.",
+      "Cancel": "Annuler",
+      "Confirm": "Confirmer",
+      "Submit": "Valider",
+      "Save": "Enregistrer",
+      "Edit": "Modifier",
+      "Type {0} to confirm": "Saisissez {0} pour confirmer",
+      "Target revision (optional)": "R\xE9vision cible (facultatif)",
+      "Retry limit (optional)": "Limite de tentatives (facultatif)",
+      "Prune": "\xC9laguer (Prune)",
+      "Dry run": "Simulation (Dry run)",
+      "Force": "Forcer (Force)",
+      "Replace": "Remplacer (Replace)",
+      "Server-Side Apply": "Server-Side Apply",
+      "Apply Out-Of-Sync Only": "Appliquer uniquement les ressources d\xE9synchronis\xE9es",
+      "Revision history": "Historique des r\xE9visions",
+      "Patch type": "Type de patch",
+      "Upsert if already exists": "Mettre \xE0 jour si existant (Upsert)",
+      "Invalid JSON or YAML content.": "Contenu JSON ou YAML invalide.",
+      "Running management action\u2026": "Ex\xE9cution de l'action de gestion\u2026",
+      "Create ApplicationSet": "Cr\xE9er un ApplicationSet",
+      "Create Project": "Cr\xE9er un projet",
+      "ApplicationSet created.": "ApplicationSet cr\xE9\xE9.",
+      "Project created.": "Projet cr\xE9\xE9.",
+      "Validate access": "Valider l'acc\xE8s",
+      "Repository access validated.": "Acc\xE8s au d\xE9p\xF4t valid\xE9.",
+      "Delete repository": "Supprimer le d\xE9p\xF4t",
+      "Remove this repository configuration from Argo CD?": "Retirer cette configuration de d\xE9p\xF4t d'Argo CD ?",
+      "Repository deleted.": "D\xE9p\xF4t supprim\xE9.",
+      "Invalidate cache": "Invalider le cache",
+      "Cluster cache invalidated.": "Cache du cluster invalid\xE9.",
+      "Delete cluster": "Supprimer le cluster",
+      "Remove this cluster registration from Argo CD?": "Retirer cet enregistrement de cluster d'Argo CD ?",
+      "Cluster deleted.": "Cluster supprim\xE9.",
+      "Update Project": "Mettre \xE0 jour le projet",
+      "Project updated.": "Projet mis \xE0 jour.",
+      "Delete Project": "Supprimer le projet",
+      "Permanently delete this Argo CD Project?": "Supprimer d\xE9finitivement ce projet Argo CD ?",
+      "Project deleted.": "Projet supprim\xE9.",
+      "Delete ApplicationSet": "Supprimer l'ApplicationSet",
+      "Permanently delete this ApplicationSet?": "Supprimer d\xE9finitivement cet ApplicationSet ?",
+      "ApplicationSet deleted.": "ApplicationSet supprim\xE9.",
+      "No resource actions available.": "Aucune action disponible pour cette ressource.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "L'ouverture de l'onglet Journaux lit un fragment r\xE9cent\xA0; ce qui suit est d\xE9sactiv\xE9 par d\xE9faut.",
       "Reload logs": "Recharger les journaux",
       "Invalid log options. Check the line count and time range.": "Options de journal non valides. V\xE9rifiez le nombre de lignes et la plage horaire.",
@@ -3726,6 +4176,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "Termin\xE9",
       "Initiated by": "Initi\xE9 par",
       "Automated": "Automatis\xE9",
+      "Restarts": "Red\xE9marrages",
+      "Redaction notice": "Avis de masquage",
       "{0} (unrecognized state)": "{0} (\xE9tat non reconnu)",
       "Default": "Par d\xE9faut",
       "None": "Aucun",
@@ -3815,7 +4267,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "Lecture d\u2019informations suppl\xE9mentaires\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "Informations suppl\xE9mentaires indisponibles\xA0; les principaux d\xE9tails restent disponibles. Ne d\xE9duisez pas un r\xE9sultat vide.",
       "Management paused; the existing list is an old snapshot.": "La direction a fait une pause\xA0; la liste existante est un ancien instantan\xE9.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Seule cette r\xE9ponse du serveur est affich\xE9e\xA0; cron n'est pas recalcul\xE9 en utilisant l'horloge du navigateur. Les fen\xEAtres de projet actif ne prouvent pas qu'une application peut se synchroniser. La version officielle 3.1.8 canSync utilise l'\xE9valuation de la fen\xEAtre de synchronisation manuelle, et non la synchronisation automatique ou l'autorisation RBAC. Cette extension ne peut pas se synchroniser.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Seule cette r\xE9ponse du serveur est affich\xE9e ; le cron n'est pas recalcul\xE9 avec l'horloge du navigateur. Les fen\xEAtres actives du projet ne prouvent pas qu'une application peut \xEAtre synchronis\xE9e. Le canSync officiel v3.1.8 \xE9value les fen\xEAtres de synchronisation manuelle, et non la synchronisation automatique ni les autorisations RBAC.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "Le serveur a signal\xE9 les d\xE9tails de la connexion\xA0; leur contenu peut contenir des informations d'identification et n'est pas divulgu\xE9.",
       "No displayable connection details were provided; do not infer success.": "Aucun d\xE9tail de connexion affichable n'a \xE9t\xE9 fourni\xA0; ne d\xE9duisez pas le succ\xE8s.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Les d\xE9tails de rapprochement peuvent contenir des valeurs de g\xE9n\xE9rateur ou des informations d'identification\xA0; les corps sont retenus.",
@@ -3921,9 +4373,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "L'aper\xE7u r\xE9capitulatif a \xE9chou\xE9 ou la limite identit\xE9/h\xF4te a \xE9t\xE9 modifi\xE9e\xA0; rien n'a \xE9t\xE9 ajout\xE9 \xE0 la zone de saisie du chat."
     },
     "nl": {
-      ...deploymentEnglish,
-      "Restarts": "Herstarts",
-      "Redaction notice": "Toelichting op afscherming",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "Er is al een andere bewerking bezig of de objectstatus conflicteert.",
+      "New application": "Nieuwe applicatie",
+      "Create application": "Applicatie aanmaken",
+      "Create": "Aanmaken",
+      "Creating application\u2026": "Applicatie aanmaken\u2026",
+      "Application created.": "Applicatie aangemaakt.",
+      "Action failed.": "Actie mislukt.",
+      "Application actions": "Applicatie-acties",
+      "Session identity unavailable. Reload applications first.": "Sessie-identiteit niet beschikbaar. Laad eerst de applicaties opnieuw.",
+      "Session identity unavailable. Read management data first.": "Sessie-identiteit niet beschikbaar. Lees eerst de beheergegevens.",
+      "Sync": "Synchroniseren",
+      "Sync application": "Applicatie synchroniseren",
+      "Syncing application\u2026": "Applicatie synchroniseren\u2026",
+      "Sync requested.": "Synchronisatie aangevraagd.",
+      "Refresh": "Vernieuwen",
+      "Refreshing application\u2026": "Applicatie vernieuwen\u2026",
+      "Application refreshed.": "Applicatie vernieuwd.",
+      "Hard refresh": "Geforceerd vernieuwen",
+      "Hard refreshing application\u2026": "Applicatie geforceerd vernieuwen\u2026",
+      "Application hard refreshed.": "Applicatie geforceerd vernieuwd.",
+      "Terminate": "Be\xEBindigen",
+      "Terminate operation": "Bewerking be\xEBindigen",
+      "Terminate the currently running operation for this application?": "De momenteel lopende bewerking voor deze applicatie be\xEBindigen?",
+      "Terminating operation\u2026": "Bewerking be\xEBindigen\u2026",
+      "Operation termination requested.": "Be\xEBindiging van bewerking aangevraagd.",
+      "Rollback": "Rollback",
+      "Rollback application": "Applicatie terugdraaien",
+      "Rolling back application\u2026": "Applicatie terugdraaien\u2026",
+      "Rollback requested.": "Rollback aangevraagd.",
+      "Patch": "Patchen",
+      "Patch application": "Applicatie patchen",
+      "Patching application\u2026": "Applicatie patchen\u2026",
+      "Application patched.": "Applicatie gepatcht.",
+      "Apply patch": "Patch toepassen",
+      "Delete": "Verwijderen",
+      "Delete application": "Applicatie verwijderen",
+      "This permanently deletes the Argo CD application.": "Dit verwijdert de Argo CD-applicatie definitief.",
+      "Cascade delete managed resources": "Beheerde resources trapsgewijs verwijderen",
+      "Propagation policy": "Propagatiebeleid",
+      "Foreground": "Foreground (voorgrond)",
+      "Background": "Background (achtergrond)",
+      "Invalid retry limit (0\u2013100).": "Ongeldige herhaallimiet (0\u2013100).",
+      "Deleting application\u2026": "Applicatie verwijderen\u2026",
+      "Application deleted.": "Applicatie verwijderd.",
+      "Resource actions": "Resource-acties",
+      "Syncing resource\u2026": "Resource synchroniseren\u2026",
+      "Resource sync requested.": "Resourcesynchronisatie aangevraagd.",
+      "Patch resource": "Resource patchen",
+      "Patching resource\u2026": "Resource patchen\u2026",
+      "Resource patched.": "Resource gepatcht.",
+      "Delete resource": "Resource verwijderen",
+      "Delete this Kubernetes resource from the cluster?": "Deze Kubernetes-resource uit het cluster verwijderen?",
+      "Force delete": "Geforceerd verwijderen",
+      "Orphan dependents": "Afhankelijke resources verwezen",
+      "Deleting resource\u2026": "Resource verwijderen\u2026",
+      "Resource deleted.": "Resource verwijderd.",
+      "Run resource action": "Resource-actie uitvoeren",
+      "Execute this Argo CD resource action?": "Deze Argo CD-resource-actie uitvoeren?",
+      "Run action": "Actie uitvoeren",
+      "Running resource action\u2026": "Resource-actie uitvoeren\u2026",
+      "Resource action completed.": "Resource-actie voltooid.",
+      "Cancel": "Annuleren",
+      "Confirm": "Bevestigen",
+      "Submit": "Verzenden",
+      "Save": "Opslaan",
+      "Edit": "Bewerken",
+      "Type {0} to confirm": "Typ {0} om te bevestigen",
+      "Target revision (optional)": "Doelrevisie (optioneel)",
+      "Retry limit (optional)": "Herhaallimiet (optioneel)",
+      "Prune": "Opschonen (Prune)",
+      "Dry run": "Proefdraaien (Dry run)",
+      "Force": "Forceren (Force)",
+      "Replace": "Vervangen (Replace)",
+      "Server-Side Apply": "Server-Side Apply",
+      "Apply Out-Of-Sync Only": "Alleen niet-gesynchroniseerde resources toepassen",
+      "Revision history": "Revisiegeschiedenis",
+      "Patch type": "Patchtype",
+      "Upsert if already exists": "Bijwerken indien al aanwezig (Upsert)",
+      "Invalid JSON or YAML content.": "Ongeldige JSON- of YAML-inhoud.",
+      "Running management action\u2026": "Beheeractie uitvoeren\u2026",
+      "Create ApplicationSet": "ApplicationSet aanmaken",
+      "Create Project": "Project aanmaken",
+      "ApplicationSet created.": "ApplicationSet aangemaakt.",
+      "Project created.": "Project aangemaakt.",
+      "Validate access": "Toegang valideren",
+      "Repository access validated.": "Repositorytoegang gevalideerd.",
+      "Delete repository": "Repository verwijderen",
+      "Remove this repository configuration from Argo CD?": "Deze repositoryconfiguratie verwijderen uit Argo CD?",
+      "Repository deleted.": "Repository verwijderd.",
+      "Invalidate cache": "Cache ongeldig maken",
+      "Cluster cache invalidated.": "Clustercache ongeldig gemaakt.",
+      "Delete cluster": "Cluster verwijderen",
+      "Remove this cluster registration from Argo CD?": "Deze clusterregistratie verwijderen uit Argo CD?",
+      "Cluster deleted.": "Cluster verwijderd.",
+      "Update Project": "Project bijwerken",
+      "Project updated.": "Project bijgewerkt.",
+      "Delete Project": "Project verwijderen",
+      "Permanently delete this Argo CD Project?": "Dit Argo CD-project definitief verwijderen?",
+      "Project deleted.": "Project verwijderd.",
+      "Delete ApplicationSet": "ApplicationSet verwijderen",
+      "Permanently delete this ApplicationSet?": "Deze ApplicationSet definitief verwijderen?",
+      "ApplicationSet deleted.": "ApplicationSet verwijderd.",
+      "No resource actions available.": "Geen resource-acties beschikbaar.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Als u het tabblad Logboeken opent, wordt een recent fragment gelezen; volgen is standaard uitgeschakeld.",
       "Reload logs": "Logboeken opnieuw laden",
       "Invalid log options. Check the line count and time range.": "Ongeldige logopties. Controleer het aantal lijnen en het tijdsbereik.",
@@ -4115,6 +4684,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "Voltooid",
       "Initiated by": "Ge\xEFnitieerd door",
       "Automated": "Geautomatiseerd",
+      "Restarts": "Herstarts",
+      "Redaction notice": "Toelichting op afscherming",
       "{0} (unrecognized state)": "{0} (niet-herkende status)",
       "Default": "Standaard",
       "None": "Geen",
@@ -4204,7 +4775,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "Aanvullende informatie lezen\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "Aanvullende informatie niet beschikbaar; De belangrijkste details blijven beschikbaar. Leid geen leeg resultaat af.",
       "Management paused; the existing list is an old snapshot.": "Het beheer is onderbroken; de bestaande lijst is een oude momentopname.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Alleen dit serverantwoord wordt getoond; cron wordt niet herberekend met behulp van de browserklok. Actieve projectvensters bewijzen niet dat een toepassing kan synchroniseren. Offici\xEBle v3.1.8 canSync maakt gebruik van handmatige synchronisatievensterevaluatie, niet van automatische synchronisatie of RBAC-toestemming. Deze extensie kan niet synchroniseren.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Alleen dit serverantwoord wordt getoond; cron wordt niet opnieuw berekend met de browserklok. Actieve projectvensters bewijzen niet dat een applicatie kan synchroniseren. De offici\xEBle v3.1.8 canSync evalueert vensters voor handmatige synchronisatie, niet automatische synchronisatie of RBAC-rechten.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "De server rapporteerde verbindingsdetails; hun inhoud kan inloggegevens bevatten en wordt achtergehouden.",
       "No displayable connection details were provided; do not infer success.": "Er zijn geen zichtbare verbindingsgegevens verstrekt; concludeer geen succes.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Afstemmingsdetails kunnen generatorwaarden of inloggegevens bevatten; lichamen worden achtergehouden.",
@@ -4310,9 +4881,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Samenvattingsvoorbeeld mislukt of identiteit/hostgrens gewijzigd; er is niets toegevoegd aan het chatinvoervak."
     },
     "zh-TW": {
-      ...deploymentEnglish,
-      "Restarts": "\u91CD\u65B0\u555F\u52D5\u6B21\u6578",
-      "Redaction notice": "\u654F\u611F\u8CC7\u8A0A\u96B1\u85CF\u8AAA\u660E",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "\u5DF2\u6709\u5176\u4ED6\u64CD\u4F5C\u6B63\u5728\u57F7\u884C\uFF0C\u6216\u7269\u4EF6\u72C0\u614B\u767C\u751F\u885D\u7A81\u3002",
+      "New application": "\u65B0\u589E\u61C9\u7528\u7A0B\u5F0F",
+      "Create application": "\u5EFA\u7ACB\u61C9\u7528\u7A0B\u5F0F",
+      "Create": "\u5EFA\u7ACB",
+      "Creating application\u2026": "\u6B63\u5728\u5EFA\u7ACB\u61C9\u7528\u7A0B\u5F0F\u2026",
+      "Application created.": "\u61C9\u7528\u7A0B\u5F0F\u5DF2\u5EFA\u7ACB\u3002",
+      "Action failed.": "\u64CD\u4F5C\u5931\u6557\u3002",
+      "Application actions": "\u61C9\u7528\u7A0B\u5F0F\u64CD\u4F5C",
+      "Session identity unavailable. Reload applications first.": "\u5DE5\u4F5C\u968E\u6BB5\u8EAB\u5206\u4E0D\u53EF\u7528\uFF0C\u8ACB\u5148\u91CD\u65B0\u8F09\u5165\u61C9\u7528\u7A0B\u5F0F\u3002",
+      "Session identity unavailable. Read management data first.": "\u5DE5\u4F5C\u968E\u6BB5\u8EAB\u5206\u4E0D\u53EF\u7528\uFF0C\u8ACB\u5148\u8B80\u53D6\u7BA1\u7406\u8CC7\u6599\u3002",
+      "Sync": "\u540C\u6B65",
+      "Sync application": "\u540C\u6B65\u61C9\u7528\u7A0B\u5F0F",
+      "Syncing application\u2026": "\u6B63\u5728\u540C\u6B65\u61C9\u7528\u7A0B\u5F0F\u2026",
+      "Sync requested.": "\u5DF2\u767C\u8D77\u540C\u6B65\u3002",
+      "Refresh": "\u91CD\u65B0\u6574\u7406",
+      "Refreshing application\u2026": "\u6B63\u5728\u91CD\u65B0\u6574\u7406\u61C9\u7528\u7A0B\u5F0F\u2026",
+      "Application refreshed.": "\u61C9\u7528\u7A0B\u5F0F\u5DF2\u91CD\u65B0\u6574\u7406\u3002",
+      "Hard refresh": "\u5F37\u5236\u91CD\u65B0\u6574\u7406",
+      "Hard refreshing application\u2026": "\u6B63\u5728\u5F37\u5236\u91CD\u65B0\u6574\u7406\u61C9\u7528\u7A0B\u5F0F\u2026",
+      "Application hard refreshed.": "\u61C9\u7528\u7A0B\u5F0F\u5DF2\u5F37\u5236\u91CD\u65B0\u6574\u7406\u3002",
+      "Terminate": "\u7D42\u6B62",
+      "Terminate operation": "\u7D42\u6B62\u64CD\u4F5C",
+      "Terminate the currently running operation for this application?": "\u78BA\u5B9A\u7D42\u6B62\u6B64\u61C9\u7528\u7A0B\u5F0F\u76EE\u524D\u6B63\u5728\u57F7\u884C\u7684\u64CD\u4F5C\uFF1F",
+      "Terminating operation\u2026": "\u6B63\u5728\u7D42\u6B62\u64CD\u4F5C\u2026",
+      "Operation termination requested.": "\u5DF2\u8ACB\u6C42\u7D42\u6B62\u64CD\u4F5C\u3002",
+      "Rollback": "\u56DE\u6EFE",
+      "Rollback application": "\u56DE\u6EFE\u61C9\u7528\u7A0B\u5F0F",
+      "Rolling back application\u2026": "\u6B63\u5728\u56DE\u6EFE\u61C9\u7528\u7A0B\u5F0F\u2026",
+      "Rollback requested.": "\u5DF2\u767C\u8D77\u56DE\u6EFE\u3002",
+      "Patch": "\u4FEE\u88DC",
+      "Patch application": "\u4FEE\u88DC\u61C9\u7528\u7A0B\u5F0F",
+      "Patching application\u2026": "\u6B63\u5728\u4FEE\u88DC\u61C9\u7528\u7A0B\u5F0F\u2026",
+      "Application patched.": "\u61C9\u7528\u7A0B\u5F0F\u5DF2\u4FEE\u88DC\u3002",
+      "Apply patch": "\u5957\u7528\u4FEE\u88DC",
+      "Delete": "\u522A\u9664",
+      "Delete application": "\u522A\u9664\u61C9\u7528\u7A0B\u5F0F",
+      "This permanently deletes the Argo CD application.": "\u6B64\u64CD\u4F5C\u5C07\u6C38\u4E45\u522A\u9664\u8A72 Argo CD \u61C9\u7528\u7A0B\u5F0F\u3002",
+      "Cascade delete managed resources": "\u4E32\u806F\u522A\u9664\u8A17\u7BA1\u8CC7\u6E90",
+      "Propagation policy": "\u50B3\u64AD\u7B56\u7565",
+      "Foreground": "Foreground\uFF08\u524D\u666F\u4E32\u806F\uFF09",
+      "Background": "Background\uFF08\u80CC\u666F\u4E32\u806F\uFF09",
+      "Invalid retry limit (0\u2013100).": "\u91CD\u8A66\u6B21\u6578\u4E0A\u9650\u7121\u6548\uFF08\u9808\u70BA 0\u2013100 \u7684\u6574\u6578\uFF09\u3002",
+      "Deleting application\u2026": "\u6B63\u5728\u522A\u9664\u61C9\u7528\u7A0B\u5F0F\u2026",
+      "Application deleted.": "\u61C9\u7528\u7A0B\u5F0F\u5DF2\u522A\u9664\u3002",
+      "Resource actions": "\u8CC7\u6E90\u64CD\u4F5C",
+      "Syncing resource\u2026": "\u6B63\u5728\u540C\u6B65\u8CC7\u6E90\u2026",
+      "Resource sync requested.": "\u5DF2\u767C\u8D77\u8CC7\u6E90\u540C\u6B65\u3002",
+      "Patch resource": "\u4FEE\u88DC\u8CC7\u6E90",
+      "Patching resource\u2026": "\u6B63\u5728\u4FEE\u88DC\u8CC7\u6E90\u2026",
+      "Resource patched.": "\u8CC7\u6E90\u5DF2\u4FEE\u88DC\u3002",
+      "Delete resource": "\u522A\u9664\u8CC7\u6E90",
+      "Delete this Kubernetes resource from the cluster?": "\u78BA\u5B9A\u5F9E\u53E2\u96C6\u522A\u9664\u6B64 Kubernetes \u8CC7\u6E90\uFF1F",
+      "Force delete": "\u5F37\u5236\u522A\u9664",
+      "Orphan dependents": "\u4FDD\u7559\u5B50\u8CC7\u6E90\uFF08Orphan\uFF09",
+      "Deleting resource\u2026": "\u6B63\u5728\u522A\u9664\u8CC7\u6E90\u2026",
+      "Resource deleted.": "\u8CC7\u6E90\u5DF2\u522A\u9664\u3002",
+      "Run resource action": "\u57F7\u884C\u8CC7\u6E90\u52D5\u4F5C",
+      "Execute this Argo CD resource action?": "\u78BA\u5B9A\u57F7\u884C\u6B64 Argo CD \u8CC7\u6E90\u52D5\u4F5C\uFF1F",
+      "Run action": "\u57F7\u884C\u52D5\u4F5C",
+      "Running resource action\u2026": "\u6B63\u5728\u57F7\u884C\u8CC7\u6E90\u52D5\u4F5C\u2026",
+      "Resource action completed.": "\u8CC7\u6E90\u52D5\u4F5C\u5DF2\u5B8C\u6210\u3002",
+      "Cancel": "\u53D6\u6D88",
+      "Confirm": "\u78BA\u8A8D",
+      "Submit": "\u63D0\u4EA4",
+      "Save": "\u5132\u5B58",
+      "Edit": "\u7DE8\u8F2F",
+      "Type {0} to confirm": "\u8ACB\u8F38\u5165 {0} \u4EE5\u78BA\u8A8D",
+      "Target revision (optional)": "\u76EE\u6A19\u7248\u672C\uFF08\u9078\u586B\uFF09",
+      "Retry limit (optional)": "\u91CD\u8A66\u6B21\u6578\u4E0A\u9650\uFF08\u9078\u586B\uFF09",
+      "Prune": "\u6E05\u7406\u591A\u9918\u8CC7\u6E90\uFF08Prune\uFF09",
+      "Dry run": "\u6F14\u7DF4\u6A21\u5F0F\uFF08Dry run\uFF09",
+      "Force": "\u5F37\u5236\uFF08Force\uFF09",
+      "Replace": "\u53D6\u4EE3\uFF08Replace\uFF09",
+      "Server-Side Apply": "\u4F3A\u670D\u5668\u7AEF\u5957\u7528\uFF08Server-Side Apply\uFF09",
+      "Apply Out-Of-Sync Only": "\u50C5\u5957\u7528\u5931\u6B65\u8CC7\u6E90\uFF08Apply Out-Of-Sync Only\uFF09",
+      "Revision history": "\u6B77\u53F2\u7248\u672C",
+      "Patch type": "\u4FEE\u88DC\u985E\u578B",
+      "Upsert if already exists": "\u82E5\u5DF2\u5B58\u5728\u5247\u66F4\u65B0\uFF08Upsert\uFF09",
+      "Invalid JSON or YAML content.": "JSON \u6216 YAML \u5167\u5BB9\u7121\u6548\u3002",
+      "Running management action\u2026": "\u6B63\u5728\u57F7\u884C\u7BA1\u7406\u64CD\u4F5C\u2026",
+      "Create ApplicationSet": "\u5EFA\u7ACB ApplicationSet",
+      "Create Project": "\u5EFA\u7ACB Project",
+      "ApplicationSet created.": "ApplicationSet \u5DF2\u5EFA\u7ACB\u3002",
+      "Project created.": "Project \u5DF2\u5EFA\u7ACB\u3002",
+      "Validate access": "\u9A57\u8B49\u9023\u7DDA",
+      "Repository access validated.": "\u5132\u5B58\u5EAB\u5B58\u53D6\u9A57\u8B49\u6210\u529F\u3002",
+      "Delete repository": "\u522A\u9664\u5132\u5B58\u5EAB",
+      "Remove this repository configuration from Argo CD?": "\u78BA\u5B9A\u5F9E Argo CD \u79FB\u9664\u6B64\u5132\u5B58\u5EAB\u8A2D\u5B9A\uFF1F",
+      "Repository deleted.": "\u5132\u5B58\u5EAB\u5DF2\u522A\u9664\u3002",
+      "Invalidate cache": "\u6E05\u9664\u5FEB\u53D6",
+      "Cluster cache invalidated.": "\u53E2\u96C6\u5FEB\u53D6\u5DF2\u6E05\u9664\u3002",
+      "Delete cluster": "\u522A\u9664\u53E2\u96C6",
+      "Remove this cluster registration from Argo CD?": "\u78BA\u5B9A\u5F9E Argo CD \u79FB\u9664\u6B64\u53E2\u96C6\u8A3B\u518A\uFF1F",
+      "Cluster deleted.": "\u53E2\u96C6\u5DF2\u522A\u9664\u3002",
+      "Update Project": "\u66F4\u65B0 Project",
+      "Project updated.": "Project \u5DF2\u66F4\u65B0\u3002",
+      "Delete Project": "\u522A\u9664 Project",
+      "Permanently delete this Argo CD Project?": "\u78BA\u5B9A\u6C38\u4E45\u522A\u9664\u6B64 Argo CD Project\uFF1F",
+      "Project deleted.": "Project \u5DF2\u522A\u9664\u3002",
+      "Delete ApplicationSet": "\u522A\u9664 ApplicationSet",
+      "Permanently delete this ApplicationSet?": "\u78BA\u5B9A\u6C38\u4E45\u522A\u9664\u6B64 ApplicationSet\uFF1F",
+      "ApplicationSet deleted.": "ApplicationSet \u5DF2\u522A\u9664\u3002",
+      "No resource actions available.": "\u76EE\u524D\u8CC7\u6E90\u6C92\u6709\u53EF\u7528\u7684\u52D5\u4F5C\u3002",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u958B\u555F\u65E5\u8A8C\u6A19\u7C64\u5F8C\u8B80\u53D6\u8FD1\u671F\u7247\u6BB5\uFF1B\u9023\u7E8C\u67E5\u770B\u9810\u8A2D\u70BA\u95DC\u9589\u3002",
       "Reload logs": "\u91CD\u65B0\u67E5\u8A62\u65E5\u8A8C",
       "Invalid log options. Check the line count and time range.": "\u65E5\u8A8C\u53C3\u6578\u7121\u6548\uFF1B\u8ACB\u6AA2\u67E5\u884C\u6578\u548C\u6642\u9593\u7BC4\u570D\u3002",
@@ -4504,6 +5192,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "\u5B8C\u6210",
       "Initiated by": "\u767C\u8D77\u8005",
       "Automated": "\u81EA\u52D5",
+      "Restarts": "\u91CD\u65B0\u555F\u52D5\u6B21\u6578",
+      "Redaction notice": "\u654F\u611F\u8CC7\u8A0A\u96B1\u85CF\u8AAA\u660E",
       "{0} (unrecognized state)": "{0}\uFF08\u672A\u77E5\u72C0\u614B\uFF09",
       "Default": "\u9810\u8A2D",
       "None": "\u7121",
@@ -4593,7 +5283,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "\u6B63\u5728\u8B80\u53D6\u9644\u52A0\u8CC7\u8A0A\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "\u9644\u52A0\u8CC7\u8A0A\u4E0D\u53EF\u7528\uFF1B\u4E0D\u5F71\u97FF\u4E3B\u8A73\u60C5\uFF0C\u4E0D\u80FD\u63A8\u65B7\u70BA\u7A7A\u3002",
       "Management paused; the existing list is an old snapshot.": "\u7BA1\u7406\u57DF\u5DF2\u66AB\u505C\uFF0C\u5DF2\u6709\u6E05\u55AE\u50C5\u70BA\u820A\u5FEB\u7167\u3002",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "\u50C5\u5C55\u793A\u670D\u52D9\u7AEF\u6B64\u4EFD\u56DE\u61C9\u7684\u8996\u7A97\u5224\u5B9A\uFF0C\u4E0D\u4F7F\u7528\u700F\u89BD\u5668\u6642\u8108\u91CD\u7B97 cron\u3002 Project \u6D3B\u8E8D\u8996\u7A97\u4E0D\u7B49\u65BC\u4EFB\u610F\u61C9\u7528\u7A0B\u5F0F\u53EF\u540C\u6B65\uFF1B\u5B98\u65B9 v3.1.8 \u7684 canSync \u4F7F\u7528\u624B\u52D5\u540C\u6B65\u8996\u7A97\u5224\u5B9A\uFF0C\u4E0D\u80FD\u5916\u63A8\u81EA\u52D5\u540C\u6B65\u6216 RBAC \u6B0A\u9650\uFF0C\u4E5F\u4E0D\u662F\u672C\u64F4\u5145\u63D0\u4F9B\u540C\u6B65\u64CD\u4F5C\u7684\u627F\u8AFE\u3002",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "\u50C5\u986F\u793A\u4F3A\u670D\u5668\u6B64\u4EFD\u56DE\u61C9\u7684\u8996\u7A97\u5224\u5B9A\uFF0C\u4E0D\u4F7F\u7528\u700F\u89BD\u5668\u6642\u9418\u91CD\u65B0\u8A08\u7B97 cron\u3002Project \u4F5C\u7528\u4E2D\u8996\u7A97\u4E0D\u7B49\u65BC\u4EFB\u610F\u61C9\u7528\u7A0B\u5F0F\u53EF\u540C\u6B65\uFF1B\u5B98\u65B9 v3.1.8 \u7684 canSync \u4F7F\u7528\u624B\u52D5\u540C\u6B65\u8996\u7A97\u5224\u5B9A\uFF0C\u4E0D\u80FD\u5916\u63A8\u81EA\u52D5\u540C\u6B65\u6216 RBAC \u6B0A\u9650\u3002",
       "The server reported connection details; their contents may contain credentials and are withheld.": "\u670D\u52D9\u7AEF\u5B58\u5728\u9023\u63A5\u8AAA\u660E\uFF1B\u539F\u6587\u53EF\u80FD\u5305\u542B\u8A8D\u8B49\u8A0A\u606F\uFF0C\u672A\u50B3\u8F38\u3002",
       "No displayable connection details were provided; do not infer success.": "\u670D\u52D9\u7AEF\u672A\u63D0\u4F9B\u53EF\u986F\u793A\u7684\u9023\u7DDA\u8AAA\u660E\uFF1B\u4E0D\u64DA\u6B64\u5224\u65B7\u6210\u529F\u3002",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "\u670D\u52D9\u7AEF\u5354\u8ABF\u8AAA\u660E\u53EF\u80FD\u5305\u542B\u7522\u751F\u53C3\u6578\u6216\u6191\u8B49\uFF1B\u6B63\u6587\u672A\u50B3\u8F38\u3002",
@@ -4699,9 +5389,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6458\u8981\u9810\u89BD\u5931\u6557\u6216\u8EAB\u5206/\u5BBF\u4E3B\u908A\u754C\u8B8A\u5316\uFF1B\u672A\u5BEB\u5165\u8F38\u5165\u6846\u3002"
     },
     "uk": {
-      ...deploymentEnglish,
-      "Restarts": "\u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u043A\u0438",
-      "Redaction notice": "\u041F\u0440\u0438\u043C\u0456\u0442\u043A\u0430 \u043F\u0440\u043E \u043F\u0440\u0438\u0445\u043E\u0432\u0443\u0432\u0430\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "\u0406\u043D\u0448\u0430 \u043E\u043F\u0435\u0440\u0430\u0446\u0456\u044F \u0432\u0436\u0435 \u0432\u0438\u043A\u043E\u043D\u0443\u0454\u0442\u044C\u0441\u044F \u0430\u0431\u043E \u0432\u0438\u043D\u0438\u043A \u043A\u043E\u043D\u0444\u043B\u0456\u043A\u0442 \u0441\u0442\u0430\u043D\u0443 \u043E\u0431'\u0454\u043A\u0442\u0430.",
+      "New application": "\u041D\u043E\u0432\u0438\u0439 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A",
+      "Create application": "\u0421\u0442\u0432\u043E\u0440\u0438\u0442\u0438 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A",
+      "Create": "\u0421\u0442\u0432\u043E\u0440\u0438\u0442\u0438",
+      "Creating application\u2026": "\u0421\u0442\u0432\u043E\u0440\u0435\u043D\u043D\u044F \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443\u2026",
+      "Application created.": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A \u0441\u0442\u0432\u043E\u0440\u0435\u043D\u043E.",
+      "Action failed.": "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0432\u0438\u043A\u043E\u043D\u0430\u043D\u043D\u044F \u0434\u0456\u0457.",
+      "Application actions": "\u0414\u0456\u0457 \u0456\u0437 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u043E\u043C",
+      "Session identity unavailable. Reload applications first.": "\u0406\u0434\u0435\u043D\u0442\u0438\u0444\u0456\u043A\u0430\u0442\u043E\u0440 \u0441\u0435\u0430\u043D\u0441\u0443 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0439. \u0421\u043F\u043E\u0447\u0430\u0442\u043A\u0443 \u043F\u0435\u0440\u0435\u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0442\u0435 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0438.",
+      "Session identity unavailable. Read management data first.": "\u0406\u0434\u0435\u043D\u0442\u0438\u0444\u0456\u043A\u0430\u0442\u043E\u0440 \u0441\u0435\u0430\u043D\u0441\u0443 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0439. \u0421\u043F\u043E\u0447\u0430\u0442\u043A\u0443 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0442\u0435 \u0434\u0430\u043D\u0456 \u043A\u0435\u0440\u0443\u0432\u0430\u043D\u043D\u044F.",
+      "Sync": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0443\u0432\u0430\u0442\u0438",
+      "Sync application": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0443\u0432\u0430\u0442\u0438 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A",
+      "Syncing application\u2026": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u044F \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443\u2026",
+      "Sync requested.": "\u0417\u0430\u043F\u0438\u0442 \u043D\u0430 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u044E \u043D\u0430\u0434\u0456\u0441\u043B\u0430\u043D\u043E.",
+      "Refresh": "\u041E\u043D\u043E\u0432\u0438\u0442\u0438",
+      "Refreshing application\u2026": "\u041E\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443\u2026",
+      "Application refreshed.": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A \u043E\u043D\u043E\u0432\u043B\u0435\u043D\u043E.",
+      "Hard refresh": "\u041F\u0440\u0438\u043C\u0443\u0441\u043E\u0432\u0435 \u043E\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F",
+      "Hard refreshing application\u2026": "\u041F\u0440\u0438\u043C\u0443\u0441\u043E\u0432\u0435 \u043E\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443\u2026",
+      "Application hard refreshed.": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A \u043F\u0440\u0438\u043C\u0443\u0441\u043E\u0432\u043E \u043E\u043D\u043E\u0432\u043B\u0435\u043D\u043E.",
+      "Terminate": "\u041F\u0435\u0440\u0435\u0440\u0432\u0430\u0442\u0438",
+      "Terminate operation": "\u041F\u0435\u0440\u0435\u0440\u0432\u0430\u0442\u0438 \u043E\u043F\u0435\u0440\u0430\u0446\u0456\u044E",
+      "Terminate the currently running operation for this application?": "\u041F\u0435\u0440\u0435\u0440\u0432\u0430\u0442\u0438 \u043F\u043E\u0442\u043E\u0447\u043D\u0443 \u043E\u043F\u0435\u0440\u0430\u0446\u0456\u044E \u0434\u043B\u044F \u0446\u044C\u043E\u0433\u043E \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443?",
+      "Terminating operation\u2026": "\u041F\u0435\u0440\u0435\u0440\u0438\u0432\u0430\u043D\u043D\u044F \u043E\u043F\u0435\u0440\u0430\u0446\u0456\u0457\u2026",
+      "Operation termination requested.": "\u0417\u0430\u043F\u0438\u0442 \u043D\u0430 \u043F\u0435\u0440\u0435\u0440\u0438\u0432\u0430\u043D\u043D\u044F \u043E\u043F\u0435\u0440\u0430\u0446\u0456\u0457 \u043D\u0430\u0434\u0456\u0441\u043B\u0430\u043D\u043E.",
+      "Rollback": "\u0412\u0456\u0434\u043A\u0430\u0442",
+      "Rollback application": "\u0412\u0456\u0434\u043A\u043E\u0442\u0438\u0442\u0438 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A",
+      "Rolling back application\u2026": "\u0412\u0456\u0434\u043A\u0430\u0442 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443\u2026",
+      "Rollback requested.": "\u0417\u0430\u043F\u0438\u0442 \u043D\u0430 \u0432\u0456\u0434\u043A\u0430\u0442 \u043D\u0430\u0434\u0456\u0441\u043B\u0430\u043D\u043E.",
+      "Patch": "\u041F\u0430\u0442\u0447",
+      "Patch application": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u0432\u0430\u0442\u0438 \u043F\u0430\u0442\u0447 \u0434\u043E \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443",
+      "Patching application\u2026": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u0432\u0430\u043D\u043D\u044F \u043F\u0430\u0442\u0447\u0443 \u0434\u043E \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443\u2026",
+      "Application patched.": "\u041F\u0430\u0442\u0447 \u0437\u0430\u0441\u0442\u043E\u0441\u043E\u0432\u0430\u043D\u043E \u0434\u043E \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443.",
+      "Apply patch": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u0432\u0430\u0442\u0438 \u043F\u0430\u0442\u0447",
+      "Delete": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438",
+      "Delete application": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A",
+      "This permanently deletes the Argo CD application.": "\u0426\u0435 \u043D\u0430\u0437\u0430\u0432\u0436\u0434\u0438 \u0432\u0438\u0434\u0430\u043B\u0438\u0442\u044C \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A Argo CD.",
+      "Cascade delete managed resources": "\u041A\u0430\u0441\u043A\u0430\u0434\u043D\u043E \u0432\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u043A\u0435\u0440\u043E\u0432\u0430\u043D\u0456 \u0440\u0435\u0441\u0443\u0440\u0441\u0438",
+      "Propagation policy": "\u041F\u043E\u043B\u0456\u0442\u0438\u043A\u0430 \u043F\u043E\u0448\u0438\u0440\u0435\u043D\u043D\u044F",
+      "Foreground": "Foreground (\u043F\u0435\u0440\u0435\u0434\u043D\u0456\u0439 \u043F\u043B\u0430\u043D)",
+      "Background": "Background (\u0444\u043E\u043D\u043E\u0432\u0438\u0439 \u0440\u0435\u0436\u0438\u043C)",
+      "Invalid retry limit (0\u2013100).": "\u041D\u0435\u0434\u0456\u0439\u0441\u043D\u0438\u0439 \u043B\u0456\u043C\u0456\u0442 \u043F\u043E\u0432\u0442\u043E\u0440\u0456\u0432 (0\u2013100).",
+      "Deleting application\u2026": "\u0412\u0438\u0434\u0430\u043B\u0435\u043D\u043D\u044F \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443\u2026",
+      "Application deleted.": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043E\u043A \u0432\u0438\u0434\u0430\u043B\u0435\u043D\u043E.",
+      "Resource actions": "\u0414\u0456\u0457 \u0437 \u0440\u0435\u0441\u0443\u0440\u0441\u043E\u043C",
+      "Syncing resource\u2026": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u044F \u0440\u0435\u0441\u0443\u0440\u0441\u0443\u2026",
+      "Resource sync requested.": "\u0417\u0430\u043F\u0438\u0442 \u043D\u0430 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u044E \u0440\u0435\u0441\u0443\u0440\u0441\u0443 \u043D\u0430\u0434\u0456\u0441\u043B\u0430\u043D\u043E.",
+      "Patch resource": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u0432\u0430\u0442\u0438 \u043F\u0430\u0442\u0447 \u0434\u043E \u0440\u0435\u0441\u0443\u0440\u0441\u0443",
+      "Patching resource\u2026": "\u0417\u0430\u0441\u0442\u043E\u0441\u0443\u0432\u0430\u043D\u043D\u044F \u043F\u0430\u0442\u0447\u0443 \u0434\u043E \u0440\u0435\u0441\u0443\u0440\u0441\u0443\u2026",
+      "Resource patched.": "\u041F\u0430\u0442\u0447 \u0437\u0430\u0441\u0442\u043E\u0441\u043E\u0432\u0430\u043D\u043E \u0434\u043E \u0440\u0435\u0441\u0443\u0440\u0441\u0443.",
+      "Delete resource": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0440\u0435\u0441\u0443\u0440\u0441",
+      "Delete this Kubernetes resource from the cluster?": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0446\u0435\u0439 \u0440\u0435\u0441\u0443\u0440\u0441 Kubernetes \u0456\u0437 \u043A\u043B\u0430\u0441\u0442\u0435\u0440\u0430?",
+      "Force delete": "\u041F\u0440\u0438\u043C\u0443\u0441\u043E\u0432\u0435 \u0432\u0438\u0434\u0430\u043B\u0435\u043D\u043D\u044F",
+      "Orphan dependents": "\u0417\u0430\u043B\u0438\u0448\u0438\u0442\u0438 \u0437\u0430\u043B\u0435\u0436\u043D\u0456 \u0440\u0435\u0441\u0443\u0440\u0441\u0438 \u043E\u0441\u0438\u0440\u043E\u0442\u0456\u043B\u0438\u043C\u0438",
+      "Deleting resource\u2026": "\u0412\u0438\u0434\u0430\u043B\u0435\u043D\u043D\u044F \u0440\u0435\u0441\u0443\u0440\u0441\u0443\u2026",
+      "Resource deleted.": "\u0420\u0435\u0441\u0443\u0440\u0441 \u0432\u0438\u0434\u0430\u043B\u0435\u043D\u043E.",
+      "Run resource action": "\u0412\u0438\u043A\u043E\u043D\u0430\u0442\u0438 \u0434\u0456\u044E \u0437 \u0440\u0435\u0441\u0443\u0440\u0441\u043E\u043C",
+      "Execute this Argo CD resource action?": "\u0412\u0438\u043A\u043E\u043D\u0430\u0442\u0438 \u0446\u044E \u0434\u0456\u044E \u0437 \u0440\u0435\u0441\u0443\u0440\u0441\u043E\u043C Argo CD?",
+      "Run action": "\u0412\u0438\u043A\u043E\u043D\u0430\u0442\u0438 \u0434\u0456\u044E",
+      "Running resource action\u2026": "\u0412\u0438\u043A\u043E\u043D\u0430\u043D\u043D\u044F \u0434\u0456\u0457 \u0437 \u0440\u0435\u0441\u0443\u0440\u0441\u043E\u043C\u2026",
+      "Resource action completed.": "\u0414\u0456\u044E \u0437 \u0440\u0435\u0441\u0443\u0440\u0441\u043E\u043C \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043E.",
+      "Cancel": "\u0421\u043A\u0430\u0441\u0443\u0432\u0430\u0442\u0438",
+      "Confirm": "\u041F\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0438",
+      "Submit": "\u041D\u0430\u0434\u0456\u0441\u043B\u0430\u0442\u0438",
+      "Save": "\u0417\u0431\u0435\u0440\u0435\u0433\u0442\u0438",
+      "Edit": "\u0420\u0435\u0434\u0430\u0433\u0443\u0432\u0430\u0442\u0438",
+      "Type {0} to confirm": "\u0412\u0432\u0435\u0434\u0456\u0442\u044C {0} \u0434\u043B\u044F \u043F\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0436\u0435\u043D\u043D\u044F",
+      "Target revision (optional)": "\u0426\u0456\u043B\u044C\u043E\u0432\u0430 \u0440\u0435\u0432\u0456\u0437\u0456\u044F (\u043D\u0435\u043E\u0431\u043E\u0432'\u044F\u0437\u043A\u043E\u0432\u043E)",
+      "Retry limit (optional)": "\u041B\u0456\u043C\u0456\u0442 \u043F\u043E\u0432\u0442\u043E\u0440\u0456\u0432 (\u043D\u0435\u043E\u0431\u043E\u0432'\u044F\u0437\u043A\u043E\u0432\u043E)",
+      "Prune": "\u041E\u0447\u0438\u0449\u0435\u043D\u043D\u044F (Prune)",
+      "Dry run": "\u041F\u0440\u043E\u0431\u043D\u0438\u0439 \u0437\u0430\u043F\u0443\u0441\u043A (Dry run)",
+      "Force": "\u041F\u0440\u0438\u043C\u0443\u0441\u043E\u0432\u043E (Force)",
+      "Replace": "\u0417\u0430\u043C\u0456\u043D\u0438\u0442\u0438 (Replace)",
+      "Server-Side Apply": "Server-Side Apply",
+      "Apply Out-Of-Sync Only": "\u0417\u0430\u0441\u0442\u043E\u0441\u043E\u0432\u0443\u0432\u0430\u0442\u0438 \u043B\u0438\u0448\u0435 \u043D\u0435\u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u043E\u0432\u0430\u043D\u0456 \u0440\u0435\u0441\u0443\u0440\u0441\u0438",
+      "Revision history": "\u0406\u0441\u0442\u043E\u0440\u0456\u044F \u0440\u0435\u0432\u0456\u0437\u0456\u0439",
+      "Patch type": "\u0422\u0438\u043F \u043F\u0430\u0442\u0447\u0443",
+      "Upsert if already exists": "\u041E\u043D\u043E\u0432\u0438\u0442\u0438, \u044F\u043A\u0449\u043E \u0432\u0436\u0435 \u0456\u0441\u043D\u0443\u0454 (Upsert)",
+      "Invalid JSON or YAML content.": "\u041D\u0435\u0434\u0456\u0439\u0441\u043D\u0438\u0439 \u0432\u043C\u0456\u0441\u0442 JSON \u0430\u0431\u043E YAML.",
+      "Running management action\u2026": "\u0412\u0438\u043A\u043E\u043D\u0430\u043D\u043D\u044F \u0434\u0456\u0457 \u043A\u0435\u0440\u0443\u0432\u0430\u043D\u043D\u044F\u2026",
+      "Create ApplicationSet": "\u0421\u0442\u0432\u043E\u0440\u0438\u0442\u0438 ApplicationSet",
+      "Create Project": "\u0421\u0442\u0432\u043E\u0440\u0438\u0442\u0438 Project",
+      "ApplicationSet created.": "ApplicationSet \u0441\u0442\u0432\u043E\u0440\u0435\u043D\u043E.",
+      "Project created.": "Project \u0441\u0442\u0432\u043E\u0440\u0435\u043D\u043E.",
+      "Validate access": "\u041F\u0435\u0440\u0435\u0432\u0456\u0440\u0438\u0442\u0438 \u0434\u043E\u0441\u0442\u0443\u043F",
+      "Repository access validated.": "\u0414\u043E\u0441\u0442\u0443\u043F \u0434\u043E \u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0456\u044E \u043F\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0436\u0435\u043D\u043E.",
+      "Delete repository": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0456\u0439",
+      "Remove this repository configuration from Argo CD?": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0446\u044E \u043A\u043E\u043D\u0444\u0456\u0433\u0443\u0440\u0430\u0446\u0456\u044E \u0440\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0456\u044E \u0437 Argo CD?",
+      "Repository deleted.": "\u0420\u0435\u043F\u043E\u0437\u0438\u0442\u043E\u0440\u0456\u0439 \u0432\u0438\u0434\u0430\u043B\u0435\u043D\u043E.",
+      "Invalidate cache": "\u0421\u043A\u0438\u043D\u0443\u0442\u0438 \u043A\u0435\u0448",
+      "Cluster cache invalidated.": "\u041A\u0435\u0448 \u043A\u043B\u0430\u0441\u0442\u0435\u0440\u0430 \u0441\u043A\u0438\u043D\u0443\u0442\u043E.",
+      "Delete cluster": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440",
+      "Remove this cluster registration from Argo CD?": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0446\u044E \u0440\u0435\u0454\u0441\u0442\u0440\u0430\u0446\u0456\u044E \u043A\u043B\u0430\u0441\u0442\u0435\u0440\u0430 \u0437 Argo CD?",
+      "Cluster deleted.": "\u041A\u043B\u0430\u0441\u0442\u0435\u0440 \u0432\u0438\u0434\u0430\u043B\u0435\u043D\u043E.",
+      "Update Project": "\u041E\u043D\u043E\u0432\u0438\u0442\u0438 Project",
+      "Project updated.": "Project \u043E\u043D\u043E\u0432\u043B\u0435\u043D\u043E.",
+      "Delete Project": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 Project",
+      "Permanently delete this Argo CD Project?": "\u041D\u0430\u0437\u0430\u0432\u0436\u0434\u0438 \u0432\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0446\u0435\u0439 Project Argo CD?",
+      "Project deleted.": "Project \u0432\u0438\u0434\u0430\u043B\u0435\u043D\u043E.",
+      "Delete ApplicationSet": "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 ApplicationSet",
+      "Permanently delete this ApplicationSet?": "\u041D\u0430\u0437\u0430\u0432\u0436\u0434\u0438 \u0432\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u0446\u0435\u0439 ApplicationSet?",
+      "ApplicationSet deleted.": "ApplicationSet \u0432\u0438\u0434\u0430\u043B\u0435\u043D\u043E.",
+      "No resource actions available.": "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0434\u0456\u0439 \u0434\u043B\u044F \u0446\u044C\u043E\u0433\u043E \u0440\u0435\u0441\u0443\u0440\u0441\u0443.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u0412\u0456\u0434\u043A\u0440\u0438\u0442\u0442\u044F \u0432\u043A\u043B\u0430\u0434\u043A\u0438 \xAB\u0416\u0443\u0440\u043D\u0430\u043B\u0438\xBB \u0447\u0438\u0442\u0430\u0454 \u043E\u0441\u0442\u0430\u043D\u043D\u0456\u0439 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442; \u0437\u0430 \u0443\u043C\u043E\u0432\u0447\u0430\u043D\u043D\u044F\u043C \u0432\u0438\u043C\u043A\u043D\u0435\u043D\u043E.",
       "Reload logs": "\u041F\u0435\u0440\u0435\u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0438\u0442\u0438 \u0436\u0443\u0440\u043D\u0430\u043B\u0438",
       "Invalid log options. Check the line count and time range.": "\u041D\u0435\u0434\u0456\u0439\u0441\u043D\u0456 \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u0438 \u0436\u0443\u0440\u043D\u0430\u043B\u0443. \u041F\u0435\u0440\u0435\u0432\u0456\u0440\u0442\u0435 \u043A\u0456\u043B\u044C\u043A\u0456\u0441\u0442\u044C \u0440\u044F\u0434\u043A\u0456\u0432 \u0456 \u0434\u0456\u0430\u043F\u0430\u0437\u043E\u043D \u0447\u0430\u0441\u0443.",
@@ -4893,6 +5700,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "\u0412\u0438\u043A\u043E\u043D\u0430\u043D\u043E",
       "Initiated by": "\u0406\u043D\u0456\u0446\u0456\u0430\u0442\u043E\u0440\u043E\u043C",
       "Automated": "\u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0437\u043E\u0432\u0430\u043D\u0438\u0439",
+      "Restarts": "\u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u043A\u0438",
+      "Redaction notice": "\u041F\u0440\u0438\u043C\u0456\u0442\u043A\u0430 \u043F\u0440\u043E \u043F\u0440\u0438\u0445\u043E\u0432\u0443\u0432\u0430\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       "{0} (unrecognized state)": "{0} (\u043D\u0435\u0440\u043E\u0437\u043F\u0456\u0437\u043D\u0430\u043D\u0438\u0439 \u0441\u0442\u0430\u043D)",
       "Default": "\u0417\u0430 \u0437\u0430\u043C\u043E\u0432\u0447\u0443\u0432\u0430\u043D\u043D\u044F\u043C",
       "None": "\u0436\u043E\u0434\u043D\u043E\u0433\u043E",
@@ -4982,7 +5791,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "\u0427\u0438\u0442\u0430\u043D\u043D\u044F \u0434\u043E\u0434\u0430\u0442\u043A\u043E\u0432\u043E\u0457 \u0456\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0456\u0457\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "\u0414\u043E\u0434\u0430\u0442\u043A\u043E\u0432\u0430 \u0456\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0456\u044F \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430; \u043E\u0441\u043D\u043E\u0432\u043D\u0456 \u0434\u0435\u0442\u0430\u043B\u0456 \u0437\u0430\u043B\u0438\u0448\u0430\u044E\u0442\u044C\u0441\u044F \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u043C\u0438. \u041D\u0435 \u0432\u0438\u0432\u043E\u0434\u044C\u0442\u0435 \u043F\u043E\u0440\u043E\u0436\u043D\u0456\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442.",
       "Management paused; the existing list is an old snapshot.": "\u0423\u043F\u0440\u0430\u0432\u043B\u0456\u043D\u043D\u044F \u043F\u0440\u0438\u0437\u0443\u043F\u0438\u043D\u0435\u043D\u043E; \u0456\u0441\u043D\u0443\u044E\u0447\u0438\u0439 \u0441\u043F\u0438\u0441\u043E\u043A \u0454 \u0441\u0442\u0430\u0440\u0438\u043C \u0437\u043D\u0456\u043C\u043A\u043E\u043C.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "\u0412\u0456\u0434\u043E\u0431\u0440\u0430\u0436\u0430\u0454\u0442\u044C\u0441\u044F \u043B\u0438\u0448\u0435 \u0446\u044F \u0432\u0456\u0434\u043F\u043E\u0432\u0456\u0434\u044C \u0441\u0435\u0440\u0432\u0435\u0440\u0430; cron \u043D\u0435 \u043F\u0435\u0440\u0435\u0440\u0430\u0445\u043E\u0432\u0443\u0454\u0442\u044C\u0441\u044F \u0437\u0430 \u0434\u043E\u043F\u043E\u043C\u043E\u0433\u043E\u044E \u0433\u043E\u0434\u0438\u043D\u043D\u0438\u043A\u0430 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0430. \u0410\u043A\u0442\u0438\u0432\u043D\u0456 \u0432\u0456\u043A\u043D\u0430 \u043F\u0440\u043E\u0435\u043A\u0442\u0443 \u043D\u0435 \u043F\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0436\u0443\u044E\u0442\u044C \u043C\u043E\u0436\u043B\u0438\u0432\u0456\u0441\u0442\u044C \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u0457 \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u0438. \u041E\u0444\u0456\u0446\u0456\u0439\u043D\u0430 \u0432\u0435\u0440\u0441\u0456\u044F 3.1.8 canSync \u0432\u0438\u043A\u043E\u0440\u0438\u0441\u0442\u043E\u0432\u0443\u0454 \u043E\u0446\u0456\u043D\u043A\u0443 \u0432\u0456\u043A\u043D\u0430 \u0440\u0443\u0447\u043D\u043E\u0457 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u0457, \u0430 \u043D\u0435 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u043D\u0443 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u044E \u0447\u0438 \u0434\u043E\u0437\u0432\u0456\u043B RBAC. \u0426\u0435 \u0440\u043E\u0437\u0448\u0438\u0440\u0435\u043D\u043D\u044F \u043D\u0435 \u043C\u043E\u0436\u0435 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0443\u0432\u0430\u0442\u0438\u0441\u044F.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "\u0412\u0456\u0434\u043E\u0431\u0440\u0430\u0436\u0430\u0454\u0442\u044C\u0441\u044F \u043B\u0438\u0448\u0435 \u0446\u044F \u0432\u0456\u0434\u043F\u043E\u0432\u0456\u0434\u044C \u0441\u0435\u0440\u0432\u0435\u0440\u0430; cron \u043D\u0435 \u043F\u0435\u0440\u0435\u0440\u0430\u0445\u043E\u0432\u0443\u0454\u0442\u044C\u0441\u044F \u0437\u0430 \u0434\u043E\u043F\u043E\u043C\u043E\u0433\u043E\u044E \u0433\u043E\u0434\u0438\u043D\u043D\u0438\u043A\u0430 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0430. \u0410\u043A\u0442\u0438\u0432\u043D\u0456 \u0432\u0456\u043A\u043D\u0430 \u043F\u0440\u043E\u0454\u043A\u0442\u0443 \u043D\u0435 \u043F\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0436\u0443\u044E\u0442\u044C \u043C\u043E\u0436\u043B\u0438\u0432\u0456\u0441\u0442\u044C \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u0457 \u0437\u0430\u0441\u0442\u043E\u0441\u0443\u043D\u043A\u0443. \u041E\u0444\u0456\u0446\u0456\u0439\u043D\u0438\u0439 v3.1.8 canSync \u043E\u0446\u0456\u043D\u044E\u0454 \u0432\u0456\u043A\u043D\u0430 \u0440\u0443\u0447\u043D\u043E\u0457 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u0457, \u0430 \u043D\u0435 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u043D\u0443 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0456\u0437\u0430\u0446\u0456\u044E \u0447\u0438 \u0434\u043E\u0437\u0432\u043E\u043B\u0438 RBAC.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "\u0421\u0435\u0440\u0432\u0435\u0440 \u043F\u043E\u0432\u0456\u0434\u043E\u043C\u0438\u0432 \u0434\u0435\u0442\u0430\u043B\u0456 \u043F\u0456\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044F; \u0457\u0445 \u0432\u043C\u0456\u0441\u0442 \u043C\u043E\u0436\u0435 \u043C\u0456\u0441\u0442\u0438\u0442\u0438 \u043E\u0431\u043B\u0456\u043A\u043E\u0432\u0456 \u0434\u0430\u043D\u0456 \u0442\u0430 \u043D\u0435 \u0440\u043E\u0437\u0433\u043E\u043B\u043E\u0448\u0443\u0454\u0442\u044C\u0441\u044F.",
       "No displayable connection details were provided; do not infer success.": "\u0412\u0456\u0434\u043E\u0431\u0440\u0430\u0436\u0430\u044E\u0442\u044C\u0441\u044F \u0434\u0435\u0442\u0430\u043B\u0456 \u043F\u0456\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044F \u043D\u0435 \u043D\u0430\u0434\u0430\u043D\u043E; \u043D\u0435 \u043F\u0440\u0438\u043F\u0443\u0441\u043A\u0430\u0439\u0442\u0435 \u0443\u0441\u043F\u0456\u0445\u0443.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "\u0414\u0435\u0442\u0430\u043B\u0456 \u0443\u0437\u0433\u043E\u0434\u0436\u0435\u043D\u043D\u044F \u043C\u043E\u0436\u0443\u0442\u044C \u043C\u0456\u0441\u0442\u0438\u0442\u0438 \u0437\u043D\u0430\u0447\u0435\u043D\u043D\u044F \u0433\u0435\u043D\u0435\u0440\u0430\u0442\u043E\u0440\u0430 \u0430\u0431\u043E \u043E\u0431\u043B\u0456\u043A\u043E\u0432\u0456 \u0434\u0430\u043D\u0456; \u0442\u0456\u043B\u0430 \u0443\u0442\u0440\u0438\u043C\u0443\u044E\u0442\u044C\u0441\u044F.",
@@ -5088,9 +5897,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u043E\u043F\u0435\u0440\u0435\u0434\u043D\u044C\u043E\u0433\u043E \u043F\u0435\u0440\u0435\u0433\u043B\u044F\u0434\u0443 \u0437\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0430\u0431\u043E \u0437\u043C\u0456\u043D\u0435\u043D\u043E \u043C\u0435\u0436\u0443 \u0456\u0434\u0435\u043D\u0442\u0438\u0444\u0456\u043A\u0430\u0442\u043E\u0440\u0430/\u0445\u043E\u0441\u0442\u0443; \u0443 \u043F\u043E\u043B\u0435 \u0432\u0432\u0435\u0434\u0435\u043D\u043D\u044F \u0447\u0430\u0442\u0443 \u043D\u0456\u0447\u043E\u0433\u043E \u043D\u0435 \u0434\u043E\u0434\u0430\u043D\u043E."
     },
     "es": {
-      ...deploymentEnglish,
-      "Restarts": "Reinicios",
-      "Redaction notice": "Aviso de ocultaci\xF3n de datos",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "Ya hay otra operaci\xF3n en curso o el estado del objeto entr\xF3 en conflicto.",
+      "New application": "Nueva aplicaci\xF3n",
+      "Create application": "Crear aplicaci\xF3n",
+      "Create": "Crear",
+      "Creating application\u2026": "Creando aplicaci\xF3n\u2026",
+      "Application created.": "Aplicaci\xF3n creada.",
+      "Action failed.": "La acci\xF3n fall\xF3.",
+      "Application actions": "Acciones de la aplicaci\xF3n",
+      "Session identity unavailable. Reload applications first.": "Identidad de sesi\xF3n no disponible. Vuelva a cargar primero las aplicaciones.",
+      "Session identity unavailable. Read management data first.": "Identidad de sesi\xF3n no disponible. Lea primero los datos de gesti\xF3n.",
+      "Sync": "Sincronizar",
+      "Sync application": "Sincronizar aplicaci\xF3n",
+      "Syncing application\u2026": "Sincronizando aplicaci\xF3n\u2026",
+      "Sync requested.": "Sincronizaci\xF3n solicitada.",
+      "Refresh": "Actualizar",
+      "Refreshing application\u2026": "Actualizando aplicaci\xF3n\u2026",
+      "Application refreshed.": "Aplicaci\xF3n actualizada.",
+      "Hard refresh": "Actualizaci\xF3n forzada",
+      "Hard refreshing application\u2026": "Actualizando aplicaci\xF3n de forma forzada\u2026",
+      "Application hard refreshed.": "Aplicaci\xF3n actualizada de forma forzada.",
+      "Terminate": "Terminar",
+      "Terminate operation": "Terminar operaci\xF3n",
+      "Terminate the currently running operation for this application?": "\xBFTerminar la operaci\xF3n actualmente en ejecuci\xF3n para esta aplicaci\xF3n?",
+      "Terminating operation\u2026": "Terminando operaci\xF3n\u2026",
+      "Operation termination requested.": "Terminaci\xF3n de operaci\xF3n solicitada.",
+      "Rollback": "Revertir (Rollback)",
+      "Rollback application": "Revertir aplicaci\xF3n",
+      "Rolling back application\u2026": "Revirtiendo aplicaci\xF3n\u2026",
+      "Rollback requested.": "Reversi\xF3n solicitada.",
+      "Patch": "Parchear",
+      "Patch application": "Parchear aplicaci\xF3n",
+      "Patching application\u2026": "Aplicando parche a la aplicaci\xF3n\u2026",
+      "Application patched.": "Aplicaci\xF3n parcheada.",
+      "Apply patch": "Aplicar parche",
+      "Delete": "Eliminar",
+      "Delete application": "Eliminar aplicaci\xF3n",
+      "This permanently deletes the Argo CD application.": "Esto elimina permanentemente la aplicaci\xF3n de Argo CD.",
+      "Cascade delete managed resources": "Eliminar en cascada los recursos gestionados",
+      "Propagation policy": "Pol\xEDtica de propagaci\xF3n",
+      "Foreground": "Foreground (primer plano)",
+      "Background": "Background (segundo plano)",
+      "Invalid retry limit (0\u2013100).": "L\xEDmite de reintentos no v\xE1lido (0\u2013100).",
+      "Deleting application\u2026": "Eliminando aplicaci\xF3n\u2026",
+      "Application deleted.": "Aplicaci\xF3n eliminada.",
+      "Resource actions": "Acciones del recurso",
+      "Syncing resource\u2026": "Sincronizando recurso\u2026",
+      "Resource sync requested.": "Sincronizaci\xF3n del recurso solicitada.",
+      "Patch resource": "Parchear recurso",
+      "Patching resource\u2026": "Aplicando parche al recurso\u2026",
+      "Resource patched.": "Recurso parcheado.",
+      "Delete resource": "Eliminar recurso",
+      "Delete this Kubernetes resource from the cluster?": "\xBFEliminar este recurso de Kubernetes del cl\xFAster?",
+      "Force delete": "Forzar eliminaci\xF3n",
+      "Orphan dependents": "Dejar dependientes hu\xE9rfanos",
+      "Deleting resource\u2026": "Eliminando recurso\u2026",
+      "Resource deleted.": "Recurso eliminado.",
+      "Run resource action": "Ejecutar acci\xF3n del recurso",
+      "Execute this Argo CD resource action?": "\xBFEjecutar esta acci\xF3n de recurso de Argo CD?",
+      "Run action": "Ejecutar acci\xF3n",
+      "Running resource action\u2026": "Ejecutando acci\xF3n del recurso\u2026",
+      "Resource action completed.": "Acci\xF3n del recurso completada.",
+      "Cancel": "Cancelar",
+      "Confirm": "Confirmar",
+      "Submit": "Enviar",
+      "Save": "Guardar",
+      "Edit": "Editar",
+      "Type {0} to confirm": "Escriba {0} para confirmar",
+      "Target revision (optional)": "Revisi\xF3n de destino (opcional)",
+      "Retry limit (optional)": "L\xEDmite de reintentos (opcional)",
+      "Prune": "Podar (Prune)",
+      "Dry run": "Simulaci\xF3n (Dry run)",
+      "Force": "Forzar (Force)",
+      "Replace": "Reemplazar (Replace)",
+      "Server-Side Apply": "Server-Side Apply",
+      "Apply Out-Of-Sync Only": "Aplicar solo recursos fuera de sincron\xEDa",
+      "Revision history": "Historial de revisiones",
+      "Patch type": "Tipo de parche",
+      "Upsert if already exists": "Actualizar si ya existe (Upsert)",
+      "Invalid JSON or YAML content.": "Contenido JSON o YAML no v\xE1lido.",
+      "Running management action\u2026": "Ejecutando acci\xF3n de gesti\xF3n\u2026",
+      "Create ApplicationSet": "Crear ApplicationSet",
+      "Create Project": "Crear Project",
+      "ApplicationSet created.": "ApplicationSet creado.",
+      "Project created.": "Project creado.",
+      "Validate access": "Validar acceso",
+      "Repository access validated.": "Acceso al repositorio validado.",
+      "Delete repository": "Eliminar repositorio",
+      "Remove this repository configuration from Argo CD?": "\xBFEliminar esta configuraci\xF3n de repositorio de Argo CD?",
+      "Repository deleted.": "Repositorio eliminado.",
+      "Invalidate cache": "Invalidar cach\xE9",
+      "Cluster cache invalidated.": "Cach\xE9 del cl\xFAster invalidada.",
+      "Delete cluster": "Eliminar cl\xFAster",
+      "Remove this cluster registration from Argo CD?": "\xBFEliminar este registro de cl\xFAster de Argo CD?",
+      "Cluster deleted.": "Cl\xFAster eliminado.",
+      "Update Project": "Actualizar Project",
+      "Project updated.": "Project actualizado.",
+      "Delete Project": "Eliminar Project",
+      "Permanently delete this Argo CD Project?": "\xBFEliminar permanentemente este Project de Argo CD?",
+      "Project deleted.": "Project eliminado.",
+      "Delete ApplicationSet": "Eliminar ApplicationSet",
+      "Permanently delete this ApplicationSet?": "\xBFEliminar permanentemente este ApplicationSet?",
+      "ApplicationSet deleted.": "ApplicationSet eliminado.",
+      "No resource actions available.": "No hay acciones disponibles para este recurso.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Al abrir la pesta\xF1a Registros se lee un fragmento reciente; Lo siguiente est\xE1 desactivado de forma predeterminada.",
       "Reload logs": "Recargar registros",
       "Invalid log options. Check the line count and time range.": "Opciones de registro no v\xE1lidas. Verifique el recuento de l\xEDneas y el rango de tiempo.",
@@ -5282,6 +6208,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "Completado",
       "Initiated by": "Iniciado por",
       "Automated": "Automatizado",
+      "Restarts": "Reinicios",
+      "Redaction notice": "Aviso de ocultaci\xF3n de datos",
       "{0} (unrecognized state)": "{0} (estado no reconocido)",
       "Default": "Predeterminado",
       "None": "Ninguno",
@@ -5371,7 +6299,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "Leyendo informaci\xF3n adicional\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "Informaci\xF3n adicional no disponible; Los detalles principales permanecen disponibles. No infieras un resultado vac\xEDo.",
       "Management paused; the existing list is an old snapshot.": "La gesti\xF3n hizo una pausa; la lista existente es una instant\xE1nea antigua.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "S\xF3lo se muestra esta respuesta del servidor; cron no se recalcula utilizando el reloj del navegador. Las ventanas de Proyecto activo no prueban que una aplicaci\xF3n pueda sincronizarse. CanSync oficial v3.1.8 utiliza evaluaci\xF3n de ventana de sincronizaci\xF3n manual, no sincronizaci\xF3n autom\xE1tica ni permiso RBAC. Esta extensi\xF3n no se puede sincronizar.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Solo se muestra esta respuesta del servidor; cron no se recalcula con el reloj del navegador. Las ventanas activas del proyecto no prueban que una aplicaci\xF3n pueda sincronizarse. El canSync oficial de v3.1.8 eval\xFAa ventanas de sincronizaci\xF3n manual, no la sincronizaci\xF3n autom\xE1tica ni los permisos RBAC.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "El servidor inform\xF3 detalles de la conexi\xF3n; su contenido puede contener credenciales y se retiene.",
       "No displayable connection details were provided; do not infer success.": "No se proporcionaron detalles de conexi\xF3n visibles; no infieras el \xE9xito.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Los detalles de conciliaci\xF3n pueden contener valores de generador o credenciales; los cuerpos son retenidos.",
@@ -5477,9 +6405,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Error en la vista previa del resumen o se modific\xF3 el l\xEDmite de identidad/host; no se agreg\xF3 nada al cuadro de entrada del chat."
     },
     "pt-BR": {
-      ...deploymentEnglish,
-      "Restarts": "Reinicializa\xE7\xF5es",
-      "Redaction notice": "Aviso de oculta\xE7\xE3o de dados",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "Outra opera\xE7\xE3o j\xE1 est\xE1 em andamento ou o estado do objeto entrou em conflito.",
+      "New application": "Nova aplica\xE7\xE3o",
+      "Create application": "Criar aplica\xE7\xE3o",
+      "Create": "Criar",
+      "Creating application\u2026": "Criando aplica\xE7\xE3o\u2026",
+      "Application created.": "Aplica\xE7\xE3o criada.",
+      "Action failed.": "Falha na a\xE7\xE3o.",
+      "Application actions": "A\xE7\xF5es da aplica\xE7\xE3o",
+      "Session identity unavailable. Reload applications first.": "Identidade da sess\xE3o indispon\xEDvel. Recarregue as aplica\xE7\xF5es primeiro.",
+      "Session identity unavailable. Read management data first.": "Identidade da sess\xE3o indispon\xEDvel. Leia os dados de gerenciamento primeiro.",
+      "Sync": "Sincronizar",
+      "Sync application": "Sincronizar aplica\xE7\xE3o",
+      "Syncing application\u2026": "Sincronizando aplica\xE7\xE3o\u2026",
+      "Sync requested.": "Sincroniza\xE7\xE3o solicitada.",
+      "Refresh": "Atualizar",
+      "Refreshing application\u2026": "Atualizando aplica\xE7\xE3o\u2026",
+      "Application refreshed.": "Aplica\xE7\xE3o atualizada.",
+      "Hard refresh": "Atualiza\xE7\xE3o for\xE7ada",
+      "Hard refreshing application\u2026": "Atualizando aplica\xE7\xE3o de forma for\xE7ada\u2026",
+      "Application hard refreshed.": "Aplica\xE7\xE3o atualizada de forma for\xE7ada.",
+      "Terminate": "Encerrar",
+      "Terminate operation": "Encerrar opera\xE7\xE3o",
+      "Terminate the currently running operation for this application?": "Encerrar a opera\xE7\xE3o atualmente em execu\xE7\xE3o para esta aplica\xE7\xE3o?",
+      "Terminating operation\u2026": "Encerrando opera\xE7\xE3o\u2026",
+      "Operation termination requested.": "Encerramento da opera\xE7\xE3o solicitado.",
+      "Rollback": "Reverter (Rollback)",
+      "Rollback application": "Reverter aplica\xE7\xE3o",
+      "Rolling back application\u2026": "Revertendo aplica\xE7\xE3o\u2026",
+      "Rollback requested.": "Revers\xE3o solicitada.",
+      "Patch": "Aplicar patch",
+      "Patch application": "Aplicar patch na aplica\xE7\xE3o",
+      "Patching application\u2026": "Aplicando patch na aplica\xE7\xE3o\u2026",
+      "Application patched.": "Patch aplicado na aplica\xE7\xE3o.",
+      "Apply patch": "Aplicar patch",
+      "Delete": "Excluir",
+      "Delete application": "Excluir aplica\xE7\xE3o",
+      "This permanently deletes the Argo CD application.": "Isso exclui permanentemente a aplica\xE7\xE3o do Argo CD.",
+      "Cascade delete managed resources": "Excluir recursos gerenciados em cascata",
+      "Propagation policy": "Pol\xEDtica de propaga\xE7\xE3o",
+      "Foreground": "Foreground (primeiro plano)",
+      "Background": "Background (segundo plano)",
+      "Invalid retry limit (0\u2013100).": "Limite de tentativas inv\xE1lido (0\u2013100).",
+      "Deleting application\u2026": "Excluindo aplica\xE7\xE3o\u2026",
+      "Application deleted.": "Aplica\xE7\xE3o exclu\xEDda.",
+      "Resource actions": "A\xE7\xF5es do recurso",
+      "Syncing resource\u2026": "Sincronizando recurso\u2026",
+      "Resource sync requested.": "Sincroniza\xE7\xE3o do recurso solicitada.",
+      "Patch resource": "Aplicar patch no recurso",
+      "Patching resource\u2026": "Aplicando patch no recurso\u2026",
+      "Resource patched.": "Patch aplicado no recurso.",
+      "Delete resource": "Excluir recurso",
+      "Delete this Kubernetes resource from the cluster?": "Excluir este recurso Kubernetes do cluster?",
+      "Force delete": "For\xE7ar exclus\xE3o",
+      "Orphan dependents": "Tornar dependentes \xF3rf\xE3os",
+      "Deleting resource\u2026": "Excluindo recurso\u2026",
+      "Resource deleted.": "Recurso exclu\xEDdo.",
+      "Run resource action": "Executar a\xE7\xE3o do recurso",
+      "Execute this Argo CD resource action?": "Executar esta a\xE7\xE3o de recurso do Argo CD?",
+      "Run action": "Executar a\xE7\xE3o",
+      "Running resource action\u2026": "Executando a\xE7\xE3o do recurso\u2026",
+      "Resource action completed.": "A\xE7\xE3o do recurso conclu\xEDda.",
+      "Cancel": "Cancelar",
+      "Confirm": "Confirmar",
+      "Submit": "Enviar",
+      "Save": "Salvar",
+      "Edit": "Editar",
+      "Type {0} to confirm": "Digite {0} para confirmar",
+      "Target revision (optional)": "Revis\xE3o de destino (opcional)",
+      "Retry limit (optional)": "Limite de tentativas (opcional)",
+      "Prune": "Podar (Prune)",
+      "Dry run": "Simula\xE7\xE3o (Dry run)",
+      "Force": "For\xE7ar (Force)",
+      "Replace": "Substituir (Replace)",
+      "Server-Side Apply": "Server-Side Apply",
+      "Apply Out-Of-Sync Only": "Aplicar somente recursos fora de sincronia",
+      "Revision history": "Hist\xF3rico de revis\xF5es",
+      "Patch type": "Tipo de patch",
+      "Upsert if already exists": "Atualizar se j\xE1 existir (Upsert)",
+      "Invalid JSON or YAML content.": "Conte\xFAdo JSON ou YAML inv\xE1lido.",
+      "Running management action\u2026": "Executando a\xE7\xE3o de gerenciamento\u2026",
+      "Create ApplicationSet": "Criar ApplicationSet",
+      "Create Project": "Criar Project",
+      "ApplicationSet created.": "ApplicationSet criado.",
+      "Project created.": "Project criado.",
+      "Validate access": "Validar acesso",
+      "Repository access validated.": "Acesso ao reposit\xF3rio validado.",
+      "Delete repository": "Excluir reposit\xF3rio",
+      "Remove this repository configuration from Argo CD?": "Remover esta configura\xE7\xE3o de reposit\xF3rio do Argo CD?",
+      "Repository deleted.": "Reposit\xF3rio exclu\xEDdo.",
+      "Invalidate cache": "Invalidar cache",
+      "Cluster cache invalidated.": "Cache do cluster invalidado.",
+      "Delete cluster": "Excluir cluster",
+      "Remove this cluster registration from Argo CD?": "Remover este registro de cluster do Argo CD?",
+      "Cluster deleted.": "Cluster exclu\xEDdo.",
+      "Update Project": "Atualizar Project",
+      "Project updated.": "Project atualizado.",
+      "Delete Project": "Excluir Project",
+      "Permanently delete this Argo CD Project?": "Excluir permanentemente este Project do Argo CD?",
+      "Project deleted.": "Project exclu\xEDdo.",
+      "Delete ApplicationSet": "Excluir ApplicationSet",
+      "Permanently delete this ApplicationSet?": "Excluir permanentemente este ApplicationSet?",
+      "ApplicationSet deleted.": "ApplicationSet exclu\xEDdo.",
+      "No resource actions available.": "Nenhuma a\xE7\xE3o dispon\xEDvel para este recurso.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Abrir a guia Logs l\xEA um fragmento recente; o seguinte est\xE1 desativado por padr\xE3o.",
       "Reload logs": "Recarregar registros",
       "Invalid log options. Check the line count and time range.": "Op\xE7\xF5es de registro inv\xE1lidas. Verifique a contagem de linhas e o intervalo de tempo.",
@@ -5671,6 +6716,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "Conclu\xEDdo",
       "Initiated by": "Iniciado por",
       "Automated": "Automatizado",
+      "Restarts": "Reinicializa\xE7\xF5es",
+      "Redaction notice": "Aviso de oculta\xE7\xE3o de dados",
       "{0} (unrecognized state)": "{0} (estado n\xE3o reconhecido)",
       "Default": "Padr\xE3o",
       "None": "Nenhum",
@@ -5760,7 +6807,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "Lendo informa\xE7\xF5es adicionais\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "Informa\xE7\xF5es adicionais indispon\xEDveis; os principais detalhes permanecem dispon\xEDveis. N\xE3o infira um resultado vazio.",
       "Management paused; the existing list is an old snapshot.": "Gest\xE3o pausada; a lista existente \xE9 um instant\xE2neo antigo.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Somente esta resposta do servidor \xE9 mostrada; cron n\xE3o \xE9 recalculado usando o rel\xF3gio do navegador. As janelas do Active Project n\xE3o provam que um aplicativo pode sincronizar. O canSync v3.1.8 oficial usa avalia\xE7\xE3o de janela de sincroniza\xE7\xE3o manual, n\xE3o sincroniza\xE7\xE3o autom\xE1tica ou permiss\xE3o RBAC. Esta extens\xE3o n\xE3o pode ser sincronizada.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Somente esta resposta do servidor \xE9 exibida; o cron n\xE3o \xE9 recalculado usando o rel\xF3gio do navegador. Janelas ativas do Projeto n\xE3o provam que uma aplica\xE7\xE3o pode sincronizar. O canSync oficial da v3.1.8 avalia janelas de sincroniza\xE7\xE3o manual, n\xE3o sincroniza\xE7\xE3o autom\xE1tica ou permiss\xE3o RBAC.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "O servidor relatou detalhes da conex\xE3o; seu conte\xFAdo pode conter credenciais e \xE9 retido.",
       "No displayable connection details were provided; do not infer success.": "Nenhum detalhe de conex\xE3o exib\xEDvel foi fornecido; n\xE3o infira sucesso.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Os detalhes da reconcilia\xE7\xE3o podem conter valores ou credenciais do gerador; corpos s\xE3o retidos.",
@@ -5866,9 +6913,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Falha na visualiza\xE7\xE3o do resumo ou limite de identidade/host alterado; nada foi adicionado \xE0 caixa de entrada do chat."
     },
     "ko": {
-      ...deploymentEnglish,
-      "Restarts": "\uC7AC\uC2DC\uC791 \uD69F\uC218",
-      "Redaction notice": "\uBBFC\uAC10 \uC815\uBCF4 \uC228\uAE40 \uC548\uB0B4",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "\uB2E4\uB978 \uC791\uC5C5\uC774 \uC774\uBBF8 \uC9C4\uD589 \uC911\uC774\uAC70\uB098 \uAC1D\uCCB4 \uC0C1\uD0DC \uCDA9\uB3CC\uC774 \uBC1C\uC0DD\uD588\uC2B5\uB2C8\uB2E4.",
+      "New application": "\uC0C8 \uC560\uD50C\uB9AC\uCF00\uC774\uC158",
+      "Create application": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uC0DD\uC131",
+      "Create": "\uC0DD\uC131",
+      "Creating application\u2026": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uC0DD\uC131 \uC911\u2026",
+      "Application created.": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC774 \uC0DD\uC131\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Action failed.": "\uC791\uC5C5\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.",
+      "Application actions": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uC791\uC5C5",
+      "Session identity unavailable. Reload applications first.": "\uC138\uC158 \uC2E0\uC6D0\uC744 \uD655\uC778\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uBA3C\uC800 \uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC744 \uB2E4\uC2DC \uBD88\uB7EC\uC624\uC138\uC694.",
+      "Session identity unavailable. Read management data first.": "\uC138\uC158 \uC2E0\uC6D0\uC744 \uD655\uC778\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uBA3C\uC800 \uAD00\uB9AC \uB370\uC774\uD130\uB97C \uBD88\uB7EC\uC624\uC138\uC694.",
+      "Sync": "\uB3D9\uAE30\uD654",
+      "Sync application": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uB3D9\uAE30\uD654",
+      "Syncing application\u2026": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uB3D9\uAE30\uD654 \uC911\u2026",
+      "Sync requested.": "\uB3D9\uAE30\uD654\uB97C \uC694\uCCAD\uD588\uC2B5\uB2C8\uB2E4.",
+      "Refresh": "\uC0C8\uB85C\uACE0\uCE68",
+      "Refreshing application\u2026": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uC0C8\uB85C\uACE0\uCE68 \uC911\u2026",
+      "Application refreshed.": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC744 \uC0C8\uB85C\uACE0\uCE68\uD588\uC2B5\uB2C8\uB2E4.",
+      "Hard refresh": "\uAC15\uC81C \uC0C8\uB85C\uACE0\uCE68",
+      "Hard refreshing application\u2026": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uAC15\uC81C \uC0C8\uB85C\uACE0\uCE68 \uC911\u2026",
+      "Application hard refreshed.": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC744 \uAC15\uC81C \uC0C8\uB85C\uACE0\uCE68\uD588\uC2B5\uB2C8\uB2E4.",
+      "Terminate": "\uC911\uB2E8",
+      "Terminate operation": "\uC791\uC5C5 \uC911\uB2E8",
+      "Terminate the currently running operation for this application?": "\uC774 \uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC5D0\uC11C \uD604\uC7AC \uC2E4\uD589 \uC911\uC778 \uC791\uC5C5\uC744 \uC911\uB2E8\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+      "Terminating operation\u2026": "\uC791\uC5C5 \uC911\uB2E8 \uC911\u2026",
+      "Operation termination requested.": "\uC791\uC5C5 \uC911\uB2E8\uC744 \uC694\uCCAD\uD588\uC2B5\uB2C8\uB2E4.",
+      "Rollback": "\uB864\uBC31",
+      "Rollback application": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uB864\uBC31",
+      "Rolling back application\u2026": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uB864\uBC31 \uC911\u2026",
+      "Rollback requested.": "\uB864\uBC31\uC744 \uC694\uCCAD\uD588\uC2B5\uB2C8\uB2E4.",
+      "Patch": "\uD328\uCE58",
+      "Patch application": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uD328\uCE58",
+      "Patching application\u2026": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uD328\uCE58 \uC911\u2026",
+      "Application patched.": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC774 \uD328\uCE58\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Apply patch": "\uD328\uCE58 \uC801\uC6A9",
+      "Delete": "\uC0AD\uC81C",
+      "Delete application": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uC0AD\uC81C",
+      "This permanently deletes the Argo CD application.": "\uC774 Argo CD \uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC744 \uC601\uAD6C\uC801\uC73C\uB85C \uC0AD\uC81C\uD569\uB2C8\uB2E4.",
+      "Cascade delete managed resources": "\uAD00\uB9AC\uB418\uB294 \uB9AC\uC18C\uC2A4 \uACC4\uB2E8\uC2DD \uC0AD\uC81C",
+      "Propagation policy": "\uC804\uD30C \uC815\uCC45",
+      "Foreground": "Foreground (\uD3EC\uADF8\uB77C\uC6B4\uB4DC)",
+      "Background": "Background (\uBC31\uADF8\uB77C\uC6B4\uB4DC)",
+      "Invalid retry limit (0\u2013100).": "\uC798\uBABB\uB41C \uC7AC\uC2DC\uB3C4 \uD69F\uC218 \uC81C\uD55C\uC785\uB2C8\uB2E4 (0\u2013100).",
+      "Deleting application\u2026": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uC0AD\uC81C \uC911\u2026",
+      "Application deleted.": "\uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC774 \uC0AD\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Resource actions": "\uB9AC\uC18C\uC2A4 \uC791\uC5C5",
+      "Syncing resource\u2026": "\uB9AC\uC18C\uC2A4 \uB3D9\uAE30\uD654 \uC911\u2026",
+      "Resource sync requested.": "\uB9AC\uC18C\uC2A4 \uB3D9\uAE30\uD654\uB97C \uC694\uCCAD\uD588\uC2B5\uB2C8\uB2E4.",
+      "Patch resource": "\uB9AC\uC18C\uC2A4 \uD328\uCE58",
+      "Patching resource\u2026": "\uB9AC\uC18C\uC2A4 \uD328\uCE58 \uC911\u2026",
+      "Resource patched.": "\uB9AC\uC18C\uC2A4\uAC00 \uD328\uCE58\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Delete resource": "\uB9AC\uC18C\uC2A4 \uC0AD\uC81C",
+      "Delete this Kubernetes resource from the cluster?": "\uD074\uB7EC\uC2A4\uD130\uC5D0\uC11C \uC774 Kubernetes \uB9AC\uC18C\uC2A4\uB97C \uC0AD\uC81C\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+      "Force delete": "\uAC15\uC81C \uC0AD\uC81C",
+      "Orphan dependents": "\uC885\uC18D \uB9AC\uC18C\uC2A4 \uACE0\uC544 \uC0C1\uD0DC\uB85C \uC720\uC9C0",
+      "Deleting resource\u2026": "\uB9AC\uC18C\uC2A4 \uC0AD\uC81C \uC911\u2026",
+      "Resource deleted.": "\uB9AC\uC18C\uC2A4\uAC00 \uC0AD\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Run resource action": "\uB9AC\uC18C\uC2A4 \uC791\uC5C5 \uC2E4\uD589",
+      "Execute this Argo CD resource action?": "\uC774 Argo CD \uB9AC\uC18C\uC2A4 \uC791\uC5C5\uC744 \uC2E4\uD589\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+      "Run action": "\uC791\uC5C5 \uC2E4\uD589",
+      "Running resource action\u2026": "\uB9AC\uC18C\uC2A4 \uC791\uC5C5 \uC2E4\uD589 \uC911\u2026",
+      "Resource action completed.": "\uB9AC\uC18C\uC2A4 \uC791\uC5C5\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Cancel": "\uCDE8\uC18C",
+      "Confirm": "\uD655\uC778",
+      "Submit": "\uC81C\uCD9C",
+      "Save": "\uC800\uC7A5",
+      "Edit": "\uD3B8\uC9D1",
+      "Type {0} to confirm": "\uD655\uC778\uD558\uB824\uBA74 {0}\uC744(\uB97C) \uC785\uB825\uD558\uC138\uC694",
+      "Target revision (optional)": "\uB300\uC0C1 \uB9AC\uBE44\uC804 (\uC120\uD0DD)",
+      "Retry limit (optional)": "\uC7AC\uC2DC\uB3C4 \uD69F\uC218 \uC81C\uD55C (\uC120\uD0DD)",
+      "Prune": "\uC815\uB9AC (Prune)",
+      "Dry run": "\uC0AC\uC804 \uC2E4\uD589 (Dry run)",
+      "Force": "\uAC15\uC81C (Force)",
+      "Replace": "\uAD50\uCCB4 (Replace)",
+      "Server-Side Apply": "\uC11C\uBC84 \uCE21 \uC801\uC6A9 (Server-Side Apply)",
+      "Apply Out-Of-Sync Only": "\uBE44\uB3D9\uAE30\uD654 \uB9AC\uC18C\uC2A4\uB9CC \uC801\uC6A9",
+      "Revision history": "\uB9AC\uBE44\uC804 \uAE30\uB85D",
+      "Patch type": "\uD328\uCE58 \uC720\uD615",
+      "Upsert if already exists": "\uC774\uBBF8 \uC874\uC7AC\uD558\uBA74 \uC5C5\uB370\uC774\uD2B8 (Upsert)",
+      "Invalid JSON or YAML content.": "\uC798\uBABB\uB41C JSON \uB610\uB294 YAML \uB0B4\uC6A9\uC785\uB2C8\uB2E4.",
+      "Running management action\u2026": "\uAD00\uB9AC \uC791\uC5C5 \uC2E4\uD589 \uC911\u2026",
+      "Create ApplicationSet": "ApplicationSet \uC0DD\uC131",
+      "Create Project": "Project \uC0DD\uC131",
+      "ApplicationSet created.": "ApplicationSet\uC774 \uC0DD\uC131\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Project created.": "Project\uAC00 \uC0DD\uC131\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Validate access": "\uC811\uADFC \uAC80\uC99D",
+      "Repository access validated.": "\uC800\uC7A5\uC18C \uC811\uADFC\uC774 \uAC80\uC99D\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Delete repository": "\uC800\uC7A5\uC18C \uC0AD\uC81C",
+      "Remove this repository configuration from Argo CD?": "Argo CD\uC5D0\uC11C \uC774 \uC800\uC7A5\uC18C \uAD6C\uC131\uC744 \uC81C\uAC70\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+      "Repository deleted.": "\uC800\uC7A5\uC18C\uAC00 \uC0AD\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Invalidate cache": "\uCE90\uC2DC \uBB34\uD6A8\uD654",
+      "Cluster cache invalidated.": "\uD074\uB7EC\uC2A4\uD130 \uCE90\uC2DC\uAC00 \uBB34\uD6A8\uD654\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Delete cluster": "\uD074\uB7EC\uC2A4\uD130 \uC0AD\uC81C",
+      "Remove this cluster registration from Argo CD?": "Argo CD\uC5D0\uC11C \uC774 \uD074\uB7EC\uC2A4\uD130 \uB4F1\uB85D\uC744 \uC81C\uAC70\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+      "Cluster deleted.": "\uD074\uB7EC\uC2A4\uD130\uAC00 \uC0AD\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Update Project": "Project \uC5C5\uB370\uC774\uD2B8",
+      "Project updated.": "Project\uAC00 \uC5C5\uB370\uC774\uD2B8\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Delete Project": "Project \uC0AD\uC81C",
+      "Permanently delete this Argo CD Project?": "\uC774 Argo CD Project\uB97C \uC601\uAD6C\uC801\uC73C\uB85C \uC0AD\uC81C\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+      "Project deleted.": "Project\uAC00 \uC0AD\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "Delete ApplicationSet": "ApplicationSet \uC0AD\uC81C",
+      "Permanently delete this ApplicationSet?": "\uC774 ApplicationSet\uC744 \uC601\uAD6C\uC801\uC73C\uB85C \uC0AD\uC81C\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?",
+      "ApplicationSet deleted.": "ApplicationSet\uC774 \uC0AD\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+      "No resource actions available.": "\uC0AC\uC6A9 \uAC00\uB2A5\uD55C \uB9AC\uC18C\uC2A4 \uC791\uC5C5\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\uB85C\uADF8 \uD0ED\uC744 \uC5F4\uBA74 \uCD5C\uADFC \uC870\uAC01\uC744 \uC77D\uC2B5\uB2C8\uB2E4. \uB2E4\uC74C\uC740 \uAE30\uBCF8\uC801\uC73C\uB85C \uAEBC\uC838 \uC788\uC2B5\uB2C8\uB2E4.",
       "Reload logs": "\uB85C\uADF8 \uB2E4\uC2DC \uB85C\uB4DC",
       "Invalid log options. Check the line count and time range.": "\uB85C\uADF8 \uC635\uC158\uC774 \uC798\uBABB\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uD68C\uC120 \uC218\uC640 \uC2DC\uAC04 \uBC94\uC704\uB97C \uD655\uC778\uD558\uC138\uC694.",
@@ -6060,6 +7224,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "\uC644\uB8CC\uB428",
       "Initiated by": "\uC2DC\uC791\uD55C \uC0AC\uB78C",
       "Automated": "\uC790\uB3D9\uD654\uB428",
+      "Restarts": "\uC7AC\uC2DC\uC791 \uD69F\uC218",
+      "Redaction notice": "\uBBFC\uAC10 \uC815\uBCF4 \uC228\uAE40 \uC548\uB0B4",
       "{0} (unrecognized state)": "{0}(\uC778\uC2DD\uD560 \uC218 \uC5C6\uB294 \uC0C1\uD0DC)",
       "Default": "\uAE30\uBCF8\uAC12",
       "None": "\uC5C6\uC74C",
@@ -6149,7 +7315,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "\uCD94\uAC00 \uC815\uBCF4\uB97C \uC77D\uB294 \uC911\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "\uCD94\uAC00 \uC815\uBCF4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4. \uC8FC\uC694 \uC138\uBD80 \uC815\uBCF4\uB294 \uACC4\uC18D \uC81C\uACF5\uB429\uB2C8\uB2E4. \uBE48 \uACB0\uACFC\uB97C \uCD94\uB860\uD558\uC9C0 \uB9C8\uC2ED\uC2DC\uC624.",
       "Management paused; the existing list is an old snapshot.": "\uAD00\uB9AC\uAC00 \uC77C\uC2DC \uC911\uC9C0\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uAE30\uC874 \uBAA9\uB85D\uC740 \uC774\uC804 \uC2A4\uB0C5\uC0F7\uC785\uB2C8\uB2E4.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "\uC774 \uC11C\uBC84 \uC751\uB2F5\uB9CC \uD45C\uC2DC\uB429\uB2C8\uB2E4. cron\uC740 \uBE0C\uB77C\uC6B0\uC800 \uC2DC\uACC4\uB97C \uC0AC\uC6A9\uD558\uC5EC \uB2E4\uC2DC \uACC4\uC0B0\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uD65C\uC131 \uD504\uB85C\uC81D\uD2B8 \uCC3D\uC740 \uC751\uC6A9 \uD504\uB85C\uADF8\uB7A8\uC774 \uB3D9\uAE30\uD654\uD560 \uC218 \uC788\uC74C\uC744 \uC99D\uBA85\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uACF5\uC2DD v3.1.8 canSync\uB294 \uC790\uB3D9 \uB3D9\uAE30\uD654 \uB610\uB294 RBAC \uAD8C\uD55C\uC774 \uC544\uB2CC \uC218\uB3D9 \uB3D9\uAE30\uD654 \uCC3D \uD3C9\uAC00\uB97C \uC0AC\uC6A9\uD569\uB2C8\uB2E4. \uC774 \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8\uC740 \uB3D9\uAE30\uD654\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "\uC774 \uC11C\uBC84 \uC751\uB2F5\uB9CC \uD45C\uC2DC\uB418\uBA70 \uBE0C\uB77C\uC6B0\uC800 \uC2DC\uACC4\uB85C cron\uC744 \uB2E4\uC2DC \uACC4\uC0B0\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uD65C\uC131 \uD504\uB85C\uC81D\uD2B8 \uCC3D\uC774 \uC560\uD50C\uB9AC\uCF00\uC774\uC158 \uB3D9\uAE30\uD654 \uAC00\uB2A5 \uC5EC\uBD80\uB97C \uC99D\uBA85\uD558\uC9C0\uB294 \uC54A\uC2B5\uB2C8\uB2E4. \uACF5\uC2DD v3.1.8 canSync\uB294 \uC790\uB3D9 \uB3D9\uAE30\uD654\uB098 RBAC \uAD8C\uD55C\uC774 \uC544\uB2CC \uC218\uB3D9 \uB3D9\uAE30\uD654 \uCC3D \uD3C9\uAC00\uB97C \uC0AC\uC6A9\uD569\uB2C8\uB2E4.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "\uC11C\uBC84\uAC00 \uC5F0\uACB0 \uC138\uBD80\uC815\uBCF4\uB97C \uBCF4\uACE0\uD588\uC2B5\uB2C8\uB2E4. \uD574\uB2F9 \uCF58\uD150\uCE20\uC5D0\uB294 \uC790\uACA9 \uC99D\uBA85\uC774 \uD3EC\uD568\uB420 \uC218 \uC788\uC73C\uBA70 \uBCF4\uB958\uB429\uB2C8\uB2E4.",
       "No displayable connection details were provided; do not infer success.": "\uD45C\uC2DC \uAC00\uB2A5\uD55C \uC5F0\uACB0 \uC138\uBD80 \uC815\uBCF4\uAC00 \uC81C\uACF5\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uC131\uACF5\uC744 \uCD94\uB860\uD558\uC9C0 \uB9C8\uC2ED\uC2DC\uC624.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "\uC870\uC815 \uC138\uBD80\uC815\uBCF4\uC5D0\uB294 \uC0DD\uC131\uC790 \uAC12\uC774\uB098 \uC790\uACA9 \uC99D\uBA85\uC774 \uD3EC\uD568\uB420 \uC218 \uC788\uC2B5\uB2C8\uB2E4. \uC2DC\uCCB4\uB294 \uBCF4\uB958\uB429\uB2C8\uB2E4.",
@@ -6255,9 +7421,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\uC694\uC57D \uBBF8\uB9AC\uBCF4\uAE30\uAC00 \uC2E4\uD328\uD588\uAC70\uB098 ID/\uD638\uC2A4\uD2B8 \uACBD\uACC4\uAC00 \uBCC0\uACBD\uB418\uC5C8\uC2B5\uB2C8\uB2E4. \uCC44\uD305 \uC785\uB825\uCC3D\uC5D0 \uC544\uBB34\uAC83\uB3C4 \uCD94\uAC00\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
     },
     "pl": {
-      ...deploymentEnglish,
-      "Restarts": "Ponowne uruchomienia",
-      "Redaction notice": "Informacja o ukryciu danych",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "Inna operacja jest ju\u017C w toku lub wyst\u0105pi\u0142 konflikt stanu obiektu.",
+      "New application": "Nowa aplikacja",
+      "Create application": "Utw\xF3rz aplikacj\u0119",
+      "Create": "Utw\xF3rz",
+      "Creating application\u2026": "Tworzenie aplikacji\u2026",
+      "Application created.": "Aplikacja utworzona.",
+      "Action failed.": "Operacja nie powiod\u0142a si\u0119.",
+      "Application actions": "Operacje aplikacji",
+      "Session identity unavailable. Reload applications first.": "To\u017Csamo\u015B\u0107 sesji niedost\u0119pna. Najpierw prze\u0142aduj aplikacje.",
+      "Session identity unavailable. Read management data first.": "To\u017Csamo\u015B\u0107 sesji niedost\u0119pna. Najpierw wczytaj dane zarz\u0105dzania.",
+      "Sync": "Synchronizuj",
+      "Sync application": "Synchronizuj aplikacj\u0119",
+      "Syncing application\u2026": "Synchronizowanie aplikacji\u2026",
+      "Sync requested.": "Za\u017C\u0105dano synchronizacji.",
+      "Refresh": "Od\u015Bwie\u017C",
+      "Refreshing application\u2026": "Od\u015Bwie\u017Canie aplikacji\u2026",
+      "Application refreshed.": "Aplikacja od\u015Bwie\u017Cona.",
+      "Hard refresh": "Wymu\u015B od\u015Bwie\u017Cenie",
+      "Hard refreshing application\u2026": "Wymuszanie od\u015Bwie\u017Cenia aplikacji\u2026",
+      "Application hard refreshed.": "Wymuszono od\u015Bwie\u017Cenie aplikacji.",
+      "Terminate": "Przerwij",
+      "Terminate operation": "Przerwij operacj\u0119",
+      "Terminate the currently running operation for this application?": "Przerwa\u0107 bie\u017C\u0105c\u0105 operacj\u0119 dla tej aplikacji?",
+      "Terminating operation\u2026": "Przerywanie operacji\u2026",
+      "Operation termination requested.": "Za\u017C\u0105dano przerwania operacji.",
+      "Rollback": "Wycofaj (Rollback)",
+      "Rollback application": "Wycofaj aplikacj\u0119",
+      "Rolling back application\u2026": "Wycofywanie aplikacji\u2026",
+      "Rollback requested.": "Za\u017C\u0105dano wycofania.",
+      "Patch": "\u0141ataj (Patch)",
+      "Patch application": "Zastosuj \u0142atk\u0119 do aplikacji",
+      "Patching application\u2026": "Stosowanie \u0142atki do aplikacji\u2026",
+      "Application patched.": "Zastosowano \u0142atk\u0119 do aplikacji.",
+      "Apply patch": "Zastosuj \u0142atk\u0119",
+      "Delete": "Usu\u0144",
+      "Delete application": "Usu\u0144 aplikacj\u0119",
+      "This permanently deletes the Argo CD application.": "Spowoduje to trwa\u0142e usuni\u0119cie aplikacji Argo CD.",
+      "Cascade delete managed resources": "Kaskadowo usu\u0144 zarz\u0105dzane zasoby",
+      "Propagation policy": "Polityka propagacji",
+      "Foreground": "Foreground (pierwszoplanowo)",
+      "Background": "Background (w tle)",
+      "Invalid retry limit (0\u2013100).": "Nieprawid\u0142owy limit ponowie\u0144 (0\u2013100).",
+      "Deleting application\u2026": "Usuwanie aplikacji\u2026",
+      "Application deleted.": "Aplikacja usuni\u0119ta.",
+      "Resource actions": "Operacje na zasobie",
+      "Syncing resource\u2026": "Synchronizowanie zasobu\u2026",
+      "Resource sync requested.": "Za\u017C\u0105dano synchronizacji zasobu.",
+      "Patch resource": "Zastosuj \u0142atk\u0119 do zasobu",
+      "Patching resource\u2026": "Stosowanie \u0142atki do zasobu\u2026",
+      "Resource patched.": "Zastosowano \u0142atk\u0119 do zasobu.",
+      "Delete resource": "Usu\u0144 zas\xF3b",
+      "Delete this Kubernetes resource from the cluster?": "Usun\u0105\u0107 ten zas\xF3b Kubernetes z klastra?",
+      "Force delete": "Wymu\u015B usuni\u0119cie",
+      "Orphan dependents": "Osiero\u0107 zasoby zale\u017Cne",
+      "Deleting resource\u2026": "Usuwanie zasobu\u2026",
+      "Resource deleted.": "Zas\xF3b usuni\u0119ty.",
+      "Run resource action": "Uruchom akcj\u0119 zasobu",
+      "Execute this Argo CD resource action?": "Wykona\u0107 t\u0119 akcj\u0119 zasobu Argo CD?",
+      "Run action": "Uruchom akcj\u0119",
+      "Running resource action\u2026": "Wykonywanie akcji zasobu\u2026",
+      "Resource action completed.": "Akcja zasobu zako\u0144czona.",
+      "Cancel": "Anuluj",
+      "Confirm": "Potwierd\u017A",
+      "Submit": "Wy\u015Blij",
+      "Save": "Zapisz",
+      "Edit": "Edytuj",
+      "Type {0} to confirm": "Wpisz {0}, aby potwierdzi\u0107",
+      "Target revision (optional)": "Docelowa rewizja (opcjonalnie)",
+      "Retry limit (optional)": "Limit ponowie\u0144 (opcjonalnie)",
+      "Prune": "Oczy\u015B\u0107 (Prune)",
+      "Dry run": "Pr\xF3bny przebieg (Dry run)",
+      "Force": "Wymu\u015B (Force)",
+      "Replace": "Zast\u0105p (Replace)",
+      "Server-Side Apply": "Server-Side Apply",
+      "Apply Out-Of-Sync Only": "Zastosuj tylko niezsynchronizowane zasoby",
+      "Revision history": "Historia rewizji",
+      "Patch type": "Typ \u0142atki",
+      "Upsert if already exists": "Aktualizuj, je\u015Bli ju\u017C istnieje (Upsert)",
+      "Invalid JSON or YAML content.": "Nieprawid\u0142owa zawarto\u015B\u0107 JSON lub YAML.",
+      "Running management action\u2026": "Wykonywanie operacji zarz\u0105dzania\u2026",
+      "Create ApplicationSet": "Utw\xF3rz ApplicationSet",
+      "Create Project": "Utw\xF3rz Project",
+      "ApplicationSet created.": "ApplicationSet utworzony.",
+      "Project created.": "Project utworzony.",
+      "Validate access": "Sprawd\u017A dost\u0119p",
+      "Repository access validated.": "Dost\u0119p do repozytorium zweryfikowany.",
+      "Delete repository": "Usu\u0144 repozytorium",
+      "Remove this repository configuration from Argo CD?": "Usun\u0105\u0107 t\u0119 konfiguracj\u0119 repozytorium z Argo CD?",
+      "Repository deleted.": "Repozytorium usuni\u0119te.",
+      "Invalidate cache": "Uniewa\u017Cnij pami\u0119\u0107 podr\u0119czn\u0105",
+      "Cluster cache invalidated.": "Pami\u0119\u0107 podr\u0119czna klastra uniewa\u017Cniona.",
+      "Delete cluster": "Usu\u0144 klaster",
+      "Remove this cluster registration from Argo CD?": "Usun\u0105\u0107 t\u0119 rejestracj\u0119 klastra z Argo CD?",
+      "Cluster deleted.": "Klaster usuni\u0119ty.",
+      "Update Project": "Aktualizuj Project",
+      "Project updated.": "Project zaktualizowany.",
+      "Delete Project": "Usu\u0144 Project",
+      "Permanently delete this Argo CD Project?": "Trwale usun\u0105\u0107 ten Project Argo CD?",
+      "Project deleted.": "Project usuni\u0119ty.",
+      "Delete ApplicationSet": "Usu\u0144 ApplicationSet",
+      "Permanently delete this ApplicationSet?": "Trwale usun\u0105\u0107 ten ApplicationSet?",
+      "ApplicationSet deleted.": "ApplicationSet usuni\u0119ty.",
+      "No resource actions available.": "Brak dost\u0119pnych akcji dla tego zasobu.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "Otwarcie zak\u0142adki Logi powoduje odczytanie najnowszego fragmentu; poni\u017Csze jest domy\u015Blnie wy\u0142\u0105czone.",
       "Reload logs": "Za\u0142aduj ponownie logi",
       "Invalid log options. Check the line count and time range.": "Nieprawid\u0142owe opcje dziennika. Sprawd\u017A liczb\u0119 linii i zakres czasu.",
@@ -6449,6 +7732,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "Uko\u0144czono",
       "Initiated by": "Zainicjowany przez",
       "Automated": "Zautomatyzowane",
+      "Restarts": "Ponowne uruchomienia",
+      "Redaction notice": "Informacja o ukryciu danych",
       "{0} (unrecognized state)": "{0} (stan nierozpoznany)",
       "Default": "Domy\u015Blne",
       "None": "\u017Badne",
@@ -6538,7 +7823,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "Czytanie dodatkowych informacji\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "Dodatkowe informacje niedost\u0119pne; g\u0142\xF3wne szczeg\xF3\u0142y pozostaj\u0105 dost\u0119pne. Nie wnioskuj o pustym wyniku.",
       "Management paused; the existing list is an old snapshot.": "Zarz\u0105dzanie wstrzymane; istniej\u0105ca lista jest star\u0105 migawk\u0105.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Wy\u015Bwietlana jest tylko ta odpowied\u017A serwera; cron nie jest przeliczany przy u\u017Cyciu zegara przegl\u0105darki. Aktywne okna projektu nie dowodz\u0105, \u017Ce aplikacja mo\u017Ce si\u0119 synchronizowa\u0107. Oficjalna wersja 3.1.8 canSync wykorzystuje ocen\u0119 okna synchronizacji r\u0119cznej, a nie automatyczn\u0105 synchronizacj\u0119 lub pozwolenie RBAC. Tego rozszerzenia nie mo\u017Cna synchronizowa\u0107.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Wy\u015Bwietlana jest wy\u0142\u0105cznie ta odpowied\u017A serwera; cron nie jest przeliczany na podstawie zegara przegl\u0105darki. Aktywne okna projektu nie dowodz\u0105, \u017Ce aplikacja mo\u017Ce si\u0119 zsynchronizowa\u0107. Oficjalny canSync w wersji v3.1.8 ocenia okna synchronizacji r\u0119cznej, a nie synchronizacj\u0119 automatyczn\u0105 ani uprawnienia RBAC.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "Serwer zg\u0142osi\u0142 szczeg\xF3\u0142y po\u0142\u0105czenia; ich zawarto\u015B\u0107 mo\u017Ce zawiera\u0107 dane uwierzytelniaj\u0105ce i jest ukrywana.",
       "No displayable connection details were provided; do not infer success.": "Nie podano \u017Cadnych mo\u017Cliwych do wy\u015Bwietlenia szczeg\xF3\u0142\xF3w po\u0142\u0105czenia; nie wnioskuj o sukcesie.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Szczeg\xF3\u0142y uzgodnienia mog\u0105 zawiera\u0107 warto\u015Bci generatora lub dane uwierzytelniaj\u0105ce; cia\u0142a zostaj\u0105 zatrzymane.",
@@ -6644,9 +7929,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "Podgl\u0105d podsumowania nie powi\xF3d\u0142 si\u0119 lub zmieniono granic\u0119 to\u017Csamo\u015Bci/hosta; nic nie zosta\u0142o dodane do pola wprowadzania czatu."
     },
     "ja": {
-      ...deploymentEnglish,
-      "Restarts": "\u518D\u8D77\u52D5\u56DE\u6570",
-      "Redaction notice": "\u6A5F\u5BC6\u60C5\u5831\u306E\u30DE\u30B9\u30AD\u30F3\u30B0\u306B\u3064\u3044\u3066",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "\u5225\u306E\u64CD\u4F5C\u304C\u3059\u3067\u306B\u9032\u884C\u4E2D\u3067\u3042\u308B\u304B\u3001\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u72B6\u614B\u304C\u7AF6\u5408\u3057\u3066\u3044\u307E\u3059\u3002",
+      "New application": "\u65B0\u898F\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3",
+      "Create application": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u4F5C\u6210",
+      "Create": "\u4F5C\u6210",
+      "Creating application\u2026": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u4F5C\u6210\u4E2D\u2026",
+      "Application created.": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u4F5C\u6210\u3057\u307E\u3057\u305F\u3002",
+      "Action failed.": "\u64CD\u4F5C\u306B\u5931\u6557\u3057\u307E\u3057\u305F\u3002",
+      "Application actions": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u64CD\u4F5C",
+      "Session identity unavailable. Reload applications first.": "\u30BB\u30C3\u30B7\u30E7\u30F3 ID \u3092\u5229\u7528\u3067\u304D\u307E\u305B\u3093\u3002\u5148\u306B\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u518D\u8AAD\u307F\u8FBC\u307F\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+      "Session identity unavailable. Read management data first.": "\u30BB\u30C3\u30B7\u30E7\u30F3 ID \u3092\u5229\u7528\u3067\u304D\u307E\u305B\u3093\u3002\u5148\u306B\u7BA1\u7406\u30C7\u30FC\u30BF\u3092\u8AAD\u307F\u8FBC\u3093\u3067\u304F\u3060\u3055\u3044\u3002",
+      "Sync": "\u540C\u671F",
+      "Sync application": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u540C\u671F",
+      "Syncing application\u2026": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u540C\u671F\u4E2D\u2026",
+      "Sync requested.": "\u540C\u671F\u3092\u30EA\u30AF\u30A8\u30B9\u30C8\u3057\u307E\u3057\u305F\u3002",
+      "Refresh": "\u66F4\u65B0",
+      "Refreshing application\u2026": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u66F4\u65B0\u4E2D\u2026",
+      "Application refreshed.": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u66F4\u65B0\u3057\u307E\u3057\u305F\u3002",
+      "Hard refresh": "\u5F37\u5236\u66F4\u65B0",
+      "Hard refreshing application\u2026": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u5F37\u5236\u66F4\u65B0\u4E2D\u2026",
+      "Application hard refreshed.": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u5F37\u5236\u66F4\u65B0\u3057\u307E\u3057\u305F\u3002",
+      "Terminate": "\u505C\u6B62",
+      "Terminate operation": "\u64CD\u4F5C\u3092\u505C\u6B62",
+      "Terminate the currently running operation for this application?": "\u3053\u306E\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3067\u73FE\u5728\u5B9F\u884C\u4E2D\u306E\u64CD\u4F5C\u3092\u505C\u6B62\u3057\u307E\u3059\u304B\uFF1F",
+      "Terminating operation\u2026": "\u64CD\u4F5C\u3092\u505C\u6B62\u4E2D\u2026",
+      "Operation termination requested.": "\u64CD\u4F5C\u306E\u505C\u6B62\u3092\u30EA\u30AF\u30A8\u30B9\u30C8\u3057\u307E\u3057\u305F\u3002",
+      "Rollback": "\u30ED\u30FC\u30EB\u30D0\u30C3\u30AF",
+      "Rollback application": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u30ED\u30FC\u30EB\u30D0\u30C3\u30AF",
+      "Rolling back application\u2026": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u30ED\u30FC\u30EB\u30D0\u30C3\u30AF\u4E2D\u2026",
+      "Rollback requested.": "\u30ED\u30FC\u30EB\u30D0\u30C3\u30AF\u3092\u30EA\u30AF\u30A8\u30B9\u30C8\u3057\u307E\u3057\u305F\u3002",
+      "Patch": "\u30D1\u30C3\u30C1",
+      "Patch application": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u306B\u30D1\u30C3\u30C1\u9069\u7528",
+      "Patching application\u2026": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u306B\u30D1\u30C3\u30C1\u3092\u9069\u7528\u4E2D\u2026",
+      "Application patched.": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u306B\u30D1\u30C3\u30C1\u3092\u9069\u7528\u3057\u307E\u3057\u305F\u3002",
+      "Apply patch": "\u30D1\u30C3\u30C1\u3092\u9069\u7528",
+      "Delete": "\u524A\u9664",
+      "Delete application": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u524A\u9664",
+      "This permanently deletes the Argo CD application.": "\u3053\u306E Argo CD \u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u5B8C\u5168\u306B\u524A\u9664\u3057\u307E\u3059\u3002",
+      "Cascade delete managed resources": "\u7BA1\u7406\u5BFE\u8C61\u30EA\u30BD\u30FC\u30B9\u3092\u30AB\u30B9\u30B1\u30FC\u30C9\u524A\u9664\u3059\u308B",
+      "Propagation policy": "\u4F1D\u64AD\u30DD\u30EA\u30B7\u30FC",
+      "Foreground": "Foreground\uFF08\u30D5\u30A9\u30A2\u30B0\u30E9\u30A6\u30F3\u30C9\uFF09",
+      "Background": "Background\uFF08\u30D0\u30C3\u30AF\u30B0\u30E9\u30A6\u30F3\u30C9\uFF09",
+      "Invalid retry limit (0\u2013100).": "\u518D\u8A66\u884C\u4E0A\u9650\u304C\u7121\u52B9\u3067\u3059\uFF080\u301C100\uFF09\u3002",
+      "Deleting application\u2026": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u524A\u9664\u4E2D\u2026",
+      "Application deleted.": "\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u3092\u524A\u9664\u3057\u307E\u3057\u305F\u3002",
+      "Resource actions": "\u30EA\u30BD\u30FC\u30B9\u64CD\u4F5C",
+      "Syncing resource\u2026": "\u30EA\u30BD\u30FC\u30B9\u3092\u540C\u671F\u4E2D\u2026",
+      "Resource sync requested.": "\u30EA\u30BD\u30FC\u30B9\u306E\u540C\u671F\u3092\u30EA\u30AF\u30A8\u30B9\u30C8\u3057\u307E\u3057\u305F\u3002",
+      "Patch resource": "\u30EA\u30BD\u30FC\u30B9\u306B\u30D1\u30C3\u30C1\u9069\u7528",
+      "Patching resource\u2026": "\u30EA\u30BD\u30FC\u30B9\u306B\u30D1\u30C3\u30C1\u3092\u9069\u7528\u4E2D\u2026",
+      "Resource patched.": "\u30EA\u30BD\u30FC\u30B9\u306B\u30D1\u30C3\u30C1\u3092\u9069\u7528\u3057\u307E\u3057\u305F\u3002",
+      "Delete resource": "\u30EA\u30BD\u30FC\u30B9\u3092\u524A\u9664",
+      "Delete this Kubernetes resource from the cluster?": "\u3053\u306E Kubernetes \u30EA\u30BD\u30FC\u30B9\u3092\u30AF\u30E9\u30B9\u30BF\u30FC\u304B\u3089\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F",
+      "Force delete": "\u5F37\u5236\u524A\u9664",
+      "Orphan dependents": "\u4F9D\u5B58\u30EA\u30BD\u30FC\u30B9\u3092\u5B64\u7ACB\u3055\u305B\u308B\uFF08Orphan\uFF09",
+      "Deleting resource\u2026": "\u30EA\u30BD\u30FC\u30B9\u3092\u524A\u9664\u4E2D\u2026",
+      "Resource deleted.": "\u30EA\u30BD\u30FC\u30B9\u3092\u524A\u9664\u3057\u307E\u3057\u305F\u3002",
+      "Run resource action": "\u30EA\u30BD\u30FC\u30B9\u30A2\u30AF\u30B7\u30E7\u30F3\u3092\u5B9F\u884C",
+      "Execute this Argo CD resource action?": "\u3053\u306E Argo CD \u30EA\u30BD\u30FC\u30B9\u30A2\u30AF\u30B7\u30E7\u30F3\u3092\u5B9F\u884C\u3057\u307E\u3059\u304B\uFF1F",
+      "Run action": "\u30A2\u30AF\u30B7\u30E7\u30F3\u3092\u5B9F\u884C",
+      "Running resource action\u2026": "\u30EA\u30BD\u30FC\u30B9\u30A2\u30AF\u30B7\u30E7\u30F3\u3092\u5B9F\u884C\u4E2D\u2026",
+      "Resource action completed.": "\u30EA\u30BD\u30FC\u30B9\u30A2\u30AF\u30B7\u30E7\u30F3\u304C\u5B8C\u4E86\u3057\u307E\u3057\u305F\u3002",
+      "Cancel": "\u30AD\u30E3\u30F3\u30BB\u30EB",
+      "Confirm": "\u78BA\u8A8D",
+      "Submit": "\u9001\u4FE1",
+      "Save": "\u4FDD\u5B58",
+      "Edit": "\u7DE8\u96C6",
+      "Type {0} to confirm": "\u78BA\u8A8D\u306E\u305F\u3081 {0} \u3068\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044",
+      "Target revision (optional)": "\u5BFE\u8C61\u30EA\u30D3\u30B8\u30E7\u30F3\uFF08\u4EFB\u610F\uFF09",
+      "Retry limit (optional)": "\u518D\u8A66\u884C\u4E0A\u9650\uFF08\u4EFB\u610F\uFF09",
+      "Prune": "\u4E0D\u8981\u30EA\u30BD\u30FC\u30B9\u306E\u524A\u9664\uFF08Prune\uFF09",
+      "Dry run": "\u30C9\u30E9\u30A4\u30E9\u30F3\uFF08Dry run\uFF09",
+      "Force": "\u5F37\u5236\uFF08Force\uFF09",
+      "Replace": "\u7F6E\u63DB\uFF08Replace\uFF09",
+      "Server-Side Apply": "\u30B5\u30FC\u30D0\u30FC\u30B5\u30A4\u30C9\u9069\u7528\uFF08Server-Side Apply\uFF09",
+      "Apply Out-Of-Sync Only": "\u975E\u540C\u671F\u30EA\u30BD\u30FC\u30B9\u306E\u307F\u9069\u7528",
+      "Revision history": "\u30EA\u30D3\u30B8\u30E7\u30F3\u5C65\u6B74",
+      "Patch type": "\u30D1\u30C3\u30C1\u7A2E\u5225",
+      "Upsert if already exists": "\u65E2\u306B\u5B58\u5728\u3059\u308B\u5834\u5408\u306F\u66F4\u65B0\uFF08Upsert\uFF09",
+      "Invalid JSON or YAML content.": "JSON \u307E\u305F\u306F YAML \u306E\u5185\u5BB9\u304C\u7121\u52B9\u3067\u3059\u3002",
+      "Running management action\u2026": "\u7BA1\u7406\u64CD\u4F5C\u3092\u5B9F\u884C\u4E2D\u2026",
+      "Create ApplicationSet": "ApplicationSet \u3092\u4F5C\u6210",
+      "Create Project": "Project \u3092\u4F5C\u6210",
+      "ApplicationSet created.": "ApplicationSet \u3092\u4F5C\u6210\u3057\u307E\u3057\u305F\u3002",
+      "Project created.": "Project \u3092\u4F5C\u6210\u3057\u307E\u3057\u305F\u3002",
+      "Validate access": "\u63A5\u7D9A\u3092\u691C\u8A3C",
+      "Repository access validated.": "\u30EA\u30DD\u30B8\u30C8\u30EA\u30A2\u30AF\u30BB\u30B9\u3092\u691C\u8A3C\u3057\u307E\u3057\u305F\u3002",
+      "Delete repository": "\u30EA\u30DD\u30B8\u30C8\u30EA\u3092\u524A\u9664",
+      "Remove this repository configuration from Argo CD?": "\u3053\u306E\u30EA\u30DD\u30B8\u30C8\u30EA\u8A2D\u5B9A\u3092 Argo CD \u304B\u3089\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F",
+      "Repository deleted.": "\u30EA\u30DD\u30B8\u30C8\u30EA\u3092\u524A\u9664\u3057\u307E\u3057\u305F\u3002",
+      "Invalidate cache": "\u30AD\u30E3\u30C3\u30B7\u30E5\u3092\u7121\u52B9\u5316",
+      "Cluster cache invalidated.": "\u30AF\u30E9\u30B9\u30BF\u30FC\u30AD\u30E3\u30C3\u30B7\u30E5\u3092\u7121\u52B9\u5316\u3057\u307E\u3057\u305F\u3002",
+      "Delete cluster": "\u30AF\u30E9\u30B9\u30BF\u30FC\u3092\u524A\u9664",
+      "Remove this cluster registration from Argo CD?": "\u3053\u306E\u30AF\u30E9\u30B9\u30BF\u30FC\u767B\u9332\u3092 Argo CD \u304B\u3089\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F",
+      "Cluster deleted.": "\u30AF\u30E9\u30B9\u30BF\u30FC\u3092\u524A\u9664\u3057\u307E\u3057\u305F\u3002",
+      "Update Project": "Project \u3092\u66F4\u65B0",
+      "Project updated.": "Project \u3092\u66F4\u65B0\u3057\u307E\u3057\u305F\u3002",
+      "Delete Project": "Project \u3092\u524A\u9664",
+      "Permanently delete this Argo CD Project?": "\u3053\u306E Argo CD Project \u3092\u5B8C\u5168\u306B\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F",
+      "Project deleted.": "Project \u3092\u524A\u9664\u3057\u307E\u3057\u305F\u3002",
+      "Delete ApplicationSet": "ApplicationSet \u3092\u524A\u9664",
+      "Permanently delete this ApplicationSet?": "\u3053\u306E ApplicationSet \u3092\u5B8C\u5168\u306B\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F",
+      "ApplicationSet deleted.": "ApplicationSet \u3092\u524A\u9664\u3057\u307E\u3057\u305F\u3002",
+      "No resource actions available.": "\u5229\u7528\u53EF\u80FD\u306A\u30EA\u30BD\u30FC\u30B9\u30A2\u30AF\u30B7\u30E7\u30F3\u306F\u3042\u308A\u307E\u305B\u3093\u3002",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u300C\u30ED\u30B0\u300D\u30BF\u30D6\u3092\u958B\u304F\u3068\u3001\u6700\u8FD1\u306E\u30D5\u30E9\u30B0\u30E1\u30F3\u30C8\u304C\u8AAD\u307F\u53D6\u3089\u308C\u307E\u3059\u3002\u4EE5\u4E0B\u306F\u30C7\u30D5\u30A9\u30EB\u30C8\u3067\u306F\u30AA\u30D5\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002",
       "Reload logs": "\u30ED\u30B0\u3092\u30EA\u30ED\u30FC\u30C9\u3059\u308B",
       "Invalid log options. Check the line count and time range.": "\u7121\u52B9\u306A\u30ED\u30B0\u30AA\u30D7\u30B7\u30E7\u30F3\u3067\u3059\u3002\u884C\u6570\u3068\u6642\u9593\u7BC4\u56F2\u3092\u78BA\u8A8D\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
@@ -6838,6 +8240,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "\u5B8C\u4E86",
       "Initiated by": "\u306B\u3088\u3063\u3066\u958B\u59CB\u3055\u308C\u307E\u3057\u305F",
       "Automated": "\u81EA\u52D5\u5316",
+      "Restarts": "\u518D\u8D77\u52D5\u56DE\u6570",
+      "Redaction notice": "\u6A5F\u5BC6\u60C5\u5831\u306E\u30DE\u30B9\u30AD\u30F3\u30B0\u306B\u3064\u3044\u3066",
       "{0} (unrecognized state)": "{0} (\u672A\u8A8D\u8B58\u72B6\u614B)",
       "Default": "\u30C7\u30D5\u30A9\u30EB\u30C8",
       "None": "\u306A\u3057",
@@ -6927,7 +8331,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "\u8FFD\u52A0\u60C5\u5831\u3092\u8AAD\u3093\u3067\u3044\u307E\u3059\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "\u8FFD\u52A0\u60C5\u5831\u306F\u5229\u7528\u3067\u304D\u307E\u305B\u3093\u3002\u4E3B\u306A\u8A73\u7D30\u306F\u5F15\u304D\u7D9A\u304D\u5229\u7528\u53EF\u80FD\u3067\u3059\u3002\u7A7A\u306E\u7D50\u679C\u3092\u63A8\u6E2C\u3057\u306A\u3044\u3067\u304F\u3060\u3055\u3044\u3002",
       "Management paused; the existing list is an old snapshot.": "\u7D4C\u55B6\u306F\u4E00\u6642\u505C\u6B62\u3057\u305F\u3002\u65E2\u5B58\u306E\u30EA\u30B9\u30C8\u306F\u53E4\u3044\u30B9\u30CA\u30C3\u30D7\u30B7\u30E7\u30C3\u30C8\u3067\u3059\u3002",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "\u3053\u306E\u30B5\u30FC\u30D0\u30FC\u5FDC\u7B54\u306E\u307F\u304C\u8868\u793A\u3055\u308C\u307E\u3059\u3002 cron \u306F\u30D6\u30E9\u30A6\u30B6\u306E\u6642\u8A08\u3092\u4F7F\u7528\u3057\u3066\u518D\u8A08\u7B97\u3055\u308C\u307E\u305B\u3093\u3002\u30A2\u30AF\u30C6\u30A3\u30D6\u306A\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8 \u30A6\u30A3\u30F3\u30C9\u30A6\u306F\u3001\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u304C\u540C\u671F\u3067\u304D\u308B\u3053\u3068\u3092\u8A3C\u660E\u3057\u307E\u305B\u3093\u3002\u516C\u5F0F v3.1.8 canSync \u306F\u3001\u81EA\u52D5\u540C\u671F\u3084 RBAC \u8A31\u53EF\u3067\u306F\u306A\u304F\u3001\u624B\u52D5\u540C\u671F\u30A6\u30A3\u30F3\u30C9\u30A6\u8A55\u4FA1\u3092\u4F7F\u7528\u3057\u307E\u3059\u3002\u3053\u306E\u62E1\u5F35\u6A5F\u80FD\u306F\u540C\u671F\u3067\u304D\u307E\u305B\u3093\u3002",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "\u3053\u306E\u30B5\u30FC\u30D0\u30FC\u5FDC\u7B54\u306E\u307F\u3092\u8868\u793A\u3057\u3001\u30D6\u30E9\u30A6\u30B6\u6642\u8A08\u306B\u3088\u308B cron \u306E\u518D\u8A08\u7B97\u306F\u884C\u3044\u307E\u305B\u3093\u3002\u30A2\u30AF\u30C6\u30A3\u30D6\u306A Project \u30A6\u30A3\u30F3\u30C9\u30A6\u306F\u30A2\u30D7\u30EA\u30B1\u30FC\u30B7\u30E7\u30F3\u304C\u540C\u671F\u53EF\u80FD\u3067\u3042\u308B\u3053\u3068\u306E\u8A3C\u660E\u306B\u306F\u306A\u308A\u307E\u305B\u3093\u3002\u516C\u5F0F v3.1.8 \u306E canSync \u306F\u81EA\u52D5\u540C\u671F\u3084 RBAC \u6A29\u9650\u3067\u306F\u306A\u304F\u3001\u624B\u52D5\u540C\u671F\u30A6\u30A3\u30F3\u30C9\u30A6\u306E\u8A55\u4FA1\u3092\u4F7F\u7528\u3057\u307E\u3059\u3002",
       "The server reported connection details; their contents may contain credentials and are withheld.": "\u30B5\u30FC\u30D0\u30FC\u306F\u63A5\u7D9A\u306E\u8A73\u7D30\u3092\u5831\u544A\u3057\u307E\u3057\u305F\u3002\u305D\u306E\u5185\u5BB9\u306B\u306F\u8A8D\u8A3C\u60C5\u5831\u304C\u542B\u307E\u308C\u3066\u3044\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u305F\u3081\u3001\u516C\u958B\u3055\u308C\u307E\u305B\u3093\u3002",
       "No displayable connection details were provided; do not infer success.": "\u8868\u793A\u53EF\u80FD\u306A\u63A5\u7D9A\u306E\u8A73\u7D30\u306F\u63D0\u4F9B\u3055\u308C\u307E\u305B\u3093\u3067\u3057\u305F\u3002\u6210\u529F\u3092\u63A8\u6E2C\u3057\u306A\u3044\u3067\u304F\u3060\u3055\u3044\u3002",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "\u8ABF\u6574\u306E\u8A73\u7D30\u306B\u306F\u3001\u30B8\u30A7\u30CD\u30EC\u30FC\u30BF\u30FC\u306E\u5024\u307E\u305F\u306F\u8CC7\u683C\u60C5\u5831\u304C\u542B\u307E\u308C\u308B\u5834\u5408\u304C\u3042\u308A\u307E\u3059\u3002\u907A\u4F53\u306F\u5DEE\u3057\u62BC\u3055\u3048\u3089\u308C\u308B\u3002",
@@ -7033,9 +8437,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u6982\u8981\u30D7\u30EC\u30D3\u30E5\u30FC\u304C\u5931\u6557\u3057\u305F\u304B\u3001\u30A2\u30A4\u30C7\u30F3\u30C6\u30A3\u30C6\u30A3/\u30DB\u30B9\u30C8\u5883\u754C\u304C\u5909\u66F4\u3055\u308C\u307E\u3057\u305F\u3002\u30C1\u30E3\u30C3\u30C8\u5165\u529B\u30DC\u30C3\u30AF\u30B9\u306B\u306F\u4F55\u3082\u8FFD\u52A0\u3055\u308C\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
     },
     "tr": {
-      ...deploymentEnglish,
-      "Restarts": "Yeniden ba\u015Flatmalar",
-      "Redaction notice": "Hassas veri gizleme bildirimi",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "Ba\u015Fka bir i\u015Flem zaten devam ediyor veya nesne durumu \xE7ak\u0131\u015Ft\u0131.",
+      "New application": "Yeni uygulama",
+      "Create application": "Uygulama olu\u015Ftur",
+      "Create": "Olu\u015Ftur",
+      "Creating application\u2026": "Uygulama olu\u015Fturuluyor\u2026",
+      "Application created.": "Uygulama olu\u015Fturuldu.",
+      "Action failed.": "\u0130\u015Flem ba\u015Far\u0131s\u0131z oldu.",
+      "Application actions": "Uygulama i\u015Flemleri",
+      "Session identity unavailable. Reload applications first.": "Oturum kimli\u011Fi kullan\u0131lam\u0131yor. \xD6nce uygulamalar\u0131 yeniden y\xFCkleyin.",
+      "Session identity unavailable. Read management data first.": "Oturum kimli\u011Fi kullan\u0131lam\u0131yor. \xD6nce y\xF6netim verilerini okuyun.",
+      "Sync": "Senkronize et",
+      "Sync application": "Uygulamay\u0131 senkronize et",
+      "Syncing application\u2026": "Uygulama senkronize ediliyor\u2026",
+      "Sync requested.": "Senkronizasyon istendi.",
+      "Refresh": "Yenile",
+      "Refreshing application\u2026": "Uygulama yenileniyor\u2026",
+      "Application refreshed.": "Uygulama yenilendi.",
+      "Hard refresh": "Zorla yenile",
+      "Hard refreshing application\u2026": "Uygulama zorla yenileniyor\u2026",
+      "Application hard refreshed.": "Uygulama zorla yenilendi.",
+      "Terminate": "Sonland\u0131r",
+      "Terminate operation": "\u0130\u015Flemi sonland\u0131r",
+      "Terminate the currently running operation for this application?": "Bu uygulama i\xE7in \u015Fu anda \xE7al\u0131\u015Fan i\u015Flem sonland\u0131r\u0131ls\u0131n m\u0131?",
+      "Terminating operation\u2026": "\u0130\u015Flem sonland\u0131r\u0131l\u0131yor\u2026",
+      "Operation termination requested.": "\u0130\u015Flemin sonland\u0131r\u0131lmas\u0131 istendi.",
+      "Rollback": "Geri al (Rollback)",
+      "Rollback application": "Uygulamay\u0131 geri al",
+      "Rolling back application\u2026": "Uygulama geri al\u0131n\u0131yor\u2026",
+      "Rollback requested.": "Geri alma istendi.",
+      "Patch": "Yama uygula",
+      "Patch application": "Uygulamaya yama uygula",
+      "Patching application\u2026": "Uygulamaya yama uygulan\u0131yor\u2026",
+      "Application patched.": "Uygulamaya yama uyguland\u0131.",
+      "Apply patch": "Yamay\u0131 uygula",
+      "Delete": "Sil",
+      "Delete application": "Uygulamay\u0131 sil",
+      "This permanently deletes the Argo CD application.": "Bu i\u015Flem Argo CD uygulamas\u0131n\u0131 kal\u0131c\u0131 olarak siler.",
+      "Cascade delete managed resources": "Y\xF6netilen kaynaklar\u0131 kademeli olarak sil",
+      "Propagation policy": "Yay\u0131l\u0131m politikas\u0131",
+      "Foreground": "Foreground (\xF6n plan)",
+      "Background": "Background (arka plan)",
+      "Invalid retry limit (0\u2013100).": "Ge\xE7ersiz yeniden deneme s\u0131n\u0131r\u0131 (0\u2013100).",
+      "Deleting application\u2026": "Uygulama siliniyor\u2026",
+      "Application deleted.": "Uygulama silindi.",
+      "Resource actions": "Kaynak i\u015Flemleri",
+      "Syncing resource\u2026": "Kaynak senkronize ediliyor\u2026",
+      "Resource sync requested.": "Kaynak senkronizasyonu istendi.",
+      "Patch resource": "Kayna\u011Fa yama uygula",
+      "Patching resource\u2026": "Kayna\u011Fa yama uygulan\u0131yor\u2026",
+      "Resource patched.": "Kayna\u011Fa yama uyguland\u0131.",
+      "Delete resource": "Kayna\u011F\u0131 sil",
+      "Delete this Kubernetes resource from the cluster?": "Bu Kubernetes kayna\u011F\u0131 k\xFCmeden silinsin mi?",
+      "Force delete": "Zorla sil",
+      "Orphan dependents": "Ba\u011F\u0131ml\u0131 kaynaklar\u0131 sahipsiz b\u0131rak",
+      "Deleting resource\u2026": "Kaynak siliniyor\u2026",
+      "Resource deleted.": "Kaynak silindi.",
+      "Run resource action": "Kaynak eylemini \xE7al\u0131\u015Ft\u0131r",
+      "Execute this Argo CD resource action?": "Bu Argo CD kaynak eylemi \xE7al\u0131\u015Ft\u0131r\u0131ls\u0131n m\u0131?",
+      "Run action": "Eylemi \xE7al\u0131\u015Ft\u0131r",
+      "Running resource action\u2026": "Kaynak eylemi \xE7al\u0131\u015Ft\u0131r\u0131l\u0131yor\u2026",
+      "Resource action completed.": "Kaynak eylemi tamamland\u0131.",
+      "Cancel": "\u0130ptal",
+      "Confirm": "Onayla",
+      "Submit": "G\xF6nder",
+      "Save": "Kaydet",
+      "Edit": "D\xFCzenle",
+      "Type {0} to confirm": "Onaylamak i\xE7in {0} yaz\u0131n",
+      "Target revision (optional)": "Hedef revizyon (iste\u011Fe ba\u011Fl\u0131)",
+      "Retry limit (optional)": "Yeniden deneme s\u0131n\u0131r\u0131 (iste\u011Fe ba\u011Fl\u0131)",
+      "Prune": "Fazlal\u0131klar\u0131 temizle (Prune)",
+      "Dry run": "Deneme \xE7al\u0131\u015Ft\u0131rmas\u0131 (Dry run)",
+      "Force": "Zorla (Force)",
+      "Replace": "De\u011Fi\u015Ftir (Replace)",
+      "Server-Side Apply": "Sunucu Taraf\u0131 Uygulama (Server-Side Apply)",
+      "Apply Out-Of-Sync Only": "Yaln\u0131zca senkronize olmayanlar\u0131 uygula",
+      "Revision history": "Revizyon ge\xE7mi\u015Fi",
+      "Patch type": "Yama t\xFCr\xFC",
+      "Upsert if already exists": "Zaten varsa g\xFCncelle (Upsert)",
+      "Invalid JSON or YAML content.": "Ge\xE7ersiz JSON veya YAML i\xE7eri\u011Fi.",
+      "Running management action\u2026": "Y\xF6netim i\u015Flemi \xE7al\u0131\u015Ft\u0131r\u0131l\u0131yor\u2026",
+      "Create ApplicationSet": "ApplicationSet olu\u015Ftur",
+      "Create Project": "Project olu\u015Ftur",
+      "ApplicationSet created.": "ApplicationSet olu\u015Fturuldu.",
+      "Project created.": "Project olu\u015Fturuldu.",
+      "Validate access": "Eri\u015Fimi do\u011Frula",
+      "Repository access validated.": "Depo eri\u015Fimi do\u011Fruland\u0131.",
+      "Delete repository": "Depoyu sil",
+      "Remove this repository configuration from Argo CD?": "Bu depo yap\u0131land\u0131rmas\u0131 Argo CD'den kald\u0131r\u0131ls\u0131n m\u0131?",
+      "Repository deleted.": "Depo silindi.",
+      "Invalidate cache": "\xD6nbelle\u011Fi ge\xE7ersiz k\u0131l",
+      "Cluster cache invalidated.": "K\xFCme \xF6nbelle\u011Fi ge\xE7ersiz k\u0131l\u0131nd\u0131.",
+      "Delete cluster": "K\xFCmeyi sil",
+      "Remove this cluster registration from Argo CD?": "Bu k\xFCme kayd\u0131 Argo CD'den kald\u0131r\u0131ls\u0131n m\u0131?",
+      "Cluster deleted.": "K\xFCme silindi.",
+      "Update Project": "Project'i g\xFCncelle",
+      "Project updated.": "Project g\xFCncellendi.",
+      "Delete Project": "Project'i sil",
+      "Permanently delete this Argo CD Project?": "Bu Argo CD Project kal\u0131c\u0131 olarak silinsin mi?",
+      "Project deleted.": "Project silindi.",
+      "Delete ApplicationSet": "ApplicationSet'i sil",
+      "Permanently delete this ApplicationSet?": "Bu ApplicationSet kal\u0131c\u0131 olarak silinsin mi?",
+      "ApplicationSet deleted.": "ApplicationSet silindi.",
+      "No resource actions available.": "Kullan\u0131labilir kaynak eylemi yok.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "G\xFCnl\xFCkler sekmesini a\xE7t\u0131\u011F\u0131n\u0131zda yeni bir par\xE7a okunur; a\u015Fa\u011F\u0131dakiler varsay\u0131lan olarak kapal\u0131d\u0131r.",
       "Reload logs": "G\xFCnl\xFCkleri yeniden y\xFCkle",
       "Invalid log options. Check the line count and time range.": "Ge\xE7ersiz g\xFCnl\xFCk se\xE7enekleri. Sat\u0131r say\u0131s\u0131n\u0131 ve zaman aral\u0131\u011F\u0131n\u0131 kontrol edin.",
@@ -7227,6 +8748,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "Tamamland\u0131",
       "Initiated by": "Ba\u015Flatan",
       "Automated": "Otomatik",
+      "Restarts": "Yeniden ba\u015Flatmalar",
+      "Redaction notice": "Hassas veri gizleme bildirimi",
       "{0} (unrecognized state)": "{0} (tan\u0131nmayan durum)",
       "Default": "Varsay\u0131lan",
       "None": "Yok",
@@ -7316,7 +8839,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "Ek bilgiler okunuyor\u2026",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "Ek bilgi mevcut de\u011Fil; ana ayr\u0131nt\u0131lar mevcut kal\u0131r. Bo\u015F bir sonu\xE7 \xE7\u0131karmay\u0131n.",
       "Management paused; the existing list is an old snapshot.": "Y\xF6netim duraklat\u0131ld\u0131; mevcut liste eski bir anl\u0131k g\xF6r\xFCnt\xFCd\xFCr.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "Yaln\u0131zca bu sunucu yan\u0131t\u0131 g\xF6sterilir; cron taray\u0131c\u0131 saati kullan\u0131larak yeniden hesaplanmaz. Etkin Proje pencereleri bir uygulaman\u0131n senkronize edilebilece\u011Fini kan\u0131tlamaz. Resmi v3.1.8 canSync, otomatik senkronizasyon veya RBAC iznini de\u011Fil, manuel senkronizasyon penceresi de\u011Ferlendirmesini kullan\u0131r. Bu uzant\u0131 senkronize edilemiyor.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "Yaln\u0131zca bu sunucu yan\u0131t\u0131 g\xF6sterilir; cron taray\u0131c\u0131 saati kullan\u0131larak yeniden hesaplanmaz. Etkin Proje pencereleri bir uygulaman\u0131n senkronize edilebilece\u011Fini kan\u0131tlamaz. Resmi v3.1.8 canSync, otomatik senkronizasyonu veya RBAC iznini de\u011Fil, manuel senkronizasyon penceresi de\u011Ferlendirmesini kullan\u0131r.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "Sunucu ba\u011Flant\u0131 ayr\u0131nt\u0131lar\u0131n\u0131 bildirdi; i\xE7erikleri kimlik bilgilerini i\xE7erebilir ve gizlenir.",
       "No displayable connection details were provided; do not infer success.": "G\xF6r\xFCnt\xFClenebilir ba\u011Flant\u0131 ayr\u0131nt\u0131lar\u0131 sa\u011Flanmad\u0131; ba\u015Far\u0131 sonucunu \xE7\u0131karmay\u0131n.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "Mutabakat ayr\u0131nt\u0131lar\u0131, olu\u015Fturucu de\u011Ferleri veya kimlik bilgilerini i\xE7erebilir; cesetler al\u0131konuluyor.",
@@ -7422,9 +8945,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\xD6zet \xF6nizlemesi ba\u015Far\u0131s\u0131z oldu veya kimlik/ana bilgisayar s\u0131n\u0131r\u0131 de\u011Fi\u015Fti; sohbet giri\u015F kutusuna hi\xE7bir \u015Fey eklenmedi."
     },
     "ar": {
-      ...deploymentEnglish,
-      "Restarts": "\u0645\u0631\u0627\u062A \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u062A\u0634\u063A\u064A\u0644",
-      "Redaction notice": "\u0625\u0634\u0639\u0627\u0631 \u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u062D\u0633\u0627\u0633\u0629",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "\u062A\u0648\u062C\u062F \u0639\u0645\u0644\u064A\u0629 \u0623\u062E\u0631\u0649 \u0642\u064A\u062F \u0627\u0644\u062A\u0646\u0641\u064A\u0630 \u0628\u0627\u0644\u0641\u0639\u0644 \u0623\u0648 \u062D\u062F\u062B \u062A\u0639\u0627\u0631\u0636 \u0641\u064A \u062D\u0627\u0644\u0629 \u0627\u0644\u0643\u0627\u0626\u0646.",
+      "New application": "\u062A\u0637\u0628\u064A\u0642 \u062C\u062F\u064A\u062F",
+      "Create application": "\u0625\u0646\u0634\u0627\u0621 \u062A\u0637\u0628\u064A\u0642",
+      "Create": "\u0625\u0646\u0634\u0627\u0621",
+      "Creating application\u2026": "\u062C\u0627\u0631\u064D \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u2026",
+      "Application created.": "\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062A\u0637\u0628\u064A\u0642.",
+      "Action failed.": "\u0641\u0634\u0644 \u0627\u0644\u0625\u062C\u0631\u0627\u0621.",
+      "Application actions": "\u0625\u062C\u0631\u0627\u0621\u0627\u062A \u0627\u0644\u062A\u0637\u0628\u064A\u0642",
+      "Session identity unavailable. Reload applications first.": "\u0647\u0648\u064A\u0629 \u0627\u0644\u062C\u0644\u0633\u0629 \u063A\u064A\u0631 \u0645\u062A\u0627\u062D\u0629. \u0623\u0639\u062F \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u0627\u062A \u0623\u0648\u0644\u0627\u064B.",
+      "Session identity unavailable. Read management data first.": "\u0647\u0648\u064A\u0629 \u0627\u0644\u062C\u0644\u0633\u0629 \u063A\u064A\u0631 \u0645\u062A\u0627\u062D\u0629. \u0627\u0642\u0631\u0623 \u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u0625\u062F\u0627\u0631\u0629 \u0623\u0648\u0644\u0627\u064B.",
+      "Sync": "\u0645\u0632\u0627\u0645\u0646\u0629",
+      "Sync application": "\u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u062A\u0637\u0628\u064A\u0642",
+      "Syncing application\u2026": "\u062C\u0627\u0631\u064D \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u2026",
+      "Sync requested.": "\u062A\u0645 \u0637\u0644\u0628 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629.",
+      "Refresh": "\u062A\u062D\u062F\u064A\u062B",
+      "Refreshing application\u2026": "\u062C\u0627\u0631\u064D \u062A\u062D\u062F\u064A\u062B \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u2026",
+      "Application refreshed.": "\u062A\u0645 \u062A\u062D\u062F\u064A\u062B \u0627\u0644\u062A\u0637\u0628\u064A\u0642.",
+      "Hard refresh": "\u062A\u062D\u062F\u064A\u062B \u0642\u0633\u0631\u064A",
+      "Hard refreshing application\u2026": "\u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u062F\u064A\u062B \u0627\u0644\u0642\u0633\u0631\u064A \u0644\u0644\u062A\u0637\u0628\u064A\u0642\u2026",
+      "Application hard refreshed.": "\u062A\u0645 \u0627\u0644\u062A\u062D\u062F\u064A\u062B \u0627\u0644\u0642\u0633\u0631\u064A \u0644\u0644\u062A\u0637\u0628\u064A\u0642.",
+      "Terminate": "\u0625\u0646\u0647\u0627\u0621",
+      "Terminate operation": "\u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0639\u0645\u0644\u064A\u0629",
+      "Terminate the currently running operation for this application?": "\u0647\u0644 \u062A\u0631\u064A\u062F \u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0627\u0644\u062C\u0627\u0631\u064A\u0629 \u062D\u0627\u0644\u064A\u0627\u064B \u0644\u0647\u0630\u0627 \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u061F",
+      "Terminating operation\u2026": "\u062C\u0627\u0631\u064D \u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0639\u0645\u0644\u064A\u0629\u2026",
+      "Operation termination requested.": "\u062A\u0645 \u0637\u0644\u0628 \u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0639\u0645\u0644\u064A\u0629.",
+      "Rollback": "\u062A\u0631\u0627\u062C\u0639 (Rollback)",
+      "Rollback application": "\u0627\u0644\u062A\u0631\u0627\u062C\u0639 \u0639\u0646 \u0625\u0635\u062F\u0627\u0631 \u0627\u0644\u062A\u0637\u0628\u064A\u0642",
+      "Rolling back application\u2026": "\u062C\u0627\u0631\u064D \u0627\u0644\u062A\u0631\u0627\u062C\u0639 \u0639\u0646 \u0625\u0635\u062F\u0627\u0631 \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u2026",
+      "Rollback requested.": "\u062A\u0645 \u0637\u0644\u0628 \u0627\u0644\u062A\u0631\u0627\u062C\u0639.",
+      "Patch": "\u062A\u0639\u062F\u064A\u0644 \u062C\u0632\u0626\u064A (Patch)",
+      "Patch application": "\u062A\u0637\u0628\u064A\u0642 \u062A\u0639\u062F\u064A\u0644 \u062C\u0632\u0626\u064A \u0639\u0644\u0649 \u0627\u0644\u062A\u0637\u0628\u064A\u0642",
+      "Patching application\u2026": "\u062C\u0627\u0631\u064D \u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u062A\u0639\u062F\u064A\u0644 \u0627\u0644\u062C\u0632\u0626\u064A \u0639\u0644\u0649 \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u2026",
+      "Application patched.": "\u062A\u0645 \u062A\u0639\u062F\u064A\u0644 \u0627\u0644\u062A\u0637\u0628\u064A\u0642 \u062C\u0632\u0626\u064A\u0627\u064B.",
+      "Apply patch": "\u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u062A\u0639\u062F\u064A\u0644",
+      "Delete": "\u062D\u0630\u0641",
+      "Delete application": "\u062D\u0630\u0641 \u0627\u0644\u062A\u0637\u0628\u064A\u0642",
+      "This permanently deletes the Argo CD application.": "\u064A\u0624\u062F\u064A \u0647\u0630\u0627 \u0625\u0644\u0649 \u062D\u0630\u0641 \u062A\u0637\u0628\u064A\u0642 Argo CD \u0646\u0647\u0627\u0626\u064A\u0627\u064B.",
+      "Cascade delete managed resources": "\u062D\u0630\u0641 \u0627\u0644\u0645\u0648\u0627\u0631\u062F \u0627\u0644\u0645\u064F\u062F\u0627\u0631\u0629 \u0628\u0627\u0644\u062A\u0633\u0644\u0633\u0644",
+      "Propagation policy": "\u0633\u064A\u0627\u0633\u0629 \u0627\u0644\u0627\u0646\u062A\u0634\u0627\u0631",
+      "Foreground": "Foreground (\u0623\u0645\u0627\u0645\u064A)",
+      "Background": "Background (\u062E\u0644\u0641\u064A)",
+      "Invalid retry limit (0\u2013100).": "\u062D\u062F \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u0645\u062D\u0627\u0648\u0644\u0629 \u063A\u064A\u0631 \u0635\u0627\u0644\u062D (0\u2013100).",
+      "Deleting application\u2026": "\u062C\u0627\u0631\u064D \u062D\u0630\u0641 \u0627\u0644\u062A\u0637\u0628\u064A\u0642\u2026",
+      "Application deleted.": "\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u062A\u0637\u0628\u064A\u0642.",
+      "Resource actions": "\u0625\u062C\u0631\u0627\u0621\u0627\u062A \u0627\u0644\u0645\u0648\u0631\u062F",
+      "Syncing resource\u2026": "\u062C\u0627\u0631\u064D \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u0645\u0648\u0631\u062F\u2026",
+      "Resource sync requested.": "\u062A\u0645 \u0637\u0644\u0628 \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u0645\u0648\u0631\u062F.",
+      "Patch resource": "\u062A\u0639\u062F\u064A\u0644 \u0627\u0644\u0645\u0648\u0631\u062F \u062C\u0632\u0626\u064A\u0627\u064B",
+      "Patching resource\u2026": "\u062C\u0627\u0631\u064D \u062A\u0639\u062F\u064A\u0644 \u0627\u0644\u0645\u0648\u0631\u062F \u062C\u0632\u0626\u064A\u0627\u064B\u2026",
+      "Resource patched.": "\u062A\u0645 \u062A\u0639\u062F\u064A\u0644 \u0627\u0644\u0645\u0648\u0631\u062F \u062C\u0632\u0626\u064A\u0627\u064B.",
+      "Delete resource": "\u062D\u0630\u0641 \u0627\u0644\u0645\u0648\u0631\u062F",
+      "Delete this Kubernetes resource from the cluster?": "\u0647\u0644 \u062A\u0631\u064A\u062F \u062D\u0630\u0641 \u0645\u0648\u0631\u062F Kubernetes \u0647\u0630\u0627 \u0645\u0646 \u0627\u0644\u0639\u0646\u0642\u0648\u062F\u061F",
+      "Force delete": "\u062D\u0630\u0641 \u0642\u0633\u0631\u064A",
+      "Orphan dependents": "\u0627\u0644\u0625\u0628\u0642\u0627\u0621 \u0639\u0644\u0649 \u0627\u0644\u0645\u0648\u0627\u0631\u062F \u0627\u0644\u062A\u0627\u0628\u0639\u0629 \u064A\u062A\u064A\u0645\u0629",
+      "Deleting resource\u2026": "\u062C\u0627\u0631\u064D \u062D\u0630\u0641 \u0627\u0644\u0645\u0648\u0631\u062F\u2026",
+      "Resource deleted.": "\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u0645\u0648\u0631\u062F.",
+      "Run resource action": "\u062A\u0634\u063A\u064A\u0644 \u0625\u062C\u0631\u0627\u0621 \u0627\u0644\u0645\u0648\u0631\u062F",
+      "Execute this Argo CD resource action?": "\u0647\u0644 \u062A\u0631\u064A\u062F \u062A\u0646\u0641\u064A\u0630 \u0625\u062C\u0631\u0627\u0621 \u0645\u0648\u0631\u062F Argo CD \u0647\u0630\u0627\u061F",
+      "Run action": "\u062A\u0634\u063A\u064A\u0644 \u0627\u0644\u0625\u062C\u0631\u0627\u0621",
+      "Running resource action\u2026": "\u062C\u0627\u0631\u064D \u062A\u0634\u063A\u064A\u0644 \u0625\u062C\u0631\u0627\u0621 \u0627\u0644\u0645\u0648\u0631\u062F\u2026",
+      "Resource action completed.": "\u0627\u0643\u062A\u0645\u0644 \u0625\u062C\u0631\u0627\u0621 \u0627\u0644\u0645\u0648\u0631\u062F.",
+      "Cancel": "\u0625\u0644\u063A\u0627\u0621",
+      "Confirm": "\u062A\u0623\u0643\u064A\u062F",
+      "Submit": "\u0625\u0631\u0633\u0627\u0644",
+      "Save": "\u062D\u0641\u0638",
+      "Edit": "\u062A\u062D\u0631\u064A\u0631",
+      "Type {0} to confirm": "\u0627\u0643\u062A\u0628 {0} \u0644\u0644\u062A\u0623\u0643\u064A\u062F",
+      "Target revision (optional)": "\u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0645\u0633\u062A\u0647\u062F\u0641\u0629 (\u0627\u062E\u062A\u064A\u0627\u0631\u064A)",
+      "Retry limit (optional)": "\u062D\u062F \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u0645\u062D\u0627\u0648\u0644\u0629 (\u0627\u062E\u062A\u064A\u0627\u0631\u064A)",
+      "Prune": "\u062A\u0642\u0644\u064A\u0645 \u0627\u0644\u0645\u0648\u0627\u0631\u062F \u0627\u0644\u0632\u0627\u0626\u062F\u0629 (Prune)",
+      "Dry run": "\u062A\u0634\u063A\u064A\u0644 \u062A\u062C\u0631\u064A\u0628\u064A (Dry run)",
+      "Force": "\u0641\u0631\u0636 (Force)",
+      "Replace": "\u0627\u0633\u062A\u0628\u062F\u0627\u0644 (Replace)",
+      "Server-Side Apply": "\u062A\u0637\u0628\u064A\u0642 \u0645\u0646 \u062C\u0647\u0629 \u0627\u0644\u062E\u0627\u062F\u0645 (Server-Side Apply)",
+      "Apply Out-Of-Sync Only": "\u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u0645\u0648\u0627\u0631\u062F \u063A\u064A\u0631 \u0627\u0644\u0645\u062A\u0632\u0627\u0645\u0646\u0629 \u0641\u0642\u0637",
+      "Revision history": "\u0633\u062C\u0644 \u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0627\u062A",
+      "Patch type": "\u0646\u0648\u0639 \u0627\u0644\u062A\u0639\u062F\u064A\u0644 \u0627\u0644\u062C\u0632\u0626\u064A",
+      "Upsert if already exists": "\u062A\u062D\u062F\u064A\u062B \u0625\u0630\u0627 \u0643\u0627\u0646 \u0645\u0648\u062C\u0648\u062F\u0627\u064B \u0645\u0633\u0628\u0642\u0627\u064B (Upsert)",
+      "Invalid JSON or YAML content.": "\u0645\u062D\u062A\u0648\u0649 JSON \u0623\u0648 YAML \u063A\u064A\u0631 \u0635\u0627\u0644\u062D.",
+      "Running management action\u2026": "\u062C\u0627\u0631\u064D \u062A\u0646\u0641\u064A\u0630 \u0625\u062C\u0631\u0627\u0621 \u0627\u0644\u0625\u062F\u0627\u0631\u0629\u2026",
+      "Create ApplicationSet": "\u0625\u0646\u0634\u0627\u0621 ApplicationSet",
+      "Create Project": "\u0625\u0646\u0634\u0627\u0621 Project",
+      "ApplicationSet created.": "\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 ApplicationSet.",
+      "Project created.": "\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 Project.",
+      "Validate access": "\u0627\u0644\u062A\u062D\u0642\u0642 \u0645\u0646 \u0627\u0644\u0648\u0635\u0648\u0644",
+      "Repository access validated.": "\u062A\u0645 \u0627\u0644\u062A\u062D\u0642\u0642 \u0645\u0646 \u0627\u0644\u0648\u0635\u0648\u0644 \u0625\u0644\u0649 \u0627\u0644\u0645\u0633\u062A\u0648\u062F\u0639.",
+      "Delete repository": "\u062D\u0630\u0641 \u0627\u0644\u0645\u0633\u062A\u0648\u062F\u0639",
+      "Remove this repository configuration from Argo CD?": "\u0647\u0644 \u062A\u0631\u064A\u062F \u0625\u0632\u0627\u0644\u0629 \u0625\u0639\u062F\u0627\u062F \u0627\u0644\u0645\u0633\u062A\u0648\u062F\u0639 \u0647\u0630\u0627 \u0645\u0646 Argo CD\u061F",
+      "Repository deleted.": "\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u0645\u0633\u062A\u0648\u062F\u0639.",
+      "Invalidate cache": "\u0625\u0628\u0637\u0627\u0644 \u0630\u0627\u0643\u0631\u0629 \u0627\u0644\u062A\u062E\u0632\u064A\u0646 \u0627\u0644\u0645\u0624\u0642\u062A",
+      "Cluster cache invalidated.": "\u062A\u0645 \u0625\u0628\u0637\u0627\u0644 \u0630\u0627\u0643\u0631\u0629 \u0627\u0644\u062A\u062E\u0632\u064A\u0646 \u0627\u0644\u0645\u0624\u0642\u062A \u0644\u0644\u0639\u0646\u0642\u0648\u062F.",
+      "Delete cluster": "\u062D\u0630\u0641 \u0627\u0644\u0639\u0646\u0642\u0648\u062F",
+      "Remove this cluster registration from Argo CD?": "\u0647\u0644 \u062A\u0631\u064A\u062F \u0625\u0632\u0627\u0644\u0629 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0639\u0646\u0642\u0648\u062F \u0647\u0630\u0627 \u0645\u0646 Argo CD\u061F",
+      "Cluster deleted.": "\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u0639\u0646\u0642\u0648\u062F.",
+      "Update Project": "\u062A\u062D\u062F\u064A\u062B Project",
+      "Project updated.": "\u062A\u0645 \u062A\u062D\u062F\u064A\u062B Project.",
+      "Delete Project": "\u062D\u0630\u0641 Project",
+      "Permanently delete this Argo CD Project?": "\u0647\u0644 \u062A\u0631\u064A\u062F \u062D\u0630\u0641 Project \u0647\u0630\u0627 \u0645\u0646 Argo CD \u0646\u0647\u0627\u0626\u064A\u0627\u064B\u061F",
+      "Project deleted.": "\u062A\u0645 \u062D\u0630\u0641 Project.",
+      "Delete ApplicationSet": "\u062D\u0630\u0641 ApplicationSet",
+      "Permanently delete this ApplicationSet?": "\u0647\u0644 \u062A\u0631\u064A\u062F \u062D\u0630\u0641 ApplicationSet \u0647\u0630\u0627 \u0646\u0647\u0627\u0626\u064A\u0627\u064B\u061F",
+      "ApplicationSet deleted.": "\u062A\u0645 \u062D\u0630\u0641 ApplicationSet.",
+      "No resource actions available.": "\u0644\u0627 \u062A\u0648\u062C\u062F \u0625\u062C\u0631\u0627\u0621\u0627\u062A \u0645\u062A\u0627\u062D\u0629 \u0644\u0647\u0630\u0627 \u0627\u0644\u0645\u0648\u0631\u062F.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": '\u064A\u0624\u062F\u064A \u0641\u062A\u062D \u0639\u0644\u0627\u0645\u0629 \u0627\u0644\u062A\u0628\u0648\u064A\u0628 "\u0627\u0644\u0633\u062C\u0644\u0627\u062A" \u0625\u0644\u0649 \u0642\u0631\u0627\u0621\u0629 \u062C\u0632\u0621 \u062D\u062F\u064A\u062B\u061B \u064A\u062A\u0645 \u0625\u064A\u0642\u0627\u0641 \u062A\u0634\u063A\u064A\u0644 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0628\u0634\u0643\u0644 \u0627\u0641\u062A\u0631\u0627\u0636\u064A.',
       "Reload logs": "\u0625\u0639\u0627\u062F\u0629 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0633\u062C\u0644\u0627\u062A",
       "Invalid log options. Check the line count and time range.": "\u062E\u064A\u0627\u0631\u0627\u062A \u0627\u0644\u0633\u062C\u0644 \u063A\u064A\u0631 \u0635\u0627\u0644\u062D\u0629. \u062A\u062D\u0642\u0642 \u0645\u0646 \u0639\u062F\u062F \u0627\u0644\u062E\u0637\u0648\u0637 \u0648\u0627\u0644\u0646\u0637\u0627\u0642 \u0627\u0644\u0632\u0645\u0646\u064A.",
@@ -7616,6 +9256,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "\u0645\u0643\u062A\u0645\u0644",
       "Initiated by": "\u0628\u062F\u0623 \u0628\u0648\u0627\u0633\u0637\u0629",
       "Automated": "\u0622\u0644\u064A",
+      "Restarts": "\u0645\u0631\u0627\u062A \u0625\u0639\u0627\u062F\u0629 \u0627\u0644\u062A\u0634\u063A\u064A\u0644",
+      "Redaction notice": "\u0625\u0634\u0639\u0627\u0631 \u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u062D\u0633\u0627\u0633\u0629",
       "{0} (unrecognized state)": "{0} (\u062D\u0627\u0644\u0629 \u063A\u064A\u0631 \u0645\u0639\u0631\u0648\u0641\u0629)",
       "Default": "\u0627\u0644\u0627\u0641\u062A\u0631\u0627\u0636\u064A",
       "None": "\u0644\u0627 \u0634\u064A\u0621",
@@ -7705,7 +9347,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "\u0642\u0631\u0627\u0621\u0629 \u0645\u0639\u0644\u0648\u0645\u0627\u062A \u0625\u0636\u0627\u0641\u064A\u0629...",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "\u0645\u0639\u0644\u0648\u0645\u0627\u062A \u0625\u0636\u0627\u0641\u064A\u0629 \u063A\u064A\u0631 \u0645\u062A\u0648\u0641\u0631\u0629\u061B \u0627\u0644\u062A\u0641\u0627\u0635\u064A\u0644 \u0627\u0644\u0631\u0626\u064A\u0633\u064A\u0629 \u0644\u0627 \u062A\u0632\u0627\u0644 \u0645\u062A\u0627\u062D\u0629. \u0644\u0627 \u062A\u0633\u062A\u0646\u062A\u062C \u0646\u062A\u064A\u062C\u0629 \u0641\u0627\u0631\u063A\u0629.",
       "Management paused; the existing list is an old snapshot.": "\u062A\u0648\u0642\u0641\u062A \u0627\u0644\u0625\u062F\u0627\u0631\u0629 \u0645\u0624\u0642\u062A\u064B\u0627\u061B \u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0645\u0648\u062C\u0648\u062F\u0629 \u0647\u064A \u0644\u0642\u0637\u0629 \u0642\u062F\u064A\u0645\u0629.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "\u064A\u062A\u0645 \u0639\u0631\u0636 \u0627\u0633\u062A\u062C\u0627\u0628\u0629 \u0627\u0644\u062E\u0627\u062F\u0645 \u0647\u0630\u0647 \u0641\u0642\u0637\u061B \u0644\u0627 \u064A\u062A\u0645 \u0625\u0639\u0627\u062F\u0629 \u062D\u0633\u0627\u0628 cron \u0628\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0633\u0627\u0639\u0629 \u0627\u0644\u0645\u062A\u0635\u0641\u062D. \u0644\u0627 \u062A\u062B\u0628\u062A \u0646\u0648\u0627\u0641\u0630 \u0627\u0644\u0645\u0634\u0631\u0648\u0639 \u0627\u0644\u0646\u0634\u0637 \u0625\u0645\u0643\u0627\u0646\u064A\u0629 \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u062A\u0637\u0628\u064A\u0642. \u064A\u0633\u062A\u062E\u062F\u0645 \u0627\u0644\u0625\u0635\u062F\u0627\u0631 v3.1.8 \u0627\u0644\u0631\u0633\u0645\u064A \u0645\u0646 canSync \u062A\u0642\u064A\u064A\u0645 \u0646\u0627\u0641\u0630\u0629 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u064A\u062F\u0648\u064A\u0629\u060C \u0648\u0644\u064A\u0633 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u062A\u0644\u0642\u0627\u0626\u064A\u0629 \u0623\u0648 \u0625\u0630\u0646 RBAC. \u0644\u0627 \u064A\u0645\u0643\u0646 \u0645\u0632\u0627\u0645\u0646\u0629 \u0647\u0630\u0627 \u0627\u0644\u0645\u0644\u062D\u0642.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "\u064A\u062A\u0645 \u0639\u0631\u0636 \u0627\u0633\u062A\u062C\u0627\u0628\u0629 \u0627\u0644\u062E\u0627\u062F\u0645 \u0647\u0630\u0647 \u0641\u0642\u0637\u061B \u0648\u0644\u0627 \u062A\u062A\u0645 \u0625\u0639\u0627\u062F\u0629 \u062D\u0633\u0627\u0628 cron \u0628\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0633\u0627\u0639\u0629 \u0627\u0644\u0645\u062A\u0635\u0641\u062D. \u0644\u0627 \u062A\u062B\u0628\u062A \u0646\u0648\u0627\u0641\u0630 \u0627\u0644\u0645\u0634\u0631\u0648\u0639 \u0627\u0644\u0646\u0634\u0637\u0629 \u0625\u0645\u0643\u0627\u0646\u064A\u0629 \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u062A\u0637\u0628\u064A\u0642. \u064A\u0639\u062A\u0645\u062F canSync \u0627\u0644\u0631\u0633\u0645\u064A \u0641\u064A \u0627\u0644\u0625\u0635\u062F\u0627\u0631 v3.1.8 \u0639\u0644\u0649 \u062A\u0642\u064A\u064A\u0645 \u0646\u0627\u0641\u0630\u0629 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u064A\u062F\u0648\u064A\u0629\u060C \u0648\u0644\u064A\u0633 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u062A\u0644\u0642\u0627\u0626\u064A\u0629 \u0623\u0648 \u0635\u0644\u0627\u062D\u064A\u0627\u062A RBAC.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "\u0623\u0628\u0644\u063A \u0627\u0644\u062E\u0627\u062F\u0645 \u0639\u0646 \u062A\u0641\u0627\u0635\u064A\u0644 \u0627\u0644\u0627\u062A\u0635\u0627\u0644\u061B \u0642\u062F \u062A\u062D\u062A\u0648\u064A \u0645\u062D\u062A\u0648\u064A\u0627\u062A\u0647\u0627 \u0639\u0644\u0649 \u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0639\u062A\u0645\u0627\u062F \u0648\u064A\u062A\u0645 \u062D\u062C\u0628\u0647\u0627.",
       "No displayable connection details were provided; do not infer success.": "\u0644\u0645 \u064A\u062A\u0645 \u062A\u0648\u0641\u064A\u0631 \u062A\u0641\u0627\u0635\u064A\u0644 \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0627\u0644\u0642\u0627\u0628\u0644\u0629 \u0644\u0644\u0639\u0631\u0636\u061B \u0644\u0627 \u062A\u0633\u062A\u0646\u062A\u062C \u0627\u0644\u0646\u062C\u0627\u062D.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "\u0642\u062F \u062A\u062D\u062A\u0648\u064A \u062A\u0641\u0627\u0635\u064A\u0644 \u0627\u0644\u062A\u0633\u0648\u064A\u0629 \u0639\u0644\u0649 \u0642\u064A\u0645 \u0627\u0644\u0645\u0648\u0644\u062F \u0623\u0648 \u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u0627\u0639\u062A\u0645\u0627\u062F\u061B \u064A\u062A\u0645 \u062D\u062C\u0628 \u0627\u0644\u062C\u062B\u062B.",
@@ -7811,9 +9453,126 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Summary preview failed or identity/host boundary changed; nothing was added to the composer.": "\u0641\u0634\u0644\u062A \u0645\u0639\u0627\u064A\u0646\u0629 \u0627\u0644\u0645\u0644\u062E\u0635 \u0623\u0648 \u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u062D\u062F\u0648\u062F \u0627\u0644\u0647\u0648\u064A\u0629/\u0627\u0644\u0645\u0636\u064A\u0641\u061B \u0644\u0645 \u062A\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 \u0623\u064A \u0634\u064A\u0621 \u0625\u0644\u0649 \u0645\u0631\u0628\u0639 \u0625\u062F\u062E\u0627\u0644 \u0627\u0644\u062F\u0631\u062F\u0634\u0629."
     },
     "he": {
-      ...deploymentEnglish,
-      "Restarts": "\u05D4\u05E4\u05E2\u05DC\u05D5\u05EA \u05DE\u05D7\u05D3\u05E9",
-      "Redaction notice": "\u05D4\u05D5\u05D3\u05E2\u05D4 \u05E2\u05DC \u05D4\u05E1\u05EA\u05E8\u05EA \u05DE\u05D9\u05D3\u05E2 \u05E8\u05D2\u05D9\u05E9",
+      "Historical ReplicaSets ({0})": "Historical ReplicaSets ({0})",
+      "Current": "Current",
+      "Current target unconfirmed": "Current target unconfirmed",
+      "Application sync retries": "Application sync retries",
+      "Deployment and related resource events": "Deployment and related resource events",
+      "Event queries succeeded: {0} / {1}": "Event queries succeeded: {0} / {1}",
+      "{0} resources omitted by the query limit; results are incomplete.": "{0} resources omitted by the query limit; results are incomplete.",
+      "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.": "Occurrence counts are aggregated Kubernetes events, not sync retries or container restarts. Events may predate this rollout; individual attempts cannot be reconstructed.",
+      "Occurrences: {0}": "Occurrences: {0}",
+      "Desired": "Desired",
+      "Updated": "Updated",
+      "Available": "Available",
+      "Generation": "Generation",
+      "Observed generation": "Observed generation",
+      "Auto-update resource details": "Auto-update resource details",
+      "Include related resource events": "Include related resource events",
+      "Related resource events": "Related resource events",
+      "Another operation is already in progress or the object state conflicted.": "\u05E4\u05E2\u05D5\u05DC\u05D4 \u05D0\u05D7\u05E8\u05EA \u05DB\u05D1\u05E8 \u05DE\u05EA\u05D1\u05E6\u05E2\u05EA \u05D0\u05D5 \u05E9\u05D7\u05DC\u05D4 \u05D4\u05EA\u05E0\u05D2\u05E9\u05D5\u05EA \u05D1\u05DE\u05E6\u05D1 \u05D4\u05D0\u05D5\u05D1\u05D9\u05D9\u05E7\u05D8.",
+      "New application": "\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4 \u05D7\u05D3\u05E9\u05D4",
+      "Create application": "\u05D9\u05E6\u05D9\u05E8\u05EA \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4",
+      "Create": "\u05E6\u05D5\u05E8",
+      "Creating application\u2026": "\u05D9\u05D5\u05E6\u05E8 \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4\u2026",
+      "Application created.": "\u05D4\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4 \u05E0\u05D5\u05E6\u05E8\u05D4.",
+      "Action failed.": "\u05D4\u05E4\u05E2\u05D5\u05DC\u05D4 \u05E0\u05DB\u05E9\u05DC\u05D4.",
+      "Application actions": "\u05E4\u05E2\u05D5\u05DC\u05D5\u05EA \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4",
+      "Session identity unavailable. Reload applications first.": "\u05D6\u05D4\u05D5\u05EA \u05D4\u05D4\u05E4\u05E2\u05DC\u05D4 \u05D0\u05D9\u05E0\u05D4 \u05D6\u05DE\u05D9\u05E0\u05D4. \u05D8\u05E2\u05DF \u05DE\u05D7\u05D3\u05E9 \u05D0\u05EA \u05D4\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D5\u05EA \u05EA\u05D7\u05D9\u05DC\u05D4.",
+      "Session identity unavailable. Read management data first.": "\u05D6\u05D4\u05D5\u05EA \u05D4\u05D4\u05E4\u05E2\u05DC\u05D4 \u05D0\u05D9\u05E0\u05D4 \u05D6\u05DE\u05D9\u05E0\u05D4. \u05E7\u05E8\u05D0 \u05D0\u05EA \u05E0\u05EA\u05D5\u05E0\u05D9 \u05D4\u05E0\u05D9\u05D4\u05D5\u05DC \u05EA\u05D7\u05D9\u05DC\u05D4.",
+      "Sync": "\u05E1\u05E0\u05DB\u05E8\u05D5\u05DF",
+      "Sync application": "\u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4",
+      "Syncing application\u2026": "\u05DE\u05E1\u05E0\u05DB\u05E8\u05DF \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4\u2026",
+      "Sync requested.": "\u05D4\u05EA\u05D1\u05E7\u05E9 \u05E1\u05E0\u05DB\u05E8\u05D5\u05DF.",
+      "Refresh": "\u05E8\u05E2\u05E0\u05D5\u05DF",
+      "Refreshing application\u2026": "\u05DE\u05E8\u05E2\u05E0\u05DF \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4\u2026",
+      "Application refreshed.": "\u05D4\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4 \u05E8\u05D5\u05E2\u05E0\u05E0\u05D4.",
+      "Hard refresh": "\u05E8\u05E2\u05E0\u05D5\u05DF \u05E7\u05E9\u05D9\u05D7",
+      "Hard refreshing application\u2026": "\u05DE\u05D1\u05E6\u05E2 \u05E8\u05E2\u05E0\u05D5\u05DF \u05E7\u05E9\u05D9\u05D7 \u05DC\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4\u2026",
+      "Application hard refreshed.": "\u05D1\u05D5\u05E6\u05E2 \u05E8\u05E2\u05E0\u05D5\u05DF \u05E7\u05E9\u05D9\u05D7 \u05DC\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4.",
+      "Terminate": "\u05D4\u05E4\u05E1\u05E7",
+      "Terminate operation": "\u05D4\u05E4\u05E1\u05E7\u05EA \u05E4\u05E2\u05D5\u05DC\u05D4",
+      "Terminate the currently running operation for this application?": "\u05DC\u05D4\u05E4\u05E1\u05D9\u05E7 \u05D0\u05EA \u05D4\u05E4\u05E2\u05D5\u05DC\u05D4 \u05E9\u05E8\u05E6\u05D4 \u05DB\u05E2\u05EA \u05E2\u05D1\u05D5\u05E8 \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4 \u05D6\u05D5?",
+      "Terminating operation\u2026": "\u05DE\u05E4\u05E1\u05D9\u05E7 \u05E4\u05E2\u05D5\u05DC\u05D4\u2026",
+      "Operation termination requested.": "\u05D4\u05EA\u05D1\u05E7\u05E9\u05D4 \u05D4\u05E4\u05E1\u05E7\u05EA \u05E4\u05E2\u05D5\u05DC\u05D4.",
+      "Rollback": "\u05E9\u05D7\u05D6\u05D5\u05E8 (Rollback)",
+      "Rollback application": "\u05E9\u05D7\u05D6\u05D5\u05E8 \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4 \u05DC\u05D2\u05E8\u05E1\u05D4 \u05E7\u05D5\u05D3\u05DE\u05EA",
+      "Rolling back application\u2026": "\u05DE\u05E9\u05D7\u05D6\u05E8 \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4\u2026",
+      "Rollback requested.": "\u05D4\u05EA\u05D1\u05E7\u05E9 \u05E9\u05D7\u05D6\u05D5\u05E8.",
+      "Patch": "\u05D8\u05DC\u05D0\u05D9 (Patch)",
+      "Patch application": "\u05D4\u05D7\u05DC\u05EA \u05D8\u05DC\u05D0\u05D9 \u05E2\u05DC \u05D4\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4",
+      "Patching application\u2026": "\u05DE\u05D7\u05D9\u05DC \u05D8\u05DC\u05D0\u05D9 \u05E2\u05DC \u05D4\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4\u2026",
+      "Application patched.": "\u05D4\u05D8\u05DC\u05D0\u05D9 \u05D4\u05D5\u05D7\u05DC \u05E2\u05DC \u05D4\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4.",
+      "Apply patch": "\u05D4\u05D7\u05DC \u05D8\u05DC\u05D0\u05D9",
+      "Delete": "\u05DE\u05D7\u05E7",
+      "Delete application": "\u05DE\u05D7\u05D9\u05E7\u05EA \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4",
+      "This permanently deletes the Argo CD application.": "\u05E4\u05E2\u05D5\u05DC\u05D4 \u05D6\u05D5 \u05DE\u05D5\u05D7\u05E7\u05EA \u05DC\u05E6\u05DE\u05D9\u05EA\u05D5\u05EA \u05D0\u05EA \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D9\u05EA Argo CD.",
+      "Cascade delete managed resources": "\u05DE\u05D7\u05D9\u05E7\u05D4 \u05DE\u05D3\u05D5\u05E8\u05D2\u05EA \u05E9\u05DC \u05DE\u05E9\u05D0\u05D1\u05D9\u05DD \u05DE\u05E0\u05D5\u05D4\u05DC\u05D9\u05DD",
+      "Propagation policy": "\u05DE\u05D3\u05D9\u05E0\u05D9\u05D5\u05EA \u05D4\u05E4\u05E6\u05D4",
+      "Foreground": "Foreground (\u05D7\u05D6\u05D9\u05EA)",
+      "Background": "Background (\u05E8\u05E7\u05E2)",
+      "Invalid retry limit (0\u2013100).": "\u05DE\u05D2\u05D1\u05DC\u05EA \u05E0\u05D9\u05E1\u05D9\u05D5\u05E0\u05D5\u05EA \u05D7\u05D5\u05D6\u05E8\u05D9\u05DD \u05DC\u05D0 \u05EA\u05E7\u05D9\u05E0\u05D4 (0\u2013100).",
+      "Deleting application\u2026": "\u05DE\u05D5\u05D7\u05E7 \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4\u2026",
+      "Application deleted.": "\u05D4\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4 \u05E0\u05DE\u05D7\u05E7\u05D4.",
+      "Resource actions": "\u05E4\u05E2\u05D5\u05DC\u05D5\u05EA \u05DE\u05E9\u05D0\u05D1",
+      "Syncing resource\u2026": "\u05DE\u05E1\u05E0\u05DB\u05E8\u05DF \u05DE\u05E9\u05D0\u05D1\u2026",
+      "Resource sync requested.": "\u05D4\u05EA\u05D1\u05E7\u05E9 \u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05DE\u05E9\u05D0\u05D1.",
+      "Patch resource": "\u05D4\u05D7\u05DC\u05EA \u05D8\u05DC\u05D0\u05D9 \u05E2\u05DC \u05D4\u05DE\u05E9\u05D0\u05D1",
+      "Patching resource\u2026": "\u05DE\u05D7\u05D9\u05DC \u05D8\u05DC\u05D0\u05D9 \u05E2\u05DC \u05D4\u05DE\u05E9\u05D0\u05D1\u2026",
+      "Resource patched.": "\u05D4\u05D8\u05DC\u05D0\u05D9 \u05D4\u05D5\u05D7\u05DC \u05E2\u05DC \u05D4\u05DE\u05E9\u05D0\u05D1.",
+      "Delete resource": "\u05DE\u05D7\u05D9\u05E7\u05EA \u05DE\u05E9\u05D0\u05D1",
+      "Delete this Kubernetes resource from the cluster?": "\u05DC\u05DE\u05D7\u05D5\u05E7 \u05DE\u05E9\u05D0\u05D1 Kubernetes \u05D6\u05D4 \u05DE\u05D4\u05D0\u05E9\u05DB\u05D5\u05DC?",
+      "Force delete": "\u05DE\u05D7\u05D9\u05E7\u05D4 \u05DE\u05D0\u05D5\u05DC\u05E6\u05EA",
+      "Orphan dependents": "\u05D4\u05E9\u05D0\u05E8 \u05DE\u05E9\u05D0\u05D1\u05D9\u05DD \u05EA\u05DC\u05D5\u05D9\u05D9\u05DD \u05D9\u05EA\u05D5\u05DE\u05D9\u05DD",
+      "Deleting resource\u2026": "\u05DE\u05D5\u05D7\u05E7 \u05DE\u05E9\u05D0\u05D1\u2026",
+      "Resource deleted.": "\u05D4\u05DE\u05E9\u05D0\u05D1 \u05E0\u05DE\u05D7\u05E7.",
+      "Run resource action": "\u05D4\u05E4\u05E2\u05DC\u05EA \u05E4\u05E2\u05D5\u05DC\u05EA \u05DE\u05E9\u05D0\u05D1",
+      "Execute this Argo CD resource action?": "\u05DC\u05D1\u05E6\u05E2 \u05E4\u05E2\u05D5\u05DC\u05EA \u05DE\u05E9\u05D0\u05D1 \u05D6\u05D5 \u05E9\u05DC Argo CD?",
+      "Run action": "\u05D4\u05E4\u05E2\u05DC \u05E4\u05E2\u05D5\u05DC\u05D4",
+      "Running resource action\u2026": "\u05DE\u05E8\u05D9\u05E5 \u05E4\u05E2\u05D5\u05DC\u05EA \u05DE\u05E9\u05D0\u05D1\u2026",
+      "Resource action completed.": "\u05E4\u05E2\u05D5\u05DC\u05EA \u05D4\u05DE\u05E9\u05D0\u05D1 \u05D4\u05D5\u05E9\u05DC\u05DE\u05D4.",
+      "Cancel": "\u05D1\u05D9\u05D8\u05D5\u05DC",
+      "Confirm": "\u05D0\u05D9\u05E9\u05D5\u05E8",
+      "Submit": "\u05E9\u05DC\u05D7",
+      "Save": "\u05E9\u05DE\u05D5\u05E8",
+      "Edit": "\u05E2\u05E8\u05D5\u05DA",
+      "Type {0} to confirm": "\u05D4\u05E7\u05DC\u05D3 {0} \u05DC\u05D0\u05D9\u05E9\u05D5\u05E8",
+      "Target revision (optional)": "\u05D2\u05E8\u05E1\u05EA \u05D9\u05E2\u05D3 (\u05D0\u05D5\u05E4\u05E6\u05D9\u05D5\u05E0\u05DC\u05D9)",
+      "Retry limit (optional)": "\u05DE\u05D2\u05D1\u05DC\u05EA \u05E0\u05D9\u05E1\u05D9\u05D5\u05E0\u05D5\u05EA \u05D7\u05D5\u05D6\u05E8\u05D9\u05DD (\u05D0\u05D5\u05E4\u05E6\u05D9\u05D5\u05E0\u05DC\u05D9)",
+      "Prune": "\u05E0\u05D9\u05E7\u05D5\u05D9 \u05DE\u05E9\u05D0\u05D1\u05D9\u05DD \u05E2\u05D5\u05D3\u05E4\u05D9\u05DD (Prune)",
+      "Dry run": "\u05D4\u05E8\u05E6\u05EA \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF (Dry run)",
+      "Force": "\u05D0\u05D9\u05DC\u05D5\u05E5 (Force)",
+      "Replace": "\u05D4\u05D7\u05DC\u05E4\u05D4 (Replace)",
+      "Server-Side Apply": "\u05D4\u05D7\u05DC\u05D4 \u05D1\u05E6\u05D3 \u05D4\u05E9\u05E8\u05EA (Server-Side Apply)",
+      "Apply Out-Of-Sync Only": "\u05D4\u05D7\u05DC \u05E8\u05E7 \u05DE\u05E9\u05D0\u05D1\u05D9\u05DD \u05E9\u05D0\u05D9\u05E0\u05DD \u05DE\u05E1\u05D5\u05E0\u05DB\u05E8\u05E0\u05D9\u05DD",
+      "Revision history": "\u05D4\u05D9\u05E1\u05D8\u05D5\u05E8\u05D9\u05D9\u05EA \u05D2\u05E8\u05E1\u05D0\u05D5\u05EA",
+      "Patch type": "\u05E1\u05D5\u05D2 \u05D8\u05DC\u05D0\u05D9",
+      "Upsert if already exists": "\u05E2\u05D3\u05DB\u05DF \u05D0\u05DD \u05DB\u05D1\u05E8 \u05E7\u05D9\u05D9\u05DD (Upsert)",
+      "Invalid JSON or YAML content.": "\u05EA\u05D5\u05DB\u05DF JSON \u05D0\u05D5 YAML \u05DC\u05D0 \u05EA\u05E7\u05D9\u05DF.",
+      "Running management action\u2026": "\u05DE\u05D1\u05E6\u05E2 \u05E4\u05E2\u05D5\u05DC\u05EA \u05E0\u05D9\u05D4\u05D5\u05DC\u2026",
+      "Create ApplicationSet": "\u05D9\u05E6\u05D9\u05E8\u05EA ApplicationSet",
+      "Create Project": "\u05D9\u05E6\u05D9\u05E8\u05EA Project",
+      "ApplicationSet created.": "ApplicationSet \u05E0\u05D5\u05E6\u05E8.",
+      "Project created.": "Project \u05E0\u05D5\u05E6\u05E8.",
+      "Validate access": "\u05D0\u05D9\u05DE\u05D5\u05EA \u05D2\u05D9\u05E9\u05D4",
+      "Repository access validated.": "\u05D4\u05D2\u05D9\u05E9\u05D4 \u05DC\u05DE\u05D0\u05D2\u05E8 \u05D0\u05D5\u05DE\u05EA\u05D4.",
+      "Delete repository": "\u05DE\u05D7\u05D9\u05E7\u05EA \u05DE\u05D0\u05D2\u05E8",
+      "Remove this repository configuration from Argo CD?": "\u05DC\u05D4\u05E1\u05D9\u05E8 \u05D4\u05D2\u05D3\u05E8\u05EA \u05DE\u05D0\u05D2\u05E8 \u05D6\u05D5 \u05DE-Argo CD?",
+      "Repository deleted.": "\u05D4\u05DE\u05D0\u05D2\u05E8 \u05E0\u05DE\u05D7\u05E7.",
+      "Invalidate cache": "\u05D1\u05D9\u05D8\u05D5\u05DC \u05EA\u05D5\u05E7\u05E3 \u05DE\u05D8\u05DE\u05D5\u05DF",
+      "Cluster cache invalidated.": "\u05EA\u05D5\u05E7\u05E3 \u05DE\u05D8\u05DE\u05D5\u05DF \u05D4\u05D0\u05E9\u05DB\u05D5\u05DC \u05D1\u05D5\u05D8\u05DC.",
+      "Delete cluster": "\u05DE\u05D7\u05D9\u05E7\u05EA \u05D0\u05E9\u05DB\u05D5\u05DC",
+      "Remove this cluster registration from Argo CD?": "\u05DC\u05D4\u05E1\u05D9\u05E8 \u05E8\u05D9\u05E9\u05D5\u05DD \u05D0\u05E9\u05DB\u05D5\u05DC \u05D6\u05D4 \u05DE-Argo CD?",
+      "Cluster deleted.": "\u05D4\u05D0\u05E9\u05DB\u05D5\u05DC \u05E0\u05DE\u05D7\u05E7.",
+      "Update Project": "\u05E2\u05D3\u05DB\u05D5\u05DF Project",
+      "Project updated.": "Project \u05E2\u05D5\u05D3\u05DB\u05DF.",
+      "Delete Project": "\u05DE\u05D7\u05D9\u05E7\u05EA Project",
+      "Permanently delete this Argo CD Project?": "\u05DC\u05DE\u05D7\u05D5\u05E7 \u05DC\u05E6\u05DE\u05D9\u05EA\u05D5\u05EA Project \u05D6\u05D4 \u05E9\u05DC Argo CD?",
+      "Project deleted.": "Project \u05E0\u05DE\u05D7\u05E7.",
+      "Delete ApplicationSet": "\u05DE\u05D7\u05D9\u05E7\u05EA ApplicationSet",
+      "Permanently delete this ApplicationSet?": "\u05DC\u05DE\u05D7\u05D5\u05E7 \u05DC\u05E6\u05DE\u05D9\u05EA\u05D5\u05EA ApplicationSet \u05D6\u05D4?",
+      "ApplicationSet deleted.": "ApplicationSet \u05E0\u05DE\u05D7\u05E7.",
+      "No resource actions available.": "\u05D0\u05D9\u05DF \u05E4\u05E2\u05D5\u05DC\u05D5\u05EA \u05DE\u05E9\u05D0\u05D1 \u05D6\u05DE\u05D9\u05E0\u05D5\u05EA.",
       "Opening the Logs tab reads a recent fragment; following is off by default.": "\u05E4\u05EA\u05D9\u05D7\u05EA \u05D4\u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05D9\u05D4 \u05D9\u05D5\u05DE\u05E0\u05D9\u05DD \u05E7\u05D5\u05E8\u05D0\u05EA \u05E7\u05D8\u05E2 \u05D0\u05D7\u05E8\u05D5\u05DF; \u05D4\u05D1\u05D0 \u05DB\u05D1\u05D5\u05D9 \u05DB\u05D1\u05E8\u05D9\u05E8\u05EA \u05DE\u05D7\u05D3\u05DC.",
       "Reload logs": "\u05D8\u05E2\u05DF \u05DE\u05D7\u05D3\u05E9 \u05D9\u05D5\u05DE\u05E0\u05D9\u05DD",
       "Invalid log options. Check the line count and time range.": "\u05D0\u05E4\u05E9\u05E8\u05D5\u05D9\u05D5\u05EA \u05D9\u05D5\u05DE\u05DF \u05DC\u05D0 \u05D7\u05D5\u05E7\u05D9\u05D5\u05EA. \u05D1\u05D3\u05D5\u05E7 \u05D0\u05EA \u05E1\u05E4\u05D9\u05E8\u05EA \u05D4\u05E9\u05D5\u05E8\u05D5\u05EA \u05D5\u05D8\u05D5\u05D5\u05D7 \u05D4\u05D6\u05DE\u05DF.",
@@ -8005,6 +9764,8 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Completed": "\u05D4\u05D5\u05E9\u05DC\u05DD",
       "Initiated by": "\u05D1\u05D9\u05D5\u05D6\u05DE\u05EA",
       "Automated": "\u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9",
+      "Restarts": "\u05D4\u05E4\u05E2\u05DC\u05D5\u05EA \u05DE\u05D7\u05D3\u05E9",
+      "Redaction notice": "\u05D4\u05D5\u05D3\u05E2\u05D4 \u05E2\u05DC \u05D4\u05E1\u05EA\u05E8\u05EA \u05DE\u05D9\u05D3\u05E2 \u05E8\u05D2\u05D9\u05E9",
       "{0} (unrecognized state)": "{0} (\u05DE\u05E6\u05D1 \u05DC\u05D0 \u05DE\u05D6\u05D5\u05D4\u05D4)",
       "Default": "\u05D1\u05E8\u05D9\u05E8\u05EA \u05DE\u05D7\u05D3\u05DC",
       "None": "\u05D0\u05D9\u05DF",
@@ -8094,7 +9855,7 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
       "Reading additional information\u2026": "\u05E7\u05D5\u05E8\u05D0 \u05DE\u05D9\u05D3\u05E2 \u05E0\u05D5\u05E1\u05E3...",
       "Additional information unavailable; main details remain available. Do not infer an empty result.": "\u05DE\u05D9\u05D3\u05E2 \u05E0\u05D5\u05E1\u05E3 \u05D0\u05D9\u05E0\u05D5 \u05D6\u05DE\u05D9\u05DF; \u05D4\u05E4\u05E8\u05D8\u05D9\u05DD \u05D4\u05E2\u05D9\u05E7\u05E8\u05D9\u05D9\u05DD \u05E0\u05D5\u05EA\u05E8\u05D5 \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD. \u05D0\u05DC \u05EA\u05E1\u05D9\u05E7 \u05EA\u05D5\u05E6\u05D0\u05D4 \u05E8\u05D9\u05E7\u05D4.",
       "Management paused; the existing list is an old snapshot.": "\u05D4\u05D4\u05E0\u05D4\u05DC\u05D4 \u05E2\u05E6\u05E8\u05D4; \u05D4\u05E8\u05E9\u05D9\u05DE\u05D4 \u05D4\u05E7\u05D9\u05D9\u05DE\u05EA \u05D4\u05D9\u05D0 \u05EA\u05DE\u05D5\u05E0\u05EA \u05DE\u05E6\u05D1 \u05D9\u05E9\u05E0\u05D4.",
-      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync.": "\u05E8\u05E7 \u05EA\u05D2\u05D5\u05D1\u05EA \u05D4\u05E9\u05E8\u05EA \u05D4\u05D6\u05D5 \u05DE\u05D5\u05E6\u05D2\u05EA; cron \u05D0\u05D9\u05E0\u05D5 \u05DE\u05D7\u05D5\u05E9\u05D1 \u05DE\u05D7\u05D3\u05E9 \u05D1\u05D0\u05DE\u05E6\u05E2\u05D5\u05EA \u05E9\u05E2\u05D5\u05DF \u05D4\u05D3\u05E4\u05D3\u05E4\u05DF. \u05D7\u05DC\u05D5\u05E0\u05D5\u05EA Active Project \u05D0\u05D9\u05E0\u05DD \u05DE\u05D5\u05DB\u05D9\u05D7\u05D9\u05DD \u05E9\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4 \u05D9\u05DB\u05D5\u05DC\u05D4 \u05DC\u05D4\u05E1\u05EA\u05E0\u05DB\u05E8\u05DF. \u05E8\u05E9\u05DE\u05D9 v3.1.8 canSync \u05DE\u05E9\u05EA\u05DE\u05E9 \u05D1\u05D4\u05E2\u05E8\u05DB\u05EA \u05D7\u05DC\u05D5\u05DF \u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05D9\u05D3\u05E0\u05D9, \u05DC\u05D0 \u05D1\u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9 \u05D0\u05D5 \u05D1\u05D4\u05E8\u05E9\u05D0\u05EA RBAC. \u05D4\u05EA\u05D5\u05E1\u05E3 \u05D4\u05D6\u05D4 \u05DC\u05D0 \u05D9\u05DB\u05D5\u05DC \u05DC\u05E1\u05E0\u05DB\u05E8\u05DF.",
+      "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission.": "\u05DE\u05D5\u05E6\u05D2\u05EA \u05E8\u05E7 \u05EA\u05D2\u05D5\u05D1\u05EA \u05E9\u05E8\u05EA \u05D6\u05D5; cron \u05D0\u05D9\u05E0\u05D5 \u05DE\u05D7\u05D5\u05E9\u05D1 \u05DE\u05D7\u05D3\u05E9 \u05DC\u05E4\u05D9 \u05E9\u05E2\u05D5\u05DF \u05D4\u05D3\u05E4\u05D3\u05E4\u05DF. \u05D7\u05DC\u05D5\u05E0\u05D5\u05EA \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05E4\u05E2\u05D9\u05DC\u05D9\u05DD \u05D0\u05D9\u05E0\u05DD \u05DE\u05D5\u05DB\u05D9\u05D7\u05D9\u05DD \u05E9\u05E0\u05D9\u05EA\u05DF \u05DC\u05E1\u05E0\u05DB\u05E8\u05DF \u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4. canSync \u05D4\u05E8\u05E9\u05DE\u05D9 \u05D1\u05D2\u05E8\u05E1\u05D4 v3.1.8 \u05D1\u05D5\u05D3\u05E7 \u05D7\u05DC\u05D5\u05E0\u05D5\u05EA \u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05D9\u05D3\u05E0\u05D9, \u05D5\u05DC\u05D0 \u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9 \u05D0\u05D5 \u05D4\u05E8\u05E9\u05D0\u05D5\u05EA RBAC.",
       "The server reported connection details; their contents may contain credentials and are withheld.": "\u05D4\u05E9\u05E8\u05EA \u05D3\u05D9\u05D5\u05D5\u05D7 \u05E2\u05DC \u05E4\u05E8\u05D8\u05D9 \u05D7\u05D9\u05D1\u05D5\u05E8; \u05D4\u05EA\u05D5\u05DB\u05DF \u05E9\u05DC\u05D4\u05DD \u05E2\u05E9\u05D5\u05D9 \u05DC\u05D4\u05DB\u05D9\u05DC \u05D0\u05D9\u05E9\u05D5\u05E8\u05D9\u05DD \u05D5\u05E0\u05DE\u05E0\u05E2\u05D9\u05DD.",
       "No displayable connection details were provided; do not infer success.": "\u05DC\u05D0 \u05E1\u05D5\u05E4\u05E7\u05D5 \u05E4\u05E8\u05D8\u05D9 \u05D7\u05D9\u05D1\u05D5\u05E8 \u05E9\u05E0\u05D9\u05EA\u05DF \u05DC\u05D4\u05E6\u05D9\u05D2; \u05DC\u05D0 \u05DC\u05D4\u05E1\u05D9\u05E7 \u05D4\u05E6\u05DC\u05D7\u05D4.",
       "Reconciliation details may contain generator values or credentials; bodies are withheld.": "\u05E4\u05E8\u05D8\u05D9 \u05D4\u05EA\u05D0\u05DE\u05D4 \u05E2\u05E9\u05D5\u05D9\u05D9\u05DD \u05DC\u05D4\u05DB\u05D9\u05DC \u05E2\u05E8\u05DB\u05D9 \u05DE\u05D7\u05D5\u05DC\u05DC \u05D0\u05D5 \u05D0\u05D9\u05E9\u05D5\u05E8\u05D9\u05DD; \u05D2\u05D5\u05E4\u05D5\u05EA \u05DE\u05D5\u05E0\u05E2\u05D5\u05EA.",
@@ -8438,13 +10199,13 @@ textarea.oc-sdk-input { height: auto; padding: 8px 12px; resize: vertical; }
     const keyPattern = /^(?:[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\/)?[a-zA-Z0-9](?:[a-zA-Z0-9_.-]*[a-zA-Z0-9])?$/;
     const valuePattern = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9_.-]*[a-zA-Z0-9])?)?$/;
     const checks = clauses.map((clause) => {
-      const set = /^([^\s!=(),]+)\s+(in|notin)\s*\(([^()]*)\)$/.exec(clause);
+      const set2 = /^([^\s!=(),]+)\s+(in|notin)\s*\(([^()]*)\)$/.exec(clause);
       const equality = /^([^\s!=(),]+)\s*(==|!=|=)\s*([^,()]*)$/.exec(clause);
-      if (set) {
-        const key2 = set[1];
-        const values = set[3].split(",").map((v2) => v2.trim());
+      if (set2) {
+        const key2 = set2[1];
+        const values = set2[3].split(",").map((v2) => v2.trim());
         if (!keyPattern.test(key2) || values.some((v2) => !valuePattern.test(v2))) throw new Error("Invalid label selector");
-        return (labels2) => set[2] === "in" ? Object.hasOwn(labels2, key2) && values.includes(labels2[key2]) : !Object.hasOwn(labels2, key2) || !values.includes(labels2[key2]);
+        return (labels2) => set2[2] === "in" ? Object.hasOwn(labels2, key2) && values.includes(labels2[key2]) : !Object.hasOwn(labels2, key2) || !values.includes(labels2[key2]);
       }
       if (equality) {
         const key2 = equality[1];
@@ -9048,10 +10809,10 @@ ${content}`;
     tree.setAttribute("role", "tree");
     tree.setAttribute("aria-label", t("Application resource tree"));
     root2.append(tree);
-    function ancestors(id2, visit) {
+    function ancestors(id2, visit3) {
       let parent = indexed.get(id2)?.parent;
       while (parent) {
-        visit(parent);
+        visit3(parent);
         parent = indexed.get(parent)?.parent;
       }
     }
@@ -9470,6 +11231,6639 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
     } };
   }
 
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/identity.js
+  var ALIAS = /* @__PURE__ */ Symbol.for("yaml.alias");
+  var DOC = /* @__PURE__ */ Symbol.for("yaml.document");
+  var MAP = /* @__PURE__ */ Symbol.for("yaml.map");
+  var PAIR = /* @__PURE__ */ Symbol.for("yaml.pair");
+  var SCALAR = /* @__PURE__ */ Symbol.for("yaml.scalar");
+  var SEQ = /* @__PURE__ */ Symbol.for("yaml.seq");
+  var NODE_TYPE = /* @__PURE__ */ Symbol.for("yaml.node.type");
+  var isAlias = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === ALIAS;
+  var isDocument = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === DOC;
+  var isMap = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === MAP;
+  var isPair = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === PAIR;
+  var isScalar = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === SCALAR;
+  var isSeq = (node) => !!node && typeof node === "object" && node[NODE_TYPE] === SEQ;
+  function isCollection(node) {
+    if (node && typeof node === "object")
+      switch (node[NODE_TYPE]) {
+        case MAP:
+        case SEQ:
+          return true;
+      }
+    return false;
+  }
+  function isNode(node) {
+    if (node && typeof node === "object")
+      switch (node[NODE_TYPE]) {
+        case ALIAS:
+        case MAP:
+        case SCALAR:
+        case SEQ:
+          return true;
+      }
+    return false;
+  }
+  var hasAnchor = (node) => (isScalar(node) || isCollection(node)) && !!node.anchor;
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/visit.js
+  var BREAK = /* @__PURE__ */ Symbol("break visit");
+  var SKIP = /* @__PURE__ */ Symbol("skip children");
+  var REMOVE = /* @__PURE__ */ Symbol("remove node");
+  function visit(node, visitor) {
+    const visitor_ = initVisitor(visitor);
+    if (isDocument(node)) {
+      const cd = visit_(null, node.contents, visitor_, Object.freeze([node]));
+      if (cd === REMOVE)
+        node.contents = null;
+    } else
+      visit_(null, node, visitor_, Object.freeze([]));
+  }
+  visit.BREAK = BREAK;
+  visit.SKIP = SKIP;
+  visit.REMOVE = REMOVE;
+  function visit_(key, node, visitor, path) {
+    const ctrl = callVisitor(key, node, visitor, path);
+    if (isNode(ctrl) || isPair(ctrl)) {
+      replaceNode(key, path, ctrl);
+      return visit_(key, ctrl, visitor, path);
+    }
+    if (typeof ctrl !== "symbol") {
+      if (isCollection(node)) {
+        path = Object.freeze(path.concat(node));
+        for (let i = 0; i < node.items.length; ++i) {
+          const ci = visit_(i, node.items[i], visitor, path);
+          if (typeof ci === "number")
+            i = ci - 1;
+          else if (ci === BREAK)
+            return BREAK;
+          else if (ci === REMOVE) {
+            node.items.splice(i, 1);
+            i -= 1;
+          }
+        }
+      } else if (isPair(node)) {
+        path = Object.freeze(path.concat(node));
+        const ck = visit_("key", node.key, visitor, path);
+        if (ck === BREAK)
+          return BREAK;
+        else if (ck === REMOVE)
+          node.key = null;
+        const cv = visit_("value", node.value, visitor, path);
+        if (cv === BREAK)
+          return BREAK;
+        else if (cv === REMOVE)
+          node.value = null;
+      }
+    }
+    return ctrl;
+  }
+  async function visitAsync(node, visitor) {
+    const visitor_ = initVisitor(visitor);
+    if (isDocument(node)) {
+      const cd = await visitAsync_(null, node.contents, visitor_, Object.freeze([node]));
+      if (cd === REMOVE)
+        node.contents = null;
+    } else
+      await visitAsync_(null, node, visitor_, Object.freeze([]));
+  }
+  visitAsync.BREAK = BREAK;
+  visitAsync.SKIP = SKIP;
+  visitAsync.REMOVE = REMOVE;
+  async function visitAsync_(key, node, visitor, path) {
+    const ctrl = await callVisitor(key, node, visitor, path);
+    if (isNode(ctrl) || isPair(ctrl)) {
+      replaceNode(key, path, ctrl);
+      return visitAsync_(key, ctrl, visitor, path);
+    }
+    if (typeof ctrl !== "symbol") {
+      if (isCollection(node)) {
+        path = Object.freeze(path.concat(node));
+        for (let i = 0; i < node.items.length; ++i) {
+          const ci = await visitAsync_(i, node.items[i], visitor, path);
+          if (typeof ci === "number")
+            i = ci - 1;
+          else if (ci === BREAK)
+            return BREAK;
+          else if (ci === REMOVE) {
+            node.items.splice(i, 1);
+            i -= 1;
+          }
+        }
+      } else if (isPair(node)) {
+        path = Object.freeze(path.concat(node));
+        const ck = await visitAsync_("key", node.key, visitor, path);
+        if (ck === BREAK)
+          return BREAK;
+        else if (ck === REMOVE)
+          node.key = null;
+        const cv = await visitAsync_("value", node.value, visitor, path);
+        if (cv === BREAK)
+          return BREAK;
+        else if (cv === REMOVE)
+          node.value = null;
+      }
+    }
+    return ctrl;
+  }
+  function initVisitor(visitor) {
+    if (typeof visitor === "object" && (visitor.Collection || visitor.Node || visitor.Value)) {
+      return Object.assign({
+        Alias: visitor.Node,
+        Map: visitor.Node,
+        Scalar: visitor.Node,
+        Seq: visitor.Node
+      }, visitor.Value && {
+        Map: visitor.Value,
+        Scalar: visitor.Value,
+        Seq: visitor.Value
+      }, visitor.Collection && {
+        Map: visitor.Collection,
+        Seq: visitor.Collection
+      }, visitor);
+    }
+    return visitor;
+  }
+  function callVisitor(key, node, visitor, path) {
+    if (typeof visitor === "function")
+      return visitor(key, node, path);
+    if (isMap(node))
+      return visitor.Map?.(key, node, path);
+    if (isSeq(node))
+      return visitor.Seq?.(key, node, path);
+    if (isPair(node))
+      return visitor.Pair?.(key, node, path);
+    if (isScalar(node))
+      return visitor.Scalar?.(key, node, path);
+    if (isAlias(node))
+      return visitor.Alias?.(key, node, path);
+    return void 0;
+  }
+  function replaceNode(key, path, node) {
+    const parent = path[path.length - 1];
+    if (isCollection(parent)) {
+      parent.items[key] = node;
+    } else if (isPair(parent)) {
+      if (key === "key")
+        parent.key = node;
+      else
+        parent.value = node;
+    } else if (isDocument(parent)) {
+      parent.contents = node;
+    } else {
+      const pt = isAlias(parent) ? "alias" : "scalar";
+      throw new Error(`Cannot replace node with ${pt} parent`);
+    }
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/doc/directives.js
+  var escapeChars = {
+    "!": "%21",
+    ",": "%2C",
+    "[": "%5B",
+    "]": "%5D",
+    "{": "%7B",
+    "}": "%7D"
+  };
+  var escapeTagName = (tn) => tn.replace(/[!,[\]{}]/g, (ch) => escapeChars[ch]);
+  var Directives = class _Directives {
+    constructor(yaml, tags) {
+      this.docStart = null;
+      this.docEnd = false;
+      this.yaml = Object.assign({}, _Directives.defaultYaml, yaml);
+      this.tags = Object.assign({}, _Directives.defaultTags, tags);
+    }
+    clone() {
+      const copy = new _Directives(this.yaml, this.tags);
+      copy.docStart = this.docStart;
+      return copy;
+    }
+    /**
+     * During parsing, get a Directives instance for the current document and
+     * update the stream state according to the current version's spec.
+     */
+    atDocument() {
+      const res = new _Directives(this.yaml, this.tags);
+      switch (this.yaml.version) {
+        case "1.1":
+          this.atNextDocument = true;
+          break;
+        case "1.2":
+          this.atNextDocument = false;
+          this.yaml = {
+            explicit: _Directives.defaultYaml.explicit,
+            version: "1.2"
+          };
+          this.tags = Object.assign({}, _Directives.defaultTags);
+          break;
+      }
+      return res;
+    }
+    /**
+     * @param onError - May be called even if the action was successful
+     * @returns `true` on success
+     */
+    add(line, onError) {
+      if (this.atNextDocument) {
+        this.yaml = { explicit: _Directives.defaultYaml.explicit, version: "1.1" };
+        this.tags = Object.assign({}, _Directives.defaultTags);
+        this.atNextDocument = false;
+      }
+      const parts = line.trim().split(/[ \t]+/);
+      const name = parts.shift();
+      switch (name) {
+        case "%TAG": {
+          if (parts.length !== 2) {
+            onError(0, "%TAG directive should contain exactly two parts");
+            if (parts.length < 2)
+              return false;
+          }
+          const [handle, prefix] = parts;
+          this.tags[handle] = prefix;
+          return true;
+        }
+        case "%YAML": {
+          this.yaml.explicit = true;
+          if (parts.length !== 1) {
+            onError(0, "%YAML directive should contain exactly one part");
+            return false;
+          }
+          const [version] = parts;
+          if (version === "1.1" || version === "1.2") {
+            this.yaml.version = version;
+            return true;
+          } else {
+            const isValid = /^\d+\.\d+$/.test(version);
+            onError(6, `Unsupported YAML version ${version}`, isValid);
+            return false;
+          }
+        }
+        default:
+          onError(0, `Unknown directive ${name}`, true);
+          return false;
+      }
+    }
+    /**
+     * Resolves a tag, matching handles to those defined in %TAG directives.
+     *
+     * @returns Resolved tag, which may also be the non-specific tag `'!'` or a
+     *   `'!local'` tag, or `null` if unresolvable.
+     */
+    tagName(source, onError) {
+      if (source === "!")
+        return "!";
+      if (source[0] !== "!") {
+        onError(`Not a valid tag: ${source}`);
+        return null;
+      }
+      if (source[1] === "<") {
+        const verbatim = source.slice(2, -1);
+        if (verbatim === "!" || verbatim === "!!") {
+          onError(`Verbatim tags aren't resolved, so ${source} is invalid.`);
+          return null;
+        }
+        if (source[source.length - 1] !== ">")
+          onError("Verbatim tags must end with a >");
+        return verbatim;
+      }
+      const [, handle, suffix] = source.match(/^(.*!)([^!]*)$/s);
+      if (!suffix)
+        onError(`The ${source} tag has no suffix`);
+      const prefix = this.tags[handle];
+      if (prefix) {
+        try {
+          return prefix + decodeURIComponent(suffix);
+        } catch (error2) {
+          onError(String(error2));
+          return null;
+        }
+      }
+      if (handle === "!")
+        return source;
+      onError(`Could not resolve tag: ${source}`);
+      return null;
+    }
+    /**
+     * Given a fully resolved tag, returns its printable string form,
+     * taking into account current tag prefixes and defaults.
+     */
+    tagString(tag) {
+      for (const [handle, prefix] of Object.entries(this.tags)) {
+        if (tag.startsWith(prefix))
+          return handle + escapeTagName(tag.substring(prefix.length));
+      }
+      return tag[0] === "!" ? tag : `!<${tag}>`;
+    }
+    toString(doc) {
+      const lines = this.yaml.explicit ? [`%YAML ${this.yaml.version || "1.2"}`] : [];
+      const tagEntries = Object.entries(this.tags);
+      let tagNames;
+      if (doc && tagEntries.length > 0 && isNode(doc.contents)) {
+        const tags = {};
+        visit(doc.contents, (_key, node) => {
+          if (isNode(node) && node.tag)
+            tags[node.tag] = true;
+        });
+        tagNames = Object.keys(tags);
+      } else
+        tagNames = [];
+      for (const [handle, prefix] of tagEntries) {
+        if (handle === "!!" && prefix === "tag:yaml.org,2002:")
+          continue;
+        if (!doc || tagNames.some((tn) => tn.startsWith(prefix)))
+          lines.push(`%TAG ${handle} ${prefix}`);
+      }
+      return lines.join("\n");
+    }
+  };
+  Directives.defaultYaml = { explicit: false, version: "1.2" };
+  Directives.defaultTags = { "!!": "tag:yaml.org,2002:" };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/doc/anchors.js
+  function anchorIsValid(anchor) {
+    if (/[\x00-\x19\s,[\]{}]/.test(anchor)) {
+      const sa = JSON.stringify(anchor);
+      const msg = `Anchor must not contain whitespace or control characters: ${sa}`;
+      throw new Error(msg);
+    }
+    return true;
+  }
+  function anchorNames(root2) {
+    const anchors = /* @__PURE__ */ new Set();
+    visit(root2, {
+      Value(_key, node) {
+        if (node.anchor)
+          anchors.add(node.anchor);
+      }
+    });
+    return anchors;
+  }
+  function findNewAnchor(prefix, exclude) {
+    for (let i = 1; true; ++i) {
+      const name = `${prefix}${i}`;
+      if (!exclude.has(name))
+        return name;
+    }
+  }
+  function createNodeAnchors(doc, prefix) {
+    const aliasObjects = [];
+    const sourceObjects = /* @__PURE__ */ new Map();
+    let prevAnchors = null;
+    return {
+      onAnchor: (source) => {
+        aliasObjects.push(source);
+        prevAnchors ?? (prevAnchors = anchorNames(doc));
+        const anchor = findNewAnchor(prefix, prevAnchors);
+        prevAnchors.add(anchor);
+        return anchor;
+      },
+      /**
+       * With circular references, the source node is only resolved after all
+       * of its child nodes are. This is why anchors are set only after all of
+       * the nodes have been created.
+       */
+      setAnchors: () => {
+        for (const source of aliasObjects) {
+          const ref = sourceObjects.get(source);
+          if (typeof ref === "object" && ref.anchor && (isScalar(ref.node) || isCollection(ref.node))) {
+            ref.node.anchor = ref.anchor;
+          } else {
+            const error2 = new Error("Failed to resolve repeated object (this should not happen)");
+            error2.source = source;
+            throw error2;
+          }
+        }
+      },
+      sourceObjects
+    };
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/doc/applyReviver.js
+  function applyReviver(reviver, obj, key, val) {
+    if (val && typeof val === "object") {
+      if (Array.isArray(val)) {
+        for (let i = 0, len = val.length; i < len; ++i) {
+          const v0 = val[i];
+          const v1 = applyReviver(reviver, val, String(i), v0);
+          if (v1 === void 0)
+            delete val[i];
+          else if (v1 !== v0)
+            val[i] = v1;
+        }
+      } else if (val instanceof Map) {
+        for (const k of Array.from(val.keys())) {
+          const v0 = val.get(k);
+          const v1 = applyReviver(reviver, val, k, v0);
+          if (v1 === void 0)
+            val.delete(k);
+          else if (v1 !== v0)
+            val.set(k, v1);
+        }
+      } else if (val instanceof Set) {
+        for (const v0 of Array.from(val)) {
+          const v1 = applyReviver(reviver, val, v0, v0);
+          if (v1 === void 0)
+            val.delete(v0);
+          else if (v1 !== v0) {
+            val.delete(v0);
+            val.add(v1);
+          }
+        }
+      } else {
+        for (const [k, v0] of Object.entries(val)) {
+          const v1 = applyReviver(reviver, val, k, v0);
+          if (v1 === void 0)
+            delete val[k];
+          else if (v1 !== v0)
+            val[k] = v1;
+        }
+      }
+    }
+    return reviver.call(obj, key, val);
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/toJS.js
+  function toJS(value, arg, ctx) {
+    if (Array.isArray(value))
+      return value.map((v2, i) => toJS(v2, String(i), ctx));
+    if (value && typeof value.toJSON === "function") {
+      if (!ctx || !hasAnchor(value))
+        return value.toJSON(arg, ctx);
+      const data = { aliasCount: 0, count: 1, res: void 0 };
+      ctx.anchors.set(value, data);
+      ctx.onCreate = (res2) => {
+        data.res = res2;
+        delete ctx.onCreate;
+      };
+      const res = value.toJSON(arg, ctx);
+      if (ctx.onCreate)
+        ctx.onCreate(res);
+      return res;
+    }
+    if (typeof value === "bigint" && !ctx?.keep)
+      return Number(value);
+    return value;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/Node.js
+  var NodeBase = class {
+    constructor(type) {
+      Object.defineProperty(this, NODE_TYPE, { value: type });
+    }
+    /** Create a copy of this node.  */
+    clone() {
+      const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
+      if (this.range)
+        copy.range = this.range.slice();
+      return copy;
+    }
+    /** A plain JavaScript representation of this node. */
+    toJS(doc, { mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
+      if (!isDocument(doc))
+        throw new TypeError("A document argument is required");
+      const ctx = {
+        anchors: /* @__PURE__ */ new Map(),
+        doc,
+        keep: true,
+        mapAsMap: mapAsMap === true,
+        mapKeyWarned: false,
+        maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
+      };
+      const res = toJS(this, "", ctx);
+      if (typeof onAnchor === "function")
+        for (const { count: count2, res: res2 } of ctx.anchors.values())
+          onAnchor(res2, count2);
+      return typeof reviver === "function" ? applyReviver(reviver, { "": res }, "", res) : res;
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/Alias.js
+  var Alias = class extends NodeBase {
+    constructor(source) {
+      super(ALIAS);
+      this.source = source;
+      Object.defineProperty(this, "tag", {
+        set() {
+          throw new Error("Alias nodes cannot have tags");
+        }
+      });
+    }
+    /**
+     * Resolve the value of this alias within `doc`, finding the last
+     * instance of the `source` anchor before this node.
+     */
+    resolve(doc, ctx) {
+      let nodes;
+      if (ctx?.aliasResolveCache) {
+        nodes = ctx.aliasResolveCache;
+      } else {
+        nodes = [];
+        visit(doc, {
+          Node: (_key, node) => {
+            if (isAlias(node) || hasAnchor(node))
+              nodes.push(node);
+          }
+        });
+        if (ctx)
+          ctx.aliasResolveCache = nodes;
+      }
+      let found = void 0;
+      for (const node of nodes) {
+        if (node === this)
+          break;
+        if (node.anchor === this.source)
+          found = node;
+      }
+      return found;
+    }
+    toJSON(_arg, ctx) {
+      if (!ctx)
+        return { source: this.source };
+      const { anchors, doc, maxAliasCount } = ctx;
+      const source = this.resolve(doc, ctx);
+      if (!source) {
+        const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
+        throw new ReferenceError(msg);
+      }
+      let data = anchors.get(source);
+      if (!data) {
+        toJS(source, null, ctx);
+        data = anchors.get(source);
+      }
+      if (data?.res === void 0) {
+        const msg = "This should not happen: Alias anchor was not resolved?";
+        throw new ReferenceError(msg);
+      }
+      if (maxAliasCount >= 0) {
+        data.count += 1;
+        if (data.aliasCount === 0)
+          data.aliasCount = getAliasCount(doc, source, anchors);
+        if (data.count * data.aliasCount > maxAliasCount) {
+          const msg = "Excessive alias count indicates a resource exhaustion attack";
+          throw new ReferenceError(msg);
+        }
+      }
+      return data.res;
+    }
+    toString(ctx, _onComment, _onChompKeep) {
+      const src = `*${this.source}`;
+      if (ctx) {
+        anchorIsValid(this.source);
+        if (ctx.options.verifyAliasOrder && !ctx.anchors.has(this.source)) {
+          const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
+          throw new Error(msg);
+        }
+        if (ctx.implicitKey)
+          return `${src} `;
+      }
+      return src;
+    }
+  };
+  function getAliasCount(doc, node, anchors) {
+    if (isAlias(node)) {
+      const source = node.resolve(doc);
+      const anchor = anchors && source && anchors.get(source);
+      return anchor ? anchor.count * anchor.aliasCount : 0;
+    } else if (isCollection(node)) {
+      let count2 = 0;
+      for (const item of node.items) {
+        const c = getAliasCount(doc, item, anchors);
+        if (c > count2)
+          count2 = c;
+      }
+      return count2;
+    } else if (isPair(node)) {
+      const kc = getAliasCount(doc, node.key, anchors);
+      const vc = getAliasCount(doc, node.value, anchors);
+      return Math.max(kc, vc);
+    }
+    return 1;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/Scalar.js
+  var isScalarValue = (value) => !value || typeof value !== "function" && typeof value !== "object";
+  var Scalar = class extends NodeBase {
+    constructor(value) {
+      super(SCALAR);
+      this.value = value;
+    }
+    toJSON(arg, ctx) {
+      return ctx?.keep ? this.value : toJS(this.value, arg, ctx);
+    }
+    toString() {
+      return String(this.value);
+    }
+  };
+  Scalar.BLOCK_FOLDED = "BLOCK_FOLDED";
+  Scalar.BLOCK_LITERAL = "BLOCK_LITERAL";
+  Scalar.PLAIN = "PLAIN";
+  Scalar.QUOTE_DOUBLE = "QUOTE_DOUBLE";
+  Scalar.QUOTE_SINGLE = "QUOTE_SINGLE";
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/doc/createNode.js
+  var defaultTagPrefix = "tag:yaml.org,2002:";
+  function findTagObject(value, tagName, tags) {
+    if (tagName) {
+      const match = tags.filter((t2) => t2.tag === tagName);
+      const tagObj = match.find((t2) => !t2.format) ?? match[0];
+      if (!tagObj)
+        throw new Error(`Tag ${tagName} not found`);
+      return tagObj;
+    }
+    return tags.find((t2) => t2.identify?.(value) && !t2.format);
+  }
+  function createNode(value, tagName, ctx) {
+    if (isDocument(value))
+      value = value.contents;
+    if (isNode(value))
+      return value;
+    if (isPair(value)) {
+      const map2 = ctx.schema[MAP].createNode?.(ctx.schema, null, ctx);
+      map2.items.push(value);
+      return map2;
+    }
+    if (value instanceof String || value instanceof Number || value instanceof Boolean || typeof BigInt !== "undefined" && value instanceof BigInt) {
+      value = value.valueOf();
+    }
+    const { aliasDuplicateObjects, onAnchor, onTagObj, schema: schema4, sourceObjects } = ctx;
+    let ref = void 0;
+    if (aliasDuplicateObjects && value && typeof value === "object") {
+      ref = sourceObjects.get(value);
+      if (ref) {
+        ref.anchor ?? (ref.anchor = onAnchor(value));
+        return new Alias(ref.anchor);
+      } else {
+        ref = { anchor: null, node: null };
+        sourceObjects.set(value, ref);
+      }
+    }
+    if (tagName?.startsWith("!!"))
+      tagName = defaultTagPrefix + tagName.slice(2);
+    let tagObj = findTagObject(value, tagName, schema4.tags);
+    if (!tagObj) {
+      if (value && typeof value.toJSON === "function") {
+        value = value.toJSON();
+      }
+      if (!value || typeof value !== "object") {
+        const node2 = new Scalar(value);
+        if (ref)
+          ref.node = node2;
+        return node2;
+      }
+      tagObj = value instanceof Map ? schema4[MAP] : Symbol.iterator in Object(value) ? schema4[SEQ] : schema4[MAP];
+    }
+    if (onTagObj) {
+      onTagObj(tagObj);
+      delete ctx.onTagObj;
+    }
+    const node = tagObj?.createNode ? tagObj.createNode(ctx.schema, value, ctx) : typeof tagObj?.nodeClass?.from === "function" ? tagObj.nodeClass.from(ctx.schema, value, ctx) : new Scalar(value);
+    if (tagName)
+      node.tag = tagName;
+    else if (!tagObj.default)
+      node.tag = tagObj.tag;
+    if (ref)
+      ref.node = node;
+    return node;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/Collection.js
+  function collectionFromPath(schema4, path, value) {
+    let v2 = value;
+    for (let i = path.length - 1; i >= 0; --i) {
+      const k = path[i];
+      if (typeof k === "number" && Number.isInteger(k) && k >= 0) {
+        const a = [];
+        a[k] = v2;
+        v2 = a;
+      } else {
+        v2 = /* @__PURE__ */ new Map([[k, v2]]);
+      }
+    }
+    return createNode(v2, void 0, {
+      aliasDuplicateObjects: false,
+      keepUndefined: false,
+      onAnchor: () => {
+        throw new Error("This should not happen, please report a bug.");
+      },
+      schema: schema4,
+      sourceObjects: /* @__PURE__ */ new Map()
+    });
+  }
+  var isEmptyPath = (path) => path == null || typeof path === "object" && !!path[Symbol.iterator]().next().done;
+  var Collection = class extends NodeBase {
+    constructor(type, schema4) {
+      super(type);
+      Object.defineProperty(this, "schema", {
+        value: schema4,
+        configurable: true,
+        enumerable: false,
+        writable: true
+      });
+    }
+    /**
+     * Create a copy of this collection.
+     *
+     * @param schema - If defined, overwrites the original's schema
+     */
+    clone(schema4) {
+      const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
+      if (schema4)
+        copy.schema = schema4;
+      copy.items = copy.items.map((it) => isNode(it) || isPair(it) ? it.clone(schema4) : it);
+      if (this.range)
+        copy.range = this.range.slice();
+      return copy;
+    }
+    /**
+     * Adds a value to the collection. For `!!map` and `!!omap` the value must
+     * be a Pair instance or a `{ key, value }` object, which may not have a key
+     * that already exists in the map.
+     */
+    addIn(path, value) {
+      if (isEmptyPath(path))
+        this.add(value);
+      else {
+        const [key, ...rest] = path;
+        const node = this.get(key, true);
+        if (isCollection(node))
+          node.addIn(rest, value);
+        else if (node === void 0 && this.schema)
+          this.set(key, collectionFromPath(this.schema, rest, value));
+        else
+          throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+      }
+    }
+    /**
+     * Removes a value from the collection.
+     * @returns `true` if the item was found and removed.
+     */
+    deleteIn(path) {
+      const [key, ...rest] = path;
+      if (rest.length === 0)
+        return this.delete(key);
+      const node = this.get(key, true);
+      if (isCollection(node))
+        return node.deleteIn(rest);
+      else
+        throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+    }
+    /**
+     * Returns item at `key`, or `undefined` if not found. By default unwraps
+     * scalar values from their surrounding node; to disable set `keepScalar` to
+     * `true` (collections are always returned intact).
+     */
+    getIn(path, keepScalar) {
+      const [key, ...rest] = path;
+      const node = this.get(key, true);
+      if (rest.length === 0)
+        return !keepScalar && isScalar(node) ? node.value : node;
+      else
+        return isCollection(node) ? node.getIn(rest, keepScalar) : void 0;
+    }
+    hasAllNullValues(allowScalar) {
+      return this.items.every((node) => {
+        if (!isPair(node))
+          return false;
+        const n = node.value;
+        return n == null || allowScalar && isScalar(n) && n.value == null && !n.commentBefore && !n.comment && !n.tag;
+      });
+    }
+    /**
+     * Checks if the collection includes a value with the key `key`.
+     */
+    hasIn(path) {
+      const [key, ...rest] = path;
+      if (rest.length === 0)
+        return this.has(key);
+      const node = this.get(key, true);
+      return isCollection(node) ? node.hasIn(rest) : false;
+    }
+    /**
+     * Sets a value in this collection. For `!!set`, `value` needs to be a
+     * boolean to add/remove the item from the set.
+     */
+    setIn(path, value) {
+      const [key, ...rest] = path;
+      if (rest.length === 0) {
+        this.set(key, value);
+      } else {
+        const node = this.get(key, true);
+        if (isCollection(node))
+          node.setIn(rest, value);
+        else if (node === void 0 && this.schema)
+          this.set(key, collectionFromPath(this.schema, rest, value));
+        else
+          throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+      }
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/stringifyComment.js
+  var stringifyComment = (str) => str.replace(/^(?!$)(?: $)?/gm, "#");
+  function indentComment(comment, indent) {
+    if (/^\n+$/.test(comment))
+      return comment.substring(1);
+    return indent ? comment.replace(/^(?! *$)/gm, indent) : comment;
+  }
+  var lineComment = (str, indent, comment) => str.endsWith("\n") ? indentComment(comment, indent) : comment.includes("\n") ? "\n" + indentComment(comment, indent) : (str.endsWith(" ") ? "" : " ") + comment;
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/foldFlowLines.js
+  var FOLD_FLOW = "flow";
+  var FOLD_BLOCK = "block";
+  var FOLD_QUOTED = "quoted";
+  function foldFlowLines(text2, indent, mode = "flow", { indentAtStart, lineWidth = 80, minContentWidth = 20, onFold, onOverflow } = {}) {
+    if (!lineWidth || lineWidth < 0)
+      return text2;
+    if (lineWidth < minContentWidth)
+      minContentWidth = 0;
+    const endStep = Math.max(1 + minContentWidth, 1 + lineWidth - indent.length);
+    if (text2.length <= endStep)
+      return text2;
+    const folds = [];
+    const escapedFolds = {};
+    let end = lineWidth - indent.length;
+    if (typeof indentAtStart === "number") {
+      if (indentAtStart > lineWidth - Math.max(2, minContentWidth))
+        folds.push(0);
+      else
+        end = lineWidth - indentAtStart;
+    }
+    let split2 = void 0;
+    let prev = void 0;
+    let overflow = false;
+    let i = -1;
+    let escStart = -1;
+    let escEnd = -1;
+    if (mode === FOLD_BLOCK) {
+      i = consumeMoreIndentedLines(text2, i, indent.length);
+      if (i !== -1)
+        end = i + endStep;
+    }
+    for (let ch; ch = text2[i += 1]; ) {
+      if (mode === FOLD_QUOTED && ch === "\\") {
+        escStart = i;
+        switch (text2[i + 1]) {
+          case "x":
+            i += 3;
+            break;
+          case "u":
+            i += 5;
+            break;
+          case "U":
+            i += 9;
+            break;
+          default:
+            i += 1;
+        }
+        escEnd = i;
+      }
+      if (ch === "\n") {
+        if (mode === FOLD_BLOCK)
+          i = consumeMoreIndentedLines(text2, i, indent.length);
+        end = i + indent.length + endStep;
+        split2 = void 0;
+      } else {
+        if (ch === " " && prev && prev !== " " && prev !== "\n" && prev !== "	") {
+          const next = text2[i + 1];
+          if (next && next !== " " && next !== "\n" && next !== "	")
+            split2 = i;
+        }
+        if (i >= end) {
+          if (split2) {
+            folds.push(split2);
+            end = split2 + endStep;
+            split2 = void 0;
+          } else if (mode === FOLD_QUOTED) {
+            while (prev === " " || prev === "	") {
+              prev = ch;
+              ch = text2[i += 1];
+              overflow = true;
+            }
+            const j = i > escEnd + 1 ? i - 2 : escStart - 1;
+            if (escapedFolds[j])
+              return text2;
+            folds.push(j);
+            escapedFolds[j] = true;
+            end = j + endStep;
+            split2 = void 0;
+          } else {
+            overflow = true;
+          }
+        }
+      }
+      prev = ch;
+    }
+    if (overflow && onOverflow)
+      onOverflow();
+    if (folds.length === 0)
+      return text2;
+    if (onFold)
+      onFold();
+    let res = text2.slice(0, folds[0]);
+    for (let i2 = 0; i2 < folds.length; ++i2) {
+      const fold = folds[i2];
+      const end2 = folds[i2 + 1] || text2.length;
+      if (fold === 0)
+        res = `
+${indent}${text2.slice(0, end2)}`;
+      else {
+        if (mode === FOLD_QUOTED && escapedFolds[fold])
+          res += `${text2[fold]}\\`;
+        res += `
+${indent}${text2.slice(fold + 1, end2)}`;
+      }
+    }
+    return res;
+  }
+  function consumeMoreIndentedLines(text2, i, indent) {
+    let end = i;
+    let start = i + 1;
+    let ch = text2[start];
+    while (ch === " " || ch === "	") {
+      if (i < start + indent) {
+        ch = text2[++i];
+      } else {
+        do {
+          ch = text2[++i];
+        } while (ch && ch !== "\n");
+        end = i;
+        start = i + 1;
+        ch = text2[start];
+      }
+    }
+    return end;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/stringifyString.js
+  var getFoldOptions = (ctx, isBlock2) => ({
+    indentAtStart: isBlock2 ? ctx.indent.length : ctx.indentAtStart,
+    lineWidth: ctx.options.lineWidth,
+    minContentWidth: ctx.options.minContentWidth
+  });
+  var containsDocumentMarker = (str) => /^(%|---|\.\.\.)/m.test(str);
+  function lineLengthOverLimit(str, lineWidth, indentLength) {
+    if (!lineWidth || lineWidth < 0)
+      return false;
+    const limit = lineWidth - indentLength;
+    const strLen = str.length;
+    if (strLen <= limit)
+      return false;
+    for (let i = 0, start = 0; i < strLen; ++i) {
+      if (str[i] === "\n") {
+        if (i - start > limit)
+          return true;
+        start = i + 1;
+        if (strLen - start <= limit)
+          return false;
+      }
+    }
+    return true;
+  }
+  function doubleQuotedString(value, ctx) {
+    const json = JSON.stringify(value);
+    if (ctx.options.doubleQuotedAsJSON)
+      return json;
+    const { implicitKey } = ctx;
+    const minMultiLineLength = ctx.options.doubleQuotedMinMultiLineLength;
+    const indent = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
+    let str = "";
+    let start = 0;
+    for (let i = 0, ch = json[i]; ch; ch = json[++i]) {
+      if (ch === " " && json[i + 1] === "\\" && json[i + 2] === "n") {
+        str += json.slice(start, i) + "\\ ";
+        i += 1;
+        start = i;
+        ch = "\\";
+      }
+      if (ch === "\\")
+        switch (json[i + 1]) {
+          case "u":
+            {
+              str += json.slice(start, i);
+              const code = json.substr(i + 2, 4);
+              switch (code) {
+                case "0000":
+                  str += "\\0";
+                  break;
+                case "0007":
+                  str += "\\a";
+                  break;
+                case "000b":
+                  str += "\\v";
+                  break;
+                case "001b":
+                  str += "\\e";
+                  break;
+                case "0085":
+                  str += "\\N";
+                  break;
+                case "00a0":
+                  str += "\\_";
+                  break;
+                case "2028":
+                  str += "\\L";
+                  break;
+                case "2029":
+                  str += "\\P";
+                  break;
+                default:
+                  if (code.substr(0, 2) === "00")
+                    str += "\\x" + code.substr(2);
+                  else
+                    str += json.substr(i, 6);
+              }
+              i += 5;
+              start = i + 1;
+            }
+            break;
+          case "n":
+            if (implicitKey || json[i + 2] === '"' || json.length < minMultiLineLength) {
+              i += 1;
+            } else {
+              str += json.slice(start, i) + "\n\n";
+              while (json[i + 2] === "\\" && json[i + 3] === "n" && json[i + 4] !== '"') {
+                str += "\n";
+                i += 2;
+              }
+              str += indent;
+              if (json[i + 2] === " ")
+                str += "\\";
+              i += 1;
+              start = i + 1;
+            }
+            break;
+          default:
+            i += 1;
+        }
+    }
+    str = start ? str + json.slice(start) : json;
+    return implicitKey ? str : foldFlowLines(str, indent, FOLD_QUOTED, getFoldOptions(ctx, false));
+  }
+  function singleQuotedString(value, ctx) {
+    if (ctx.options.singleQuote === false || ctx.implicitKey && value.includes("\n") || /[ \t]\n|\n[ \t]/.test(value))
+      return doubleQuotedString(value, ctx);
+    const indent = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
+    const res = "'" + value.replace(/'/g, "''").replace(/\n+/g, `$&
+${indent}`) + "'";
+    return ctx.implicitKey ? res : foldFlowLines(res, indent, FOLD_FLOW, getFoldOptions(ctx, false));
+  }
+  function quotedString(value, ctx) {
+    const { singleQuote } = ctx.options;
+    let qs;
+    if (singleQuote === false)
+      qs = doubleQuotedString;
+    else {
+      const hasDouble = value.includes('"');
+      const hasSingle = value.includes("'");
+      if (hasDouble && !hasSingle)
+        qs = singleQuotedString;
+      else if (hasSingle && !hasDouble)
+        qs = doubleQuotedString;
+      else
+        qs = singleQuote ? singleQuotedString : doubleQuotedString;
+    }
+    return qs(value, ctx);
+  }
+  var blockEndNewlines;
+  try {
+    blockEndNewlines = new RegExp("(^|(?<!\n))\n+(?!\n|$)", "g");
+  } catch {
+    blockEndNewlines = /\n+(?!\n|$)/g;
+  }
+  function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
+    const { blockQuote, commentString, lineWidth } = ctx.options;
+    if (!blockQuote || /\n[\t ]+$/.test(value)) {
+      return quotedString(value, ctx);
+    }
+    const indent = ctx.indent || (ctx.forceBlockIndent || containsDocumentMarker(value) ? "  " : "");
+    const literal = blockQuote === "literal" ? true : blockQuote === "folded" || type === Scalar.BLOCK_FOLDED ? false : type === Scalar.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, lineWidth, indent.length);
+    if (!value)
+      return literal ? "|\n" : ">\n";
+    let chomp;
+    let endStart;
+    for (endStart = value.length; endStart > 0; --endStart) {
+      const ch = value[endStart - 1];
+      if (ch !== "\n" && ch !== "	" && ch !== " ")
+        break;
+    }
+    let end = value.substring(endStart);
+    const endNlPos = end.indexOf("\n");
+    if (endNlPos === -1) {
+      chomp = "-";
+    } else if (value === end || endNlPos !== end.length - 1) {
+      chomp = "+";
+      if (onChompKeep)
+        onChompKeep();
+    } else {
+      chomp = "";
+    }
+    if (end) {
+      value = value.slice(0, -end.length);
+      if (end[end.length - 1] === "\n")
+        end = end.slice(0, -1);
+      end = end.replace(blockEndNewlines, `$&${indent}`);
+    }
+    let startWithSpace = false;
+    let startEnd;
+    let startNlPos = -1;
+    for (startEnd = 0; startEnd < value.length; ++startEnd) {
+      const ch = value[startEnd];
+      if (ch === " ")
+        startWithSpace = true;
+      else if (ch === "\n")
+        startNlPos = startEnd;
+      else
+        break;
+    }
+    let start = value.substring(0, startNlPos < startEnd ? startNlPos + 1 : startEnd);
+    if (start) {
+      value = value.substring(start.length);
+      start = start.replace(/\n+/g, `$&${indent}`);
+    }
+    const indentSize = indent ? "2" : "1";
+    let header = (startWithSpace ? indentSize : "") + chomp;
+    if (comment) {
+      header += " " + commentString(comment.replace(/ ?[\r\n]+/g, " "));
+      if (onComment)
+        onComment();
+    }
+    if (!literal) {
+      const foldedValue = value.replace(/\n+/g, "\n$&").replace(/(?:^|\n)([\t ].*)(?:([\n\t ]*)\n(?![\n\t ]))?/g, "$1$2").replace(/\n+/g, `$&${indent}`);
+      let literalFallback = false;
+      const foldOptions = getFoldOptions(ctx, true);
+      if (blockQuote !== "folded" && type !== Scalar.BLOCK_FOLDED) {
+        foldOptions.onOverflow = () => {
+          literalFallback = true;
+        };
+      }
+      const body = foldFlowLines(`${start}${foldedValue}${end}`, indent, FOLD_BLOCK, foldOptions);
+      if (!literalFallback)
+        return `>${header}
+${indent}${body}`;
+    }
+    value = value.replace(/\n+/g, `$&${indent}`);
+    return `|${header}
+${indent}${start}${value}${end}`;
+  }
+  function plainString(item, ctx, onComment, onChompKeep) {
+    const { type, value } = item;
+    const { actualString, implicitKey, indent, indentStep, inFlow } = ctx;
+    if (implicitKey && value.includes("\n") || inFlow && /[[\]{},]/.test(value)) {
+      return quotedString(value, ctx);
+    }
+    if (/^[\n\t ,[\]{}#&*!|>'"%@`]|^[?-]$|^[?-][ \t]|[\n:][ \t]|[ \t]\n|[\n\t ]#|[\n\t :]$/.test(value)) {
+      return implicitKey || inFlow || !value.includes("\n") ? quotedString(value, ctx) : blockString(item, ctx, onComment, onChompKeep);
+    }
+    if (!implicitKey && !inFlow && type !== Scalar.PLAIN && value.includes("\n")) {
+      return blockString(item, ctx, onComment, onChompKeep);
+    }
+    if (containsDocumentMarker(value)) {
+      if (indent === "") {
+        ctx.forceBlockIndent = true;
+        return blockString(item, ctx, onComment, onChompKeep);
+      } else if (implicitKey && indent === indentStep) {
+        return quotedString(value, ctx);
+      }
+    }
+    const str = value.replace(/\n+/g, `$&
+${indent}`);
+    if (actualString) {
+      const test = (tag) => tag.default && tag.tag !== "tag:yaml.org,2002:str" && tag.test?.test(str);
+      const { compat, tags } = ctx.doc.schema;
+      if (tags.some(test) || compat?.some(test))
+        return quotedString(value, ctx);
+    }
+    return implicitKey ? str : foldFlowLines(str, indent, FOLD_FLOW, getFoldOptions(ctx, false));
+  }
+  function stringifyString(item, ctx, onComment, onChompKeep) {
+    const { implicitKey, inFlow } = ctx;
+    const ss = typeof item.value === "string" ? item : Object.assign({}, item, { value: String(item.value) });
+    let { type } = item;
+    if (type !== Scalar.QUOTE_DOUBLE) {
+      if (/[\x00-\x08\x0b-\x1f\x7f-\x9f\u{D800}-\u{DFFF}]/u.test(ss.value))
+        type = Scalar.QUOTE_DOUBLE;
+    }
+    const _stringify = (_type) => {
+      switch (_type) {
+        case Scalar.BLOCK_FOLDED:
+        case Scalar.BLOCK_LITERAL:
+          return implicitKey || inFlow ? quotedString(ss.value, ctx) : blockString(ss, ctx, onComment, onChompKeep);
+        case Scalar.QUOTE_DOUBLE:
+          return doubleQuotedString(ss.value, ctx);
+        case Scalar.QUOTE_SINGLE:
+          return singleQuotedString(ss.value, ctx);
+        case Scalar.PLAIN:
+          return plainString(ss, ctx, onComment, onChompKeep);
+        default:
+          return null;
+      }
+    };
+    let res = _stringify(type);
+    if (res === null) {
+      const { defaultKeyType, defaultStringType } = ctx.options;
+      const t2 = implicitKey && defaultKeyType || defaultStringType;
+      res = _stringify(t2);
+      if (res === null)
+        throw new Error(`Unsupported default string type ${t2}`);
+    }
+    return res;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/stringify.js
+  function createStringifyContext(doc, options) {
+    const opt = Object.assign({
+      blockQuote: true,
+      commentString: stringifyComment,
+      defaultKeyType: null,
+      defaultStringType: "PLAIN",
+      directives: null,
+      doubleQuotedAsJSON: false,
+      doubleQuotedMinMultiLineLength: 40,
+      falseStr: "false",
+      flowCollectionPadding: true,
+      indentSeq: true,
+      lineWidth: 80,
+      minContentWidth: 20,
+      nullStr: "null",
+      simpleKeys: false,
+      singleQuote: null,
+      trailingComma: false,
+      trueStr: "true",
+      verifyAliasOrder: true
+    }, doc.schema.toStringOptions, options);
+    let inFlow;
+    switch (opt.collectionStyle) {
+      case "block":
+        inFlow = false;
+        break;
+      case "flow":
+        inFlow = true;
+        break;
+      default:
+        inFlow = null;
+    }
+    return {
+      anchors: /* @__PURE__ */ new Set(),
+      doc,
+      flowCollectionPadding: opt.flowCollectionPadding ? " " : "",
+      indent: "",
+      indentStep: typeof opt.indent === "number" ? " ".repeat(opt.indent) : "  ",
+      inFlow,
+      options: opt
+    };
+  }
+  function getTagObject(tags, item) {
+    if (item.tag) {
+      const match = tags.filter((t2) => t2.tag === item.tag);
+      if (match.length > 0)
+        return match.find((t2) => t2.format === item.format) ?? match[0];
+    }
+    let tagObj = void 0;
+    let obj;
+    if (isScalar(item)) {
+      obj = item.value;
+      let match = tags.filter((t2) => t2.identify?.(obj));
+      if (match.length > 1) {
+        const testMatch = match.filter((t2) => t2.test);
+        if (testMatch.length > 0)
+          match = testMatch;
+      }
+      tagObj = match.find((t2) => t2.format === item.format) ?? match.find((t2) => !t2.format);
+    } else {
+      obj = item;
+      tagObj = tags.find((t2) => t2.nodeClass && obj instanceof t2.nodeClass);
+    }
+    if (!tagObj) {
+      const name = obj?.constructor?.name ?? (obj === null ? "null" : typeof obj);
+      throw new Error(`Tag not resolved for ${name} value`);
+    }
+    return tagObj;
+  }
+  function stringifyProps(node, tagObj, { anchors, doc }) {
+    if (!doc.directives)
+      return "";
+    const props = [];
+    const anchor = (isScalar(node) || isCollection(node)) && node.anchor;
+    if (anchor && anchorIsValid(anchor)) {
+      anchors.add(anchor);
+      props.push(`&${anchor}`);
+    }
+    const tag = node.tag ?? (tagObj.default ? null : tagObj.tag);
+    if (tag)
+      props.push(doc.directives.tagString(tag));
+    return props.join(" ");
+  }
+  function stringify(item, ctx, onComment, onChompKeep) {
+    if (isPair(item))
+      return item.toString(ctx, onComment, onChompKeep);
+    if (isAlias(item)) {
+      if (ctx.doc.directives)
+        return item.toString(ctx);
+      if (ctx.resolvedAliases?.has(item)) {
+        throw new TypeError(`Cannot stringify circular structure without alias nodes`);
+      } else {
+        if (ctx.resolvedAliases)
+          ctx.resolvedAliases.add(item);
+        else
+          ctx.resolvedAliases = /* @__PURE__ */ new Set([item]);
+        item = item.resolve(ctx.doc);
+      }
+    }
+    let tagObj = void 0;
+    const node = isNode(item) ? item : ctx.doc.createNode(item, { onTagObj: (o) => tagObj = o });
+    tagObj ?? (tagObj = getTagObject(ctx.doc.schema.tags, node));
+    const props = stringifyProps(node, tagObj, ctx);
+    if (props.length > 0)
+      ctx.indentAtStart = (ctx.indentAtStart ?? 0) + props.length + 1;
+    const str = typeof tagObj.stringify === "function" ? tagObj.stringify(node, ctx, onComment, onChompKeep) : isScalar(node) ? stringifyString(node, ctx, onComment, onChompKeep) : node.toString(ctx, onComment, onChompKeep);
+    if (!props)
+      return str;
+    return isScalar(node) || str[0] === "{" || str[0] === "[" ? `${props} ${str}` : `${props}
+${ctx.indent}${str}`;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/stringifyPair.js
+  function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
+    const { allNullValues, doc, indent, indentStep, options: { commentString, indentSeq, simpleKeys } } = ctx;
+    let keyComment = isNode(key) && key.comment || null;
+    if (simpleKeys) {
+      if (keyComment) {
+        throw new Error("With simple keys, key nodes cannot have comments");
+      }
+      if (isCollection(key) || !isNode(key) && typeof key === "object") {
+        const msg = "With simple keys, collection cannot be used as a key value";
+        throw new Error(msg);
+      }
+    }
+    let explicitKey = !simpleKeys && (!key || keyComment && value == null && !ctx.inFlow || isCollection(key) || (isScalar(key) ? key.type === Scalar.BLOCK_FOLDED || key.type === Scalar.BLOCK_LITERAL : typeof key === "object"));
+    ctx = Object.assign({}, ctx, {
+      allNullValues: false,
+      implicitKey: !explicitKey && (simpleKeys || !allNullValues),
+      indent: indent + indentStep
+    });
+    let keyCommentDone = false;
+    let chompKeep = false;
+    let str = stringify(key, ctx, () => keyCommentDone = true, () => chompKeep = true);
+    if (!explicitKey && !ctx.inFlow && str.length > 1024) {
+      if (simpleKeys)
+        throw new Error("With simple keys, single line scalar must not span more than 1024 characters");
+      explicitKey = true;
+    }
+    if (ctx.inFlow) {
+      if (allNullValues || value == null) {
+        if (keyCommentDone && onComment)
+          onComment();
+        return str === "" ? "?" : explicitKey ? `? ${str}` : str;
+      }
+    } else if (allNullValues && !simpleKeys || value == null && explicitKey) {
+      str = `? ${str}`;
+      if (keyComment && !keyCommentDone) {
+        str += lineComment(str, ctx.indent, commentString(keyComment));
+      } else if (chompKeep && onChompKeep)
+        onChompKeep();
+      return str;
+    }
+    if (keyCommentDone)
+      keyComment = null;
+    if (explicitKey) {
+      if (keyComment)
+        str += lineComment(str, ctx.indent, commentString(keyComment));
+      str = `? ${str}
+${indent}:`;
+    } else {
+      str = `${str}:`;
+      if (keyComment)
+        str += lineComment(str, ctx.indent, commentString(keyComment));
+    }
+    let vsb, vcb, valueComment;
+    if (isNode(value)) {
+      vsb = !!value.spaceBefore;
+      vcb = value.commentBefore;
+      valueComment = value.comment;
+    } else {
+      vsb = false;
+      vcb = null;
+      valueComment = null;
+      if (value && typeof value === "object")
+        value = doc.createNode(value);
+    }
+    ctx.implicitKey = false;
+    if (!explicitKey && !keyComment && isScalar(value))
+      ctx.indentAtStart = str.length + 1;
+    chompKeep = false;
+    if (!indentSeq && indentStep.length >= 2 && !ctx.inFlow && !explicitKey && isSeq(value) && !value.flow && !value.tag && !value.anchor) {
+      ctx.indent = ctx.indent.substring(2);
+    }
+    let valueCommentDone = false;
+    const valueStr = stringify(value, ctx, () => valueCommentDone = true, () => chompKeep = true);
+    let ws = " ";
+    if (keyComment || vsb || vcb) {
+      ws = vsb ? "\n" : "";
+      if (vcb) {
+        const cs = commentString(vcb);
+        ws += `
+${indentComment(cs, ctx.indent)}`;
+      }
+      if (valueStr === "" && !ctx.inFlow) {
+        if (ws === "\n" && valueComment)
+          ws = "\n\n";
+      } else {
+        ws += `
+${ctx.indent}`;
+      }
+    } else if (!explicitKey && isCollection(value)) {
+      const vs0 = valueStr[0];
+      const nl0 = valueStr.indexOf("\n");
+      const hasNewline = nl0 !== -1;
+      const flow = ctx.inFlow ?? value.flow ?? value.items.length === 0;
+      if (hasNewline || !flow) {
+        let hasPropsLine = false;
+        if (hasNewline && (vs0 === "&" || vs0 === "!")) {
+          let sp0 = valueStr.indexOf(" ");
+          if (vs0 === "&" && sp0 !== -1 && sp0 < nl0 && valueStr[sp0 + 1] === "!") {
+            sp0 = valueStr.indexOf(" ", sp0 + 1);
+          }
+          if (sp0 === -1 || nl0 < sp0)
+            hasPropsLine = true;
+        }
+        if (!hasPropsLine)
+          ws = `
+${ctx.indent}`;
+      }
+    } else if (valueStr === "" || valueStr[0] === "\n") {
+      ws = "";
+    }
+    str += ws + valueStr;
+    if (ctx.inFlow) {
+      if (valueCommentDone && onComment)
+        onComment();
+    } else if (valueComment && !valueCommentDone) {
+      str += lineComment(str, ctx.indent, commentString(valueComment));
+    } else if (chompKeep && onChompKeep) {
+      onChompKeep();
+    }
+    return str;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/log.js
+  function warn(logLevel, warning) {
+    if (logLevel === "debug" || logLevel === "warn") {
+      console.warn(warning);
+    }
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/merge.js
+  var MERGE_KEY = "<<";
+  var merge = {
+    identify: (value) => value === MERGE_KEY || typeof value === "symbol" && value.description === MERGE_KEY,
+    default: "key",
+    tag: "tag:yaml.org,2002:merge",
+    test: /^<<$/,
+    resolve: () => Object.assign(new Scalar(Symbol(MERGE_KEY)), {
+      addToJSMap: addMergeToJSMap
+    }),
+    stringify: () => MERGE_KEY
+  };
+  var isMergeKey = (ctx, key) => (merge.identify(key) || isScalar(key) && (!key.type || key.type === Scalar.PLAIN) && merge.identify(key.value)) && ctx?.doc.schema.tags.some((tag) => tag.tag === merge.tag && tag.default);
+  function addMergeToJSMap(ctx, map2, value) {
+    value = ctx && isAlias(value) ? value.resolve(ctx.doc) : value;
+    if (isSeq(value))
+      for (const it of value.items)
+        mergeValue(ctx, map2, it);
+    else if (Array.isArray(value))
+      for (const it of value)
+        mergeValue(ctx, map2, it);
+    else
+      mergeValue(ctx, map2, value);
+  }
+  function mergeValue(ctx, map2, value) {
+    const source = ctx && isAlias(value) ? value.resolve(ctx.doc) : value;
+    if (!isMap(source))
+      throw new Error("Merge sources must be maps or map aliases");
+    const srcMap = source.toJSON(null, ctx, Map);
+    for (const [key, value2] of srcMap) {
+      if (map2 instanceof Map) {
+        if (!map2.has(key))
+          map2.set(key, value2);
+      } else if (map2 instanceof Set) {
+        map2.add(key);
+      } else if (!Object.prototype.hasOwnProperty.call(map2, key)) {
+        Object.defineProperty(map2, key, {
+          value: value2,
+          writable: true,
+          enumerable: true,
+          configurable: true
+        });
+      }
+    }
+    return map2;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/addPairToJSMap.js
+  function addPairToJSMap(ctx, map2, { key, value }) {
+    if (isNode(key) && key.addToJSMap)
+      key.addToJSMap(ctx, map2, value);
+    else if (isMergeKey(ctx, key))
+      addMergeToJSMap(ctx, map2, value);
+    else {
+      const jsKey = toJS(key, "", ctx);
+      if (map2 instanceof Map) {
+        map2.set(jsKey, toJS(value, jsKey, ctx));
+      } else if (map2 instanceof Set) {
+        map2.add(jsKey);
+      } else {
+        const stringKey = stringifyKey(key, jsKey, ctx);
+        const jsValue = toJS(value, stringKey, ctx);
+        if (stringKey in map2)
+          Object.defineProperty(map2, stringKey, {
+            value: jsValue,
+            writable: true,
+            enumerable: true,
+            configurable: true
+          });
+        else
+          map2[stringKey] = jsValue;
+      }
+    }
+    return map2;
+  }
+  function stringifyKey(key, jsKey, ctx) {
+    if (jsKey === null)
+      return "";
+    if (typeof jsKey !== "object")
+      return String(jsKey);
+    if (isNode(key) && ctx?.doc) {
+      const strCtx = createStringifyContext(ctx.doc, {});
+      strCtx.anchors = /* @__PURE__ */ new Set();
+      for (const node of ctx.anchors.keys())
+        strCtx.anchors.add(node.anchor);
+      strCtx.inFlow = true;
+      strCtx.inStringifyKey = true;
+      const strKey = key.toString(strCtx);
+      if (!ctx.mapKeyWarned) {
+        let jsonStr = JSON.stringify(strKey);
+        if (jsonStr.length > 40)
+          jsonStr = jsonStr.substring(0, 36) + '..."';
+        warn(ctx.doc.options.logLevel, `Keys with collection values will be stringified due to JS Object restrictions: ${jsonStr}. Set mapAsMap: true to use object keys.`);
+        ctx.mapKeyWarned = true;
+      }
+      return strKey;
+    }
+    return JSON.stringify(jsKey);
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/Pair.js
+  function createPair(key, value, ctx) {
+    const k = createNode(key, void 0, ctx);
+    const v2 = createNode(value, void 0, ctx);
+    return new Pair(k, v2);
+  }
+  var Pair = class _Pair {
+    constructor(key, value = null) {
+      Object.defineProperty(this, NODE_TYPE, { value: PAIR });
+      this.key = key;
+      this.value = value;
+    }
+    clone(schema4) {
+      let { key, value } = this;
+      if (isNode(key))
+        key = key.clone(schema4);
+      if (isNode(value))
+        value = value.clone(schema4);
+      return new _Pair(key, value);
+    }
+    toJSON(_, ctx) {
+      const pair = ctx?.mapAsMap ? /* @__PURE__ */ new Map() : {};
+      return addPairToJSMap(ctx, pair, this);
+    }
+    toString(ctx, onComment, onChompKeep) {
+      return ctx?.doc ? stringifyPair(this, ctx, onComment, onChompKeep) : JSON.stringify(this);
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/stringifyCollection.js
+  function stringifyCollection(collection, ctx, options) {
+    const flow = ctx.inFlow ?? collection.flow;
+    const stringify4 = flow ? stringifyFlowCollection : stringifyBlockCollection;
+    return stringify4(collection, ctx, options);
+  }
+  function stringifyBlockCollection({ comment, items }, ctx, { blockItemPrefix, flowChars, itemIndent, onChompKeep, onComment }) {
+    const { indent, options: { commentString } } = ctx;
+    const itemCtx = Object.assign({}, ctx, { indent: itemIndent, type: null });
+    let chompKeep = false;
+    const lines = [];
+    for (let i = 0; i < items.length; ++i) {
+      const item = items[i];
+      let comment2 = null;
+      if (isNode(item)) {
+        if (!chompKeep && item.spaceBefore)
+          lines.push("");
+        addCommentBefore(ctx, lines, item.commentBefore, chompKeep);
+        if (item.comment)
+          comment2 = item.comment;
+      } else if (isPair(item)) {
+        const ik = isNode(item.key) ? item.key : null;
+        if (ik) {
+          if (!chompKeep && ik.spaceBefore)
+            lines.push("");
+          addCommentBefore(ctx, lines, ik.commentBefore, chompKeep);
+        }
+      }
+      chompKeep = false;
+      let str2 = stringify(item, itemCtx, () => comment2 = null, () => chompKeep = true);
+      if (comment2)
+        str2 += lineComment(str2, itemIndent, commentString(comment2));
+      if (chompKeep && comment2)
+        chompKeep = false;
+      lines.push(blockItemPrefix + str2);
+    }
+    let str;
+    if (lines.length === 0) {
+      str = flowChars.start + flowChars.end;
+    } else {
+      str = lines[0];
+      for (let i = 1; i < lines.length; ++i) {
+        const line = lines[i];
+        str += line ? `
+${indent}${line}` : "\n";
+      }
+    }
+    if (comment) {
+      str += "\n" + indentComment(commentString(comment), indent);
+      if (onComment)
+        onComment();
+    } else if (chompKeep && onChompKeep)
+      onChompKeep();
+    return str;
+  }
+  function stringifyFlowCollection({ items }, ctx, { flowChars, itemIndent }) {
+    const { indent, indentStep, flowCollectionPadding: fcPadding, options: { commentString } } = ctx;
+    itemIndent += indentStep;
+    const itemCtx = Object.assign({}, ctx, {
+      indent: itemIndent,
+      inFlow: true,
+      type: null
+    });
+    let reqNewline = false;
+    let linesAtValue = 0;
+    const lines = [];
+    for (let i = 0; i < items.length; ++i) {
+      const item = items[i];
+      let comment = null;
+      if (isNode(item)) {
+        if (item.spaceBefore)
+          lines.push("");
+        addCommentBefore(ctx, lines, item.commentBefore, false);
+        if (item.comment)
+          comment = item.comment;
+      } else if (isPair(item)) {
+        const ik = isNode(item.key) ? item.key : null;
+        if (ik) {
+          if (ik.spaceBefore)
+            lines.push("");
+          addCommentBefore(ctx, lines, ik.commentBefore, false);
+          if (ik.comment)
+            reqNewline = true;
+        }
+        const iv = isNode(item.value) ? item.value : null;
+        if (iv) {
+          if (iv.comment)
+            comment = iv.comment;
+          if (iv.commentBefore)
+            reqNewline = true;
+        } else if (item.value == null && ik?.comment) {
+          comment = ik.comment;
+        }
+      }
+      if (comment)
+        reqNewline = true;
+      let str = stringify(item, itemCtx, () => comment = null);
+      reqNewline || (reqNewline = lines.length > linesAtValue || str.includes("\n"));
+      if (i < items.length - 1) {
+        str += ",";
+      } else if (ctx.options.trailingComma) {
+        if (ctx.options.lineWidth > 0) {
+          reqNewline || (reqNewline = lines.reduce((sum, line) => sum + line.length + 2, 2) + (str.length + 2) > ctx.options.lineWidth);
+        }
+        if (reqNewline) {
+          str += ",";
+        }
+      }
+      if (comment)
+        str += lineComment(str, itemIndent, commentString(comment));
+      lines.push(str);
+      linesAtValue = lines.length;
+    }
+    const { start, end } = flowChars;
+    if (lines.length === 0) {
+      return start + end;
+    } else {
+      if (!reqNewline) {
+        const len = lines.reduce((sum, line) => sum + line.length + 2, 2);
+        reqNewline = ctx.options.lineWidth > 0 && len > ctx.options.lineWidth;
+      }
+      if (reqNewline) {
+        let str = start;
+        for (const line of lines)
+          str += line ? `
+${indentStep}${indent}${line}` : "\n";
+        return `${str}
+${indent}${end}`;
+      } else {
+        return `${start}${fcPadding}${lines.join(" ")}${fcPadding}${end}`;
+      }
+    }
+  }
+  function addCommentBefore({ indent, options: { commentString } }, lines, comment, chompKeep) {
+    if (comment && chompKeep)
+      comment = comment.replace(/^\n+/, "");
+    if (comment) {
+      const ic = indentComment(commentString(comment), indent);
+      lines.push(ic.trimStart());
+    }
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/YAMLMap.js
+  function findPair(items, key) {
+    const k = isScalar(key) ? key.value : key;
+    for (const it of items) {
+      if (isPair(it)) {
+        if (it.key === key || it.key === k)
+          return it;
+        if (isScalar(it.key) && it.key.value === k)
+          return it;
+      }
+    }
+    return void 0;
+  }
+  var YAMLMap = class extends Collection {
+    static get tagName() {
+      return "tag:yaml.org,2002:map";
+    }
+    constructor(schema4) {
+      super(MAP, schema4);
+      this.items = [];
+    }
+    /**
+     * A generic collection parsing method that can be extended
+     * to other node classes that inherit from YAMLMap
+     */
+    static from(schema4, obj, ctx) {
+      const { keepUndefined, replacer } = ctx;
+      const map2 = new this(schema4);
+      const add = (key, value) => {
+        if (typeof replacer === "function")
+          value = replacer.call(obj, key, value);
+        else if (Array.isArray(replacer) && !replacer.includes(key))
+          return;
+        if (value !== void 0 || keepUndefined)
+          map2.items.push(createPair(key, value, ctx));
+      };
+      if (obj instanceof Map) {
+        for (const [key, value] of obj)
+          add(key, value);
+      } else if (obj && typeof obj === "object") {
+        for (const key of Object.keys(obj))
+          add(key, obj[key]);
+      }
+      if (typeof schema4.sortMapEntries === "function") {
+        map2.items.sort(schema4.sortMapEntries);
+      }
+      return map2;
+    }
+    /**
+     * Adds a value to the collection.
+     *
+     * @param overwrite - If not set `true`, using a key that is already in the
+     *   collection will throw. Otherwise, overwrites the previous value.
+     */
+    add(pair, overwrite) {
+      let _pair;
+      if (isPair(pair))
+        _pair = pair;
+      else if (!pair || typeof pair !== "object" || !("key" in pair)) {
+        _pair = new Pair(pair, pair?.value);
+      } else
+        _pair = new Pair(pair.key, pair.value);
+      const prev = findPair(this.items, _pair.key);
+      const sortEntries = this.schema?.sortMapEntries;
+      if (prev) {
+        if (!overwrite)
+          throw new Error(`Key ${_pair.key} already set`);
+        if (isScalar(prev.value) && isScalarValue(_pair.value))
+          prev.value.value = _pair.value;
+        else
+          prev.value = _pair.value;
+      } else if (sortEntries) {
+        const i = this.items.findIndex((item) => sortEntries(_pair, item) < 0);
+        if (i === -1)
+          this.items.push(_pair);
+        else
+          this.items.splice(i, 0, _pair);
+      } else {
+        this.items.push(_pair);
+      }
+    }
+    delete(key) {
+      const it = findPair(this.items, key);
+      if (!it)
+        return false;
+      const del = this.items.splice(this.items.indexOf(it), 1);
+      return del.length > 0;
+    }
+    get(key, keepScalar) {
+      const it = findPair(this.items, key);
+      const node = it?.value;
+      return (!keepScalar && isScalar(node) ? node.value : node) ?? void 0;
+    }
+    has(key) {
+      return !!findPair(this.items, key);
+    }
+    set(key, value) {
+      this.add(new Pair(key, value), true);
+    }
+    /**
+     * @param ctx - Conversion context, originally set in Document#toJS()
+     * @param {Class} Type - If set, forces the returned collection type
+     * @returns Instance of Type, Map, or Object
+     */
+    toJSON(_, ctx, Type) {
+      const map2 = Type ? new Type() : ctx?.mapAsMap ? /* @__PURE__ */ new Map() : {};
+      if (ctx?.onCreate)
+        ctx.onCreate(map2);
+      for (const item of this.items)
+        addPairToJSMap(ctx, map2, item);
+      return map2;
+    }
+    toString(ctx, onComment, onChompKeep) {
+      if (!ctx)
+        return JSON.stringify(this);
+      for (const item of this.items) {
+        if (!isPair(item))
+          throw new Error(`Map items must all be pairs; found ${JSON.stringify(item)} instead`);
+      }
+      if (!ctx.allNullValues && this.hasAllNullValues(false))
+        ctx = Object.assign({}, ctx, { allNullValues: true });
+      return stringifyCollection(this, ctx, {
+        blockItemPrefix: "",
+        flowChars: { start: "{", end: "}" },
+        itemIndent: ctx.indent || "",
+        onChompKeep,
+        onComment
+      });
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/common/map.js
+  var map = {
+    collection: "map",
+    default: true,
+    nodeClass: YAMLMap,
+    tag: "tag:yaml.org,2002:map",
+    resolve(map2, onError) {
+      if (!isMap(map2))
+        onError("Expected a mapping for this tag");
+      return map2;
+    },
+    createNode: (schema4, obj, ctx) => YAMLMap.from(schema4, obj, ctx)
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/nodes/YAMLSeq.js
+  var YAMLSeq = class extends Collection {
+    static get tagName() {
+      return "tag:yaml.org,2002:seq";
+    }
+    constructor(schema4) {
+      super(SEQ, schema4);
+      this.items = [];
+    }
+    add(value) {
+      this.items.push(value);
+    }
+    /**
+     * Removes a value from the collection.
+     *
+     * `key` must contain a representation of an integer for this to succeed.
+     * It may be wrapped in a `Scalar`.
+     *
+     * @returns `true` if the item was found and removed.
+     */
+    delete(key) {
+      const idx = asItemIndex(key);
+      if (typeof idx !== "number")
+        return false;
+      const del = this.items.splice(idx, 1);
+      return del.length > 0;
+    }
+    get(key, keepScalar) {
+      const idx = asItemIndex(key);
+      if (typeof idx !== "number")
+        return void 0;
+      const it = this.items[idx];
+      return !keepScalar && isScalar(it) ? it.value : it;
+    }
+    /**
+     * Checks if the collection includes a value with the key `key`.
+     *
+     * `key` must contain a representation of an integer for this to succeed.
+     * It may be wrapped in a `Scalar`.
+     */
+    has(key) {
+      const idx = asItemIndex(key);
+      return typeof idx === "number" && idx < this.items.length;
+    }
+    /**
+     * Sets a value in this collection. For `!!set`, `value` needs to be a
+     * boolean to add/remove the item from the set.
+     *
+     * If `key` does not contain a representation of an integer, this will throw.
+     * It may be wrapped in a `Scalar`.
+     */
+    set(key, value) {
+      const idx = asItemIndex(key);
+      if (typeof idx !== "number")
+        throw new Error(`Expected a valid index, not ${key}.`);
+      const prev = this.items[idx];
+      if (isScalar(prev) && isScalarValue(value))
+        prev.value = value;
+      else
+        this.items[idx] = value;
+    }
+    toJSON(_, ctx) {
+      const seq2 = [];
+      if (ctx?.onCreate)
+        ctx.onCreate(seq2);
+      let i = 0;
+      for (const item of this.items)
+        seq2.push(toJS(item, String(i++), ctx));
+      return seq2;
+    }
+    toString(ctx, onComment, onChompKeep) {
+      if (!ctx)
+        return JSON.stringify(this);
+      return stringifyCollection(this, ctx, {
+        blockItemPrefix: "- ",
+        flowChars: { start: "[", end: "]" },
+        itemIndent: (ctx.indent || "") + "  ",
+        onChompKeep,
+        onComment
+      });
+    }
+    static from(schema4, obj, ctx) {
+      const { replacer } = ctx;
+      const seq2 = new this(schema4);
+      if (obj && Symbol.iterator in Object(obj)) {
+        let i = 0;
+        for (let it of obj) {
+          if (typeof replacer === "function") {
+            const key = obj instanceof Set ? it : String(i++);
+            it = replacer.call(obj, key, it);
+          }
+          seq2.items.push(createNode(it, void 0, ctx));
+        }
+      }
+      return seq2;
+    }
+  };
+  function asItemIndex(key) {
+    let idx = isScalar(key) ? key.value : key;
+    if (idx && typeof idx === "string")
+      idx = Number(idx);
+    return typeof idx === "number" && Number.isInteger(idx) && idx >= 0 ? idx : null;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/common/seq.js
+  var seq = {
+    collection: "seq",
+    default: true,
+    nodeClass: YAMLSeq,
+    tag: "tag:yaml.org,2002:seq",
+    resolve(seq2, onError) {
+      if (!isSeq(seq2))
+        onError("Expected a sequence for this tag");
+      return seq2;
+    },
+    createNode: (schema4, obj, ctx) => YAMLSeq.from(schema4, obj, ctx)
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/common/string.js
+  var string = {
+    identify: (value) => typeof value === "string",
+    default: true,
+    tag: "tag:yaml.org,2002:str",
+    resolve: (str) => str,
+    stringify(item, ctx, onComment, onChompKeep) {
+      ctx = Object.assign({ actualString: true }, ctx);
+      return stringifyString(item, ctx, onComment, onChompKeep);
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/common/null.js
+  var nullTag = {
+    identify: (value) => value == null,
+    createNode: () => new Scalar(null),
+    default: true,
+    tag: "tag:yaml.org,2002:null",
+    test: /^(?:~|[Nn]ull|NULL)?$/,
+    resolve: () => new Scalar(null),
+    stringify: ({ source }, ctx) => typeof source === "string" && nullTag.test.test(source) ? source : ctx.options.nullStr
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/core/bool.js
+  var boolTag = {
+    identify: (value) => typeof value === "boolean",
+    default: true,
+    tag: "tag:yaml.org,2002:bool",
+    test: /^(?:[Tt]rue|TRUE|[Ff]alse|FALSE)$/,
+    resolve: (str) => new Scalar(str[0] === "t" || str[0] === "T"),
+    stringify({ source, value }, ctx) {
+      if (source && boolTag.test.test(source)) {
+        const sv = source[0] === "t" || source[0] === "T";
+        if (value === sv)
+          return source;
+      }
+      return value ? ctx.options.trueStr : ctx.options.falseStr;
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/stringifyNumber.js
+  function stringifyNumber({ format, minFractionDigits, tag, value }) {
+    if (typeof value === "bigint")
+      return String(value);
+    const num = typeof value === "number" ? value : Number(value);
+    if (!isFinite(num))
+      return isNaN(num) ? ".nan" : num < 0 ? "-.inf" : ".inf";
+    let n = Object.is(value, -0) ? "-0" : JSON.stringify(value);
+    if (!format && minFractionDigits && (!tag || tag === "tag:yaml.org,2002:float") && /^\d/.test(n)) {
+      let i = n.indexOf(".");
+      if (i < 0) {
+        i = n.length;
+        n += ".";
+      }
+      let d = minFractionDigits - (n.length - i - 1);
+      while (d-- > 0)
+        n += "0";
+    }
+    return n;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/core/float.js
+  var floatNaN = {
+    identify: (value) => typeof value === "number",
+    default: true,
+    tag: "tag:yaml.org,2002:float",
+    test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
+    resolve: (str) => str.slice(-3).toLowerCase() === "nan" ? NaN : str[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY,
+    stringify: stringifyNumber
+  };
+  var floatExp = {
+    identify: (value) => typeof value === "number",
+    default: true,
+    tag: "tag:yaml.org,2002:float",
+    format: "EXP",
+    test: /^[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)[eE][-+]?[0-9]+$/,
+    resolve: (str) => parseFloat(str),
+    stringify(node) {
+      const num = Number(node.value);
+      return isFinite(num) ? num.toExponential() : stringifyNumber(node);
+    }
+  };
+  var float = {
+    identify: (value) => typeof value === "number",
+    default: true,
+    tag: "tag:yaml.org,2002:float",
+    test: /^[-+]?(?:\.[0-9]+|[0-9]+\.[0-9]*)$/,
+    resolve(str) {
+      const node = new Scalar(parseFloat(str));
+      const dot = str.indexOf(".");
+      if (dot !== -1 && str[str.length - 1] === "0")
+        node.minFractionDigits = str.length - dot - 1;
+      return node;
+    },
+    stringify: stringifyNumber
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/core/int.js
+  var intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
+  var intResolve = (str, offset, radix, { intAsBigInt }) => intAsBigInt ? BigInt(str) : parseInt(str.substring(offset), radix);
+  function intStringify(node, radix, prefix) {
+    const { value } = node;
+    if (intIdentify(value) && value >= 0)
+      return prefix + value.toString(radix);
+    return stringifyNumber(node);
+  }
+  var intOct = {
+    identify: (value) => intIdentify(value) && value >= 0,
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    format: "OCT",
+    test: /^0o[0-7]+$/,
+    resolve: (str, _onError, opt) => intResolve(str, 2, 8, opt),
+    stringify: (node) => intStringify(node, 8, "0o")
+  };
+  var int = {
+    identify: intIdentify,
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    test: /^[-+]?[0-9]+$/,
+    resolve: (str, _onError, opt) => intResolve(str, 0, 10, opt),
+    stringify: stringifyNumber
+  };
+  var intHex = {
+    identify: (value) => intIdentify(value) && value >= 0,
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    format: "HEX",
+    test: /^0x[0-9a-fA-F]+$/,
+    resolve: (str, _onError, opt) => intResolve(str, 2, 16, opt),
+    stringify: (node) => intStringify(node, 16, "0x")
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/core/schema.js
+  var schema = [
+    map,
+    seq,
+    string,
+    nullTag,
+    boolTag,
+    intOct,
+    int,
+    intHex,
+    floatNaN,
+    floatExp,
+    float
+  ];
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/json/schema.js
+  function intIdentify2(value) {
+    return typeof value === "bigint" || Number.isInteger(value);
+  }
+  var stringifyJSON = ({ value }) => JSON.stringify(value);
+  var jsonScalars = [
+    {
+      identify: (value) => typeof value === "string",
+      default: true,
+      tag: "tag:yaml.org,2002:str",
+      resolve: (str) => str,
+      stringify: stringifyJSON
+    },
+    {
+      identify: (value) => value == null,
+      createNode: () => new Scalar(null),
+      default: true,
+      tag: "tag:yaml.org,2002:null",
+      test: /^null$/,
+      resolve: () => null,
+      stringify: stringifyJSON
+    },
+    {
+      identify: (value) => typeof value === "boolean",
+      default: true,
+      tag: "tag:yaml.org,2002:bool",
+      test: /^true$|^false$/,
+      resolve: (str) => str === "true",
+      stringify: stringifyJSON
+    },
+    {
+      identify: intIdentify2,
+      default: true,
+      tag: "tag:yaml.org,2002:int",
+      test: /^-?(?:0|[1-9][0-9]*)$/,
+      resolve: (str, _onError, { intAsBigInt }) => intAsBigInt ? BigInt(str) : parseInt(str, 10),
+      stringify: ({ value }) => intIdentify2(value) ? value.toString() : JSON.stringify(value)
+    },
+    {
+      identify: (value) => typeof value === "number",
+      default: true,
+      tag: "tag:yaml.org,2002:float",
+      test: /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][-+]?[0-9]+)?$/,
+      resolve: (str) => parseFloat(str),
+      stringify: stringifyJSON
+    }
+  ];
+  var jsonError = {
+    default: true,
+    tag: "",
+    test: /^/,
+    resolve(str, onError) {
+      onError(`Unresolved plain scalar ${JSON.stringify(str)}`);
+      return str;
+    }
+  };
+  var schema2 = [map, seq].concat(jsonScalars, jsonError);
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/binary.js
+  var binary = {
+    identify: (value) => value instanceof Uint8Array,
+    // Buffer inherits from Uint8Array
+    default: false,
+    tag: "tag:yaml.org,2002:binary",
+    /**
+     * Returns a Buffer in node and an Uint8Array in browsers
+     *
+     * To use the resulting buffer as an image, you'll want to do something like:
+     *
+     *   const blob = new Blob([buffer], { type: 'image/jpeg' })
+     *   document.querySelector('#photo').src = URL.createObjectURL(blob)
+     */
+    resolve(src, onError) {
+      if (typeof atob === "function") {
+        const str = atob(src.replace(/[\n\r]/g, ""));
+        const buffer = new Uint8Array(str.length);
+        for (let i = 0; i < str.length; ++i)
+          buffer[i] = str.charCodeAt(i);
+        return buffer;
+      } else {
+        onError("This environment does not support reading binary tags; either Buffer or atob is required");
+        return src;
+      }
+    },
+    stringify({ comment, type, value }, ctx, onComment, onChompKeep) {
+      if (!value)
+        return "";
+      const buf = value;
+      let str;
+      if (typeof btoa === "function") {
+        let s = "";
+        for (let i = 0; i < buf.length; ++i)
+          s += String.fromCharCode(buf[i]);
+        str = btoa(s);
+      } else {
+        throw new Error("This environment does not support writing binary tags; either Buffer or btoa is required");
+      }
+      type ?? (type = Scalar.BLOCK_LITERAL);
+      if (type !== Scalar.QUOTE_DOUBLE) {
+        const lineWidth = Math.max(ctx.options.lineWidth - ctx.indent.length, ctx.options.minContentWidth);
+        const n = Math.ceil(str.length / lineWidth);
+        const lines = new Array(n);
+        for (let i = 0, o = 0; i < n; ++i, o += lineWidth) {
+          lines[i] = str.substr(o, lineWidth);
+        }
+        str = lines.join(type === Scalar.BLOCK_LITERAL ? "\n" : " ");
+      }
+      return stringifyString({ comment, type, value: str }, ctx, onComment, onChompKeep);
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/pairs.js
+  function resolvePairs(seq2, onError) {
+    if (isSeq(seq2)) {
+      for (let i = 0; i < seq2.items.length; ++i) {
+        let item = seq2.items[i];
+        if (isPair(item))
+          continue;
+        else if (isMap(item)) {
+          if (item.items.length > 1)
+            onError("Each pair must have its own sequence indicator");
+          const pair = item.items[0] || new Pair(new Scalar(null));
+          if (item.commentBefore)
+            pair.key.commentBefore = pair.key.commentBefore ? `${item.commentBefore}
+${pair.key.commentBefore}` : item.commentBefore;
+          if (item.comment) {
+            const cn = pair.value ?? pair.key;
+            cn.comment = cn.comment ? `${item.comment}
+${cn.comment}` : item.comment;
+          }
+          item = pair;
+        }
+        seq2.items[i] = isPair(item) ? item : new Pair(item);
+      }
+    } else
+      onError("Expected a sequence for this tag");
+    return seq2;
+  }
+  function createPairs(schema4, iterable, ctx) {
+    const { replacer } = ctx;
+    const pairs2 = new YAMLSeq(schema4);
+    pairs2.tag = "tag:yaml.org,2002:pairs";
+    let i = 0;
+    if (iterable && Symbol.iterator in Object(iterable))
+      for (let it of iterable) {
+        if (typeof replacer === "function")
+          it = replacer.call(iterable, String(i++), it);
+        let key, value;
+        if (Array.isArray(it)) {
+          if (it.length === 2) {
+            key = it[0];
+            value = it[1];
+          } else
+            throw new TypeError(`Expected [key, value] tuple: ${it}`);
+        } else if (it && it instanceof Object) {
+          const keys = Object.keys(it);
+          if (keys.length === 1) {
+            key = keys[0];
+            value = it[key];
+          } else {
+            throw new TypeError(`Expected tuple with one key, not ${keys.length} keys`);
+          }
+        } else {
+          key = it;
+        }
+        pairs2.items.push(createPair(key, value, ctx));
+      }
+    return pairs2;
+  }
+  var pairs = {
+    collection: "seq",
+    default: false,
+    tag: "tag:yaml.org,2002:pairs",
+    resolve: resolvePairs,
+    createNode: createPairs
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/omap.js
+  var YAMLOMap = class _YAMLOMap extends YAMLSeq {
+    constructor() {
+      super();
+      this.add = YAMLMap.prototype.add.bind(this);
+      this.delete = YAMLMap.prototype.delete.bind(this);
+      this.get = YAMLMap.prototype.get.bind(this);
+      this.has = YAMLMap.prototype.has.bind(this);
+      this.set = YAMLMap.prototype.set.bind(this);
+      this.tag = _YAMLOMap.tag;
+    }
+    /**
+     * If `ctx` is given, the return type is actually `Map<unknown, unknown>`,
+     * but TypeScript won't allow widening the signature of a child method.
+     */
+    toJSON(_, ctx) {
+      if (!ctx)
+        return super.toJSON(_);
+      const map2 = /* @__PURE__ */ new Map();
+      if (ctx?.onCreate)
+        ctx.onCreate(map2);
+      for (const pair of this.items) {
+        let key, value;
+        if (isPair(pair)) {
+          key = toJS(pair.key, "", ctx);
+          value = toJS(pair.value, key, ctx);
+        } else {
+          key = toJS(pair, "", ctx);
+        }
+        if (map2.has(key))
+          throw new Error("Ordered maps must not include duplicate keys");
+        map2.set(key, value);
+      }
+      return map2;
+    }
+    static from(schema4, iterable, ctx) {
+      const pairs2 = createPairs(schema4, iterable, ctx);
+      const omap2 = new this();
+      omap2.items = pairs2.items;
+      return omap2;
+    }
+  };
+  YAMLOMap.tag = "tag:yaml.org,2002:omap";
+  var omap = {
+    collection: "seq",
+    identify: (value) => value instanceof Map,
+    nodeClass: YAMLOMap,
+    default: false,
+    tag: "tag:yaml.org,2002:omap",
+    resolve(seq2, onError) {
+      const pairs2 = resolvePairs(seq2, onError);
+      const seenKeys = [];
+      for (const { key } of pairs2.items) {
+        if (isScalar(key)) {
+          if (seenKeys.includes(key.value)) {
+            onError(`Ordered maps must not include duplicate keys: ${key.value}`);
+          } else {
+            seenKeys.push(key.value);
+          }
+        }
+      }
+      return Object.assign(new YAMLOMap(), pairs2);
+    },
+    createNode: (schema4, iterable, ctx) => YAMLOMap.from(schema4, iterable, ctx)
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/bool.js
+  function boolStringify({ value, source }, ctx) {
+    const boolObj = value ? trueTag : falseTag;
+    if (source && boolObj.test.test(source))
+      return source;
+    return value ? ctx.options.trueStr : ctx.options.falseStr;
+  }
+  var trueTag = {
+    identify: (value) => value === true,
+    default: true,
+    tag: "tag:yaml.org,2002:bool",
+    test: /^(?:Y|y|[Yy]es|YES|[Tt]rue|TRUE|[Oo]n|ON)$/,
+    resolve: () => new Scalar(true),
+    stringify: boolStringify
+  };
+  var falseTag = {
+    identify: (value) => value === false,
+    default: true,
+    tag: "tag:yaml.org,2002:bool",
+    test: /^(?:N|n|[Nn]o|NO|[Ff]alse|FALSE|[Oo]ff|OFF)$/,
+    resolve: () => new Scalar(false),
+    stringify: boolStringify
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/float.js
+  var floatNaN2 = {
+    identify: (value) => typeof value === "number",
+    default: true,
+    tag: "tag:yaml.org,2002:float",
+    test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
+    resolve: (str) => str.slice(-3).toLowerCase() === "nan" ? NaN : str[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY,
+    stringify: stringifyNumber
+  };
+  var floatExp2 = {
+    identify: (value) => typeof value === "number",
+    default: true,
+    tag: "tag:yaml.org,2002:float",
+    format: "EXP",
+    test: /^[-+]?(?:[0-9][0-9_]*)?(?:\.[0-9_]*)?[eE][-+]?[0-9]+$/,
+    resolve: (str) => parseFloat(str.replace(/_/g, "")),
+    stringify(node) {
+      const num = Number(node.value);
+      return isFinite(num) ? num.toExponential() : stringifyNumber(node);
+    }
+  };
+  var float2 = {
+    identify: (value) => typeof value === "number",
+    default: true,
+    tag: "tag:yaml.org,2002:float",
+    test: /^[-+]?(?:[0-9][0-9_]*)?\.[0-9_]*$/,
+    resolve(str) {
+      const node = new Scalar(parseFloat(str.replace(/_/g, "")));
+      const dot = str.indexOf(".");
+      if (dot !== -1) {
+        const f = str.substring(dot + 1).replace(/_/g, "");
+        if (f[f.length - 1] === "0")
+          node.minFractionDigits = f.length;
+      }
+      return node;
+    },
+    stringify: stringifyNumber
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/int.js
+  var intIdentify3 = (value) => typeof value === "bigint" || Number.isInteger(value);
+  function intResolve2(str, offset, radix, { intAsBigInt }) {
+    const sign = str[0];
+    if (sign === "-" || sign === "+")
+      offset += 1;
+    str = str.substring(offset).replace(/_/g, "");
+    if (intAsBigInt) {
+      switch (radix) {
+        case 2:
+          str = `0b${str}`;
+          break;
+        case 8:
+          str = `0o${str}`;
+          break;
+        case 16:
+          str = `0x${str}`;
+          break;
+      }
+      const n2 = BigInt(str);
+      return sign === "-" ? BigInt(-1) * n2 : n2;
+    }
+    const n = parseInt(str, radix);
+    return sign === "-" ? -1 * n : n;
+  }
+  function intStringify2(node, radix, prefix) {
+    const { value } = node;
+    if (intIdentify3(value)) {
+      const str = value.toString(radix);
+      return value < 0 ? "-" + prefix + str.substr(1) : prefix + str;
+    }
+    return stringifyNumber(node);
+  }
+  var intBin = {
+    identify: intIdentify3,
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    format: "BIN",
+    test: /^[-+]?0b[0-1_]+$/,
+    resolve: (str, _onError, opt) => intResolve2(str, 2, 2, opt),
+    stringify: (node) => intStringify2(node, 2, "0b")
+  };
+  var intOct2 = {
+    identify: intIdentify3,
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    format: "OCT",
+    test: /^[-+]?0[0-7_]+$/,
+    resolve: (str, _onError, opt) => intResolve2(str, 1, 8, opt),
+    stringify: (node) => intStringify2(node, 8, "0")
+  };
+  var int2 = {
+    identify: intIdentify3,
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    test: /^[-+]?[0-9][0-9_]*$/,
+    resolve: (str, _onError, opt) => intResolve2(str, 0, 10, opt),
+    stringify: stringifyNumber
+  };
+  var intHex2 = {
+    identify: intIdentify3,
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    format: "HEX",
+    test: /^[-+]?0x[0-9a-fA-F_]+$/,
+    resolve: (str, _onError, opt) => intResolve2(str, 2, 16, opt),
+    stringify: (node) => intStringify2(node, 16, "0x")
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/set.js
+  var YAMLSet = class _YAMLSet extends YAMLMap {
+    constructor(schema4) {
+      super(schema4);
+      this.tag = _YAMLSet.tag;
+    }
+    add(key) {
+      let pair;
+      if (isPair(key))
+        pair = key;
+      else if (key && typeof key === "object" && "key" in key && "value" in key && key.value === null)
+        pair = new Pair(key.key, null);
+      else
+        pair = new Pair(key, null);
+      const prev = findPair(this.items, pair.key);
+      if (!prev)
+        this.items.push(pair);
+    }
+    /**
+     * If `keepPair` is `true`, returns the Pair matching `key`.
+     * Otherwise, returns the value of that Pair's key.
+     */
+    get(key, keepPair) {
+      const pair = findPair(this.items, key);
+      return !keepPair && isPair(pair) ? isScalar(pair.key) ? pair.key.value : pair.key : pair;
+    }
+    set(key, value) {
+      if (typeof value !== "boolean")
+        throw new Error(`Expected boolean value for set(key, value) in a YAML set, not ${typeof value}`);
+      const prev = findPair(this.items, key);
+      if (prev && !value) {
+        this.items.splice(this.items.indexOf(prev), 1);
+      } else if (!prev && value) {
+        this.items.push(new Pair(key));
+      }
+    }
+    toJSON(_, ctx) {
+      return super.toJSON(_, ctx, Set);
+    }
+    toString(ctx, onComment, onChompKeep) {
+      if (!ctx)
+        return JSON.stringify(this);
+      if (this.hasAllNullValues(true))
+        return super.toString(Object.assign({}, ctx, { allNullValues: true }), onComment, onChompKeep);
+      else
+        throw new Error("Set items must all have null values");
+    }
+    static from(schema4, iterable, ctx) {
+      const { replacer } = ctx;
+      const set2 = new this(schema4);
+      if (iterable && Symbol.iterator in Object(iterable))
+        for (let value of iterable) {
+          if (typeof replacer === "function")
+            value = replacer.call(iterable, value, value);
+          set2.items.push(createPair(value, null, ctx));
+        }
+      return set2;
+    }
+  };
+  YAMLSet.tag = "tag:yaml.org,2002:set";
+  var set = {
+    collection: "map",
+    identify: (value) => value instanceof Set,
+    nodeClass: YAMLSet,
+    default: false,
+    tag: "tag:yaml.org,2002:set",
+    createNode: (schema4, iterable, ctx) => YAMLSet.from(schema4, iterable, ctx),
+    resolve(map2, onError) {
+      if (isMap(map2)) {
+        if (map2.hasAllNullValues(true))
+          return Object.assign(new YAMLSet(), map2);
+        else
+          onError("Set items must all have null values");
+      } else
+        onError("Expected a mapping for this tag");
+      return map2;
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/timestamp.js
+  function parseSexagesimal(str, asBigInt) {
+    const sign = str[0];
+    const parts = sign === "-" || sign === "+" ? str.substring(1) : str;
+    const num = (n) => asBigInt ? BigInt(n) : Number(n);
+    const res = parts.replace(/_/g, "").split(":").reduce((res2, p) => res2 * num(60) + num(p), num(0));
+    return sign === "-" ? num(-1) * res : res;
+  }
+  function stringifySexagesimal(node) {
+    let { value } = node;
+    let num = (n) => n;
+    if (typeof value === "bigint")
+      num = (n) => BigInt(n);
+    else if (isNaN(value) || !isFinite(value))
+      return stringifyNumber(node);
+    let sign = "";
+    if (value < 0) {
+      sign = "-";
+      value *= num(-1);
+    }
+    const _60 = num(60);
+    const parts = [value % _60];
+    if (value < 60) {
+      parts.unshift(0);
+    } else {
+      value = (value - parts[0]) / _60;
+      parts.unshift(value % _60);
+      if (value >= 60) {
+        value = (value - parts[0]) / _60;
+        parts.unshift(value);
+      }
+    }
+    return sign + parts.map((n) => String(n).padStart(2, "0")).join(":").replace(/000000\d*$/, "");
+  }
+  var intTime = {
+    identify: (value) => typeof value === "bigint" || Number.isInteger(value),
+    default: true,
+    tag: "tag:yaml.org,2002:int",
+    format: "TIME",
+    test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+$/,
+    resolve: (str, _onError, { intAsBigInt }) => parseSexagesimal(str, intAsBigInt),
+    stringify: stringifySexagesimal
+  };
+  var floatTime = {
+    identify: (value) => typeof value === "number",
+    default: true,
+    tag: "tag:yaml.org,2002:float",
+    format: "TIME",
+    test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*$/,
+    resolve: (str) => parseSexagesimal(str, false),
+    stringify: stringifySexagesimal
+  };
+  var timestamp = {
+    identify: (value) => value instanceof Date,
+    default: true,
+    tag: "tag:yaml.org,2002:timestamp",
+    // If the time zone is omitted, the timestamp is assumed to be specified in UTC. The time part
+    // may be omitted altogether, resulting in a date format. In such a case, the time part is
+    // assumed to be 00:00:00Z (start of day, UTC).
+    test: RegExp("^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})(?:(?:t|T|[ \\t]+)([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2}(\\.[0-9]+)?)(?:[ \\t]*(Z|[-+][012]?[0-9](?::[0-9]{2})?))?)?$"),
+    resolve(str) {
+      const match = str.match(timestamp.test);
+      if (!match)
+        throw new Error("!!timestamp expects a date, starting with yyyy-mm-dd");
+      const [, year, month, day, hour, minute, second] = match.map(Number);
+      const millisec = match[7] ? Number((match[7] + "00").substr(1, 3)) : 0;
+      let date = Date.UTC(year, month - 1, day, hour || 0, minute || 0, second || 0, millisec);
+      const tz = match[8];
+      if (tz && tz !== "Z") {
+        let d = parseSexagesimal(tz, false);
+        if (Math.abs(d) < 30)
+          d *= 60;
+        date -= 6e4 * d;
+      }
+      return new Date(date);
+    },
+    stringify: ({ value }) => value?.toISOString().replace(/(T00:00:00)?\.000Z$/, "") ?? ""
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/yaml-1.1/schema.js
+  var schema3 = [
+    map,
+    seq,
+    string,
+    nullTag,
+    trueTag,
+    falseTag,
+    intBin,
+    intOct2,
+    int2,
+    intHex2,
+    floatNaN2,
+    floatExp2,
+    float2,
+    binary,
+    merge,
+    omap,
+    pairs,
+    set,
+    intTime,
+    floatTime,
+    timestamp
+  ];
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/tags.js
+  var schemas = /* @__PURE__ */ new Map([
+    ["core", schema],
+    ["failsafe", [map, seq, string]],
+    ["json", schema2],
+    ["yaml11", schema3],
+    ["yaml-1.1", schema3]
+  ]);
+  var tagsByName = {
+    binary,
+    bool: boolTag,
+    float,
+    floatExp,
+    floatNaN,
+    floatTime,
+    int,
+    intHex,
+    intOct,
+    intTime,
+    map,
+    merge,
+    null: nullTag,
+    omap,
+    pairs,
+    seq,
+    set,
+    timestamp
+  };
+  var coreKnownTags = {
+    "tag:yaml.org,2002:binary": binary,
+    "tag:yaml.org,2002:merge": merge,
+    "tag:yaml.org,2002:omap": omap,
+    "tag:yaml.org,2002:pairs": pairs,
+    "tag:yaml.org,2002:set": set,
+    "tag:yaml.org,2002:timestamp": timestamp
+  };
+  function getTags(customTags, schemaName, addMergeTag) {
+    const schemaTags = schemas.get(schemaName);
+    if (schemaTags && !customTags) {
+      return addMergeTag && !schemaTags.includes(merge) ? schemaTags.concat(merge) : schemaTags.slice();
+    }
+    let tags = schemaTags;
+    if (!tags) {
+      if (Array.isArray(customTags))
+        tags = [];
+      else {
+        const keys = Array.from(schemas.keys()).filter((key) => key !== "yaml11").map((key) => JSON.stringify(key)).join(", ");
+        throw new Error(`Unknown schema "${schemaName}"; use one of ${keys} or define customTags array`);
+      }
+    }
+    if (Array.isArray(customTags)) {
+      for (const tag of customTags)
+        tags = tags.concat(tag);
+    } else if (typeof customTags === "function") {
+      tags = customTags(tags.slice());
+    }
+    if (addMergeTag)
+      tags = tags.concat(merge);
+    return tags.reduce((tags2, tag) => {
+      const tagObj = typeof tag === "string" ? tagsByName[tag] : tag;
+      if (!tagObj) {
+        const tagName = JSON.stringify(tag);
+        const keys = Object.keys(tagsByName).map((key) => JSON.stringify(key)).join(", ");
+        throw new Error(`Unknown custom tag ${tagName}; use one of ${keys}`);
+      }
+      if (!tags2.includes(tagObj))
+        tags2.push(tagObj);
+      return tags2;
+    }, []);
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/schema/Schema.js
+  var sortMapEntriesByKey = (a, b) => a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
+  var Schema = class _Schema {
+    constructor({ compat, customTags, merge: merge2, resolveKnownTags, schema: schema4, sortMapEntries, toStringDefaults }) {
+      this.compat = Array.isArray(compat) ? getTags(compat, "compat") : compat ? getTags(null, compat) : null;
+      this.name = typeof schema4 === "string" && schema4 || "core";
+      this.knownTags = resolveKnownTags ? coreKnownTags : {};
+      this.tags = getTags(customTags, this.name, merge2);
+      this.toStringOptions = toStringDefaults ?? null;
+      Object.defineProperty(this, MAP, { value: map });
+      Object.defineProperty(this, SCALAR, { value: string });
+      Object.defineProperty(this, SEQ, { value: seq });
+      this.sortMapEntries = typeof sortMapEntries === "function" ? sortMapEntries : sortMapEntries === true ? sortMapEntriesByKey : null;
+    }
+    clone() {
+      const copy = Object.create(_Schema.prototype, Object.getOwnPropertyDescriptors(this));
+      copy.tags = this.tags.slice();
+      return copy;
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/stringify/stringifyDocument.js
+  function stringifyDocument(doc, options) {
+    const lines = [];
+    let hasDirectives = options.directives === true;
+    if (options.directives !== false && doc.directives) {
+      const dir = doc.directives.toString(doc);
+      if (dir) {
+        lines.push(dir);
+        hasDirectives = true;
+      } else if (doc.directives.docStart)
+        hasDirectives = true;
+    }
+    if (hasDirectives)
+      lines.push("---");
+    const ctx = createStringifyContext(doc, options);
+    const { commentString } = ctx.options;
+    if (doc.commentBefore) {
+      if (lines.length !== 1)
+        lines.unshift("");
+      const cs = commentString(doc.commentBefore);
+      lines.unshift(indentComment(cs, ""));
+    }
+    let chompKeep = false;
+    let contentComment = null;
+    if (doc.contents) {
+      if (isNode(doc.contents)) {
+        if (doc.contents.spaceBefore && hasDirectives)
+          lines.push("");
+        if (doc.contents.commentBefore) {
+          const cs = commentString(doc.contents.commentBefore);
+          lines.push(indentComment(cs, ""));
+        }
+        ctx.forceBlockIndent = !!doc.comment;
+        contentComment = doc.contents.comment;
+      }
+      const onChompKeep = contentComment ? void 0 : () => chompKeep = true;
+      let body = stringify(doc.contents, ctx, () => contentComment = null, onChompKeep);
+      if (contentComment)
+        body += lineComment(body, "", commentString(contentComment));
+      if ((body[0] === "|" || body[0] === ">") && lines[lines.length - 1] === "---") {
+        lines[lines.length - 1] = `--- ${body}`;
+      } else
+        lines.push(body);
+    } else {
+      lines.push(stringify(doc.contents, ctx));
+    }
+    if (doc.directives?.docEnd) {
+      if (doc.comment) {
+        const cs = commentString(doc.comment);
+        if (cs.includes("\n")) {
+          lines.push("...");
+          lines.push(indentComment(cs, ""));
+        } else {
+          lines.push(`... ${cs}`);
+        }
+      } else {
+        lines.push("...");
+      }
+    } else {
+      let dc = doc.comment;
+      if (dc && chompKeep)
+        dc = dc.replace(/^\n+/, "");
+      if (dc) {
+        if ((!chompKeep || contentComment) && lines[lines.length - 1] !== "")
+          lines.push("");
+        lines.push(indentComment(commentString(dc), ""));
+      }
+    }
+    return lines.join("\n") + "\n";
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/doc/Document.js
+  var Document = class _Document {
+    constructor(value, replacer, options) {
+      this.commentBefore = null;
+      this.comment = null;
+      this.errors = [];
+      this.warnings = [];
+      Object.defineProperty(this, NODE_TYPE, { value: DOC });
+      let _replacer = null;
+      if (typeof replacer === "function" || Array.isArray(replacer)) {
+        _replacer = replacer;
+      } else if (options === void 0 && replacer) {
+        options = replacer;
+        replacer = void 0;
+      }
+      const opt = Object.assign({
+        intAsBigInt: false,
+        keepSourceTokens: false,
+        logLevel: "warn",
+        prettyErrors: true,
+        strict: true,
+        stringKeys: false,
+        uniqueKeys: true,
+        version: "1.2"
+      }, options);
+      this.options = opt;
+      let { version } = opt;
+      if (options?._directives) {
+        this.directives = options._directives.atDocument();
+        if (this.directives.yaml.explicit)
+          version = this.directives.yaml.version;
+      } else
+        this.directives = new Directives({ version });
+      this.setSchema(version, options);
+      this.contents = value === void 0 ? null : this.createNode(value, _replacer, options);
+    }
+    /**
+     * Create a deep copy of this Document and its contents.
+     *
+     * Custom Node values that inherit from `Object` still refer to their original instances.
+     */
+    clone() {
+      const copy = Object.create(_Document.prototype, {
+        [NODE_TYPE]: { value: DOC }
+      });
+      copy.commentBefore = this.commentBefore;
+      copy.comment = this.comment;
+      copy.errors = this.errors.slice();
+      copy.warnings = this.warnings.slice();
+      copy.options = Object.assign({}, this.options);
+      if (this.directives)
+        copy.directives = this.directives.clone();
+      copy.schema = this.schema.clone();
+      copy.contents = isNode(this.contents) ? this.contents.clone(copy.schema) : this.contents;
+      if (this.range)
+        copy.range = this.range.slice();
+      return copy;
+    }
+    /** Adds a value to the document. */
+    add(value) {
+      if (assertCollection(this.contents))
+        this.contents.add(value);
+    }
+    /** Adds a value to the document. */
+    addIn(path, value) {
+      if (assertCollection(this.contents))
+        this.contents.addIn(path, value);
+    }
+    /**
+     * Create a new `Alias` node, ensuring that the target `node` has the required anchor.
+     *
+     * If `node` already has an anchor, `name` is ignored.
+     * Otherwise, the `node.anchor` value will be set to `name`,
+     * or if an anchor with that name is already present in the document,
+     * `name` will be used as a prefix for a new unique anchor.
+     * If `name` is undefined, the generated anchor will use 'a' as a prefix.
+     */
+    createAlias(node, name) {
+      if (!node.anchor) {
+        const prev = anchorNames(this);
+        node.anchor = // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        !name || prev.has(name) ? findNewAnchor(name || "a", prev) : name;
+      }
+      return new Alias(node.anchor);
+    }
+    createNode(value, replacer, options) {
+      let _replacer = void 0;
+      if (typeof replacer === "function") {
+        value = replacer.call({ "": value }, "", value);
+        _replacer = replacer;
+      } else if (Array.isArray(replacer)) {
+        const keyToStr = (v2) => typeof v2 === "number" || v2 instanceof String || v2 instanceof Number;
+        const asStr = replacer.filter(keyToStr).map(String);
+        if (asStr.length > 0)
+          replacer = replacer.concat(asStr);
+        _replacer = replacer;
+      } else if (options === void 0 && replacer) {
+        options = replacer;
+        replacer = void 0;
+      }
+      const { aliasDuplicateObjects, anchorPrefix, flow, keepUndefined, onTagObj, tag } = options ?? {};
+      const { onAnchor, setAnchors, sourceObjects } = createNodeAnchors(
+        this,
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        anchorPrefix || "a"
+      );
+      const ctx = {
+        aliasDuplicateObjects: aliasDuplicateObjects ?? true,
+        keepUndefined: keepUndefined ?? false,
+        onAnchor,
+        onTagObj,
+        replacer: _replacer,
+        schema: this.schema,
+        sourceObjects
+      };
+      const node = createNode(value, tag, ctx);
+      if (flow && isCollection(node))
+        node.flow = true;
+      setAnchors();
+      return node;
+    }
+    /**
+     * Convert a key and a value into a `Pair` using the current schema,
+     * recursively wrapping all values as `Scalar` or `Collection` nodes.
+     */
+    createPair(key, value, options = {}) {
+      const k = this.createNode(key, null, options);
+      const v2 = this.createNode(value, null, options);
+      return new Pair(k, v2);
+    }
+    /**
+     * Removes a value from the document.
+     * @returns `true` if the item was found and removed.
+     */
+    delete(key) {
+      return assertCollection(this.contents) ? this.contents.delete(key) : false;
+    }
+    /**
+     * Removes a value from the document.
+     * @returns `true` if the item was found and removed.
+     */
+    deleteIn(path) {
+      if (isEmptyPath(path)) {
+        if (this.contents == null)
+          return false;
+        this.contents = null;
+        return true;
+      }
+      return assertCollection(this.contents) ? this.contents.deleteIn(path) : false;
+    }
+    /**
+     * Returns item at `key`, or `undefined` if not found. By default unwraps
+     * scalar values from their surrounding node; to disable set `keepScalar` to
+     * `true` (collections are always returned intact).
+     */
+    get(key, keepScalar) {
+      return isCollection(this.contents) ? this.contents.get(key, keepScalar) : void 0;
+    }
+    /**
+     * Returns item at `path`, or `undefined` if not found. By default unwraps
+     * scalar values from their surrounding node; to disable set `keepScalar` to
+     * `true` (collections are always returned intact).
+     */
+    getIn(path, keepScalar) {
+      if (isEmptyPath(path))
+        return !keepScalar && isScalar(this.contents) ? this.contents.value : this.contents;
+      return isCollection(this.contents) ? this.contents.getIn(path, keepScalar) : void 0;
+    }
+    /**
+     * Checks if the document includes a value with the key `key`.
+     */
+    has(key) {
+      return isCollection(this.contents) ? this.contents.has(key) : false;
+    }
+    /**
+     * Checks if the document includes a value at `path`.
+     */
+    hasIn(path) {
+      if (isEmptyPath(path))
+        return this.contents !== void 0;
+      return isCollection(this.contents) ? this.contents.hasIn(path) : false;
+    }
+    /**
+     * Sets a value in this document. For `!!set`, `value` needs to be a
+     * boolean to add/remove the item from the set.
+     */
+    set(key, value) {
+      if (this.contents == null) {
+        this.contents = collectionFromPath(this.schema, [key], value);
+      } else if (assertCollection(this.contents)) {
+        this.contents.set(key, value);
+      }
+    }
+    /**
+     * Sets a value in this document. For `!!set`, `value` needs to be a
+     * boolean to add/remove the item from the set.
+     */
+    setIn(path, value) {
+      if (isEmptyPath(path)) {
+        this.contents = value;
+      } else if (this.contents == null) {
+        this.contents = collectionFromPath(this.schema, Array.from(path), value);
+      } else if (assertCollection(this.contents)) {
+        this.contents.setIn(path, value);
+      }
+    }
+    /**
+     * Change the YAML version and schema used by the document.
+     * A `null` version disables support for directives, explicit tags, anchors, and aliases.
+     * It also requires the `schema` option to be given as a `Schema` instance value.
+     *
+     * Overrides all previously set schema options.
+     */
+    setSchema(version, options = {}) {
+      if (typeof version === "number")
+        version = String(version);
+      let opt;
+      switch (version) {
+        case "1.1":
+          if (this.directives)
+            this.directives.yaml.version = "1.1";
+          else
+            this.directives = new Directives({ version: "1.1" });
+          opt = { resolveKnownTags: false, schema: "yaml-1.1" };
+          break;
+        case "1.2":
+        case "next":
+          if (this.directives)
+            this.directives.yaml.version = version;
+          else
+            this.directives = new Directives({ version });
+          opt = { resolveKnownTags: true, schema: "core" };
+          break;
+        case null:
+          if (this.directives)
+            delete this.directives;
+          opt = null;
+          break;
+        default: {
+          const sv = JSON.stringify(version);
+          throw new Error(`Expected '1.1', '1.2' or null as first argument, but found: ${sv}`);
+        }
+      }
+      if (options.schema instanceof Object)
+        this.schema = options.schema;
+      else if (opt)
+        this.schema = new Schema(Object.assign(opt, options));
+      else
+        throw new Error(`With a null YAML version, the { schema: Schema } option is required`);
+    }
+    // json & jsonArg are only used from toJSON()
+    toJS({ json, jsonArg, mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
+      const ctx = {
+        anchors: /* @__PURE__ */ new Map(),
+        doc: this,
+        keep: !json,
+        mapAsMap: mapAsMap === true,
+        mapKeyWarned: false,
+        maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
+      };
+      const res = toJS(this.contents, jsonArg ?? "", ctx);
+      if (typeof onAnchor === "function")
+        for (const { count: count2, res: res2 } of ctx.anchors.values())
+          onAnchor(res2, count2);
+      return typeof reviver === "function" ? applyReviver(reviver, { "": res }, "", res) : res;
+    }
+    /**
+     * A JSON representation of the document `contents`.
+     *
+     * @param jsonArg Used by `JSON.stringify` to indicate the array index or
+     *   property name.
+     */
+    toJSON(jsonArg, onAnchor) {
+      return this.toJS({ json: true, jsonArg, mapAsMap: false, onAnchor });
+    }
+    /** A YAML representation of the document. */
+    toString(options = {}) {
+      if (this.errors.length > 0)
+        throw new Error("Document with errors cannot be stringified");
+      if ("indent" in options && (!Number.isInteger(options.indent) || Number(options.indent) <= 0)) {
+        const s = JSON.stringify(options.indent);
+        throw new Error(`"indent" option must be a positive integer, not ${s}`);
+      }
+      return stringifyDocument(this, options);
+    }
+  };
+  function assertCollection(contents) {
+    if (isCollection(contents))
+      return true;
+    throw new Error("Expected a YAML collection as document contents");
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/errors.js
+  var YAMLError = class extends Error {
+    constructor(name, pos, code, message2) {
+      super();
+      this.name = name;
+      this.code = code;
+      this.message = message2;
+      this.pos = pos;
+    }
+  };
+  var YAMLParseError = class extends YAMLError {
+    constructor(pos, code, message2) {
+      super("YAMLParseError", pos, code, message2);
+    }
+  };
+  var YAMLWarning = class extends YAMLError {
+    constructor(pos, code, message2) {
+      super("YAMLWarning", pos, code, message2);
+    }
+  };
+  var prettifyError = (src, lc) => (error2) => {
+    if (error2.pos[0] === -1)
+      return;
+    error2.linePos = error2.pos.map((pos) => lc.linePos(pos));
+    const { line, col } = error2.linePos[0];
+    error2.message += ` at line ${line}, column ${col}`;
+    let ci = col - 1;
+    let lineStr = src.substring(lc.lineStarts[line - 1], lc.lineStarts[line]).replace(/[\n\r]+$/, "");
+    if (ci >= 60 && lineStr.length > 80) {
+      const trimStart = Math.min(ci - 39, lineStr.length - 79);
+      lineStr = "\u2026" + lineStr.substring(trimStart);
+      ci -= trimStart - 1;
+    }
+    if (lineStr.length > 80)
+      lineStr = lineStr.substring(0, 79) + "\u2026";
+    if (line > 1 && /^ *$/.test(lineStr.substring(0, ci))) {
+      let prev = src.substring(lc.lineStarts[line - 2], lc.lineStarts[line - 1]);
+      if (prev.length > 80)
+        prev = prev.substring(0, 79) + "\u2026\n";
+      lineStr = prev + lineStr;
+    }
+    if (/[^ ]/.test(lineStr)) {
+      let count2 = 1;
+      const end = error2.linePos[1];
+      if (end?.line === line && end.col > col) {
+        count2 = Math.max(1, Math.min(end.col - col, 80 - ci));
+      }
+      const pointer = " ".repeat(ci) + "^".repeat(count2);
+      error2.message += `:
+
+${lineStr}
+${pointer}
+`;
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/resolve-props.js
+  function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIndent, startOnNewline }) {
+    let spaceBefore = false;
+    let atNewline = startOnNewline;
+    let hasSpace = startOnNewline;
+    let comment = "";
+    let commentSep = "";
+    let hasNewline = false;
+    let reqSpace = false;
+    let tab = null;
+    let anchor = null;
+    let tag = null;
+    let newlineAfterProp = null;
+    let comma = null;
+    let found = null;
+    let start = null;
+    for (const token of tokens) {
+      if (reqSpace) {
+        if (token.type !== "space" && token.type !== "newline" && token.type !== "comma")
+          onError(token.offset, "MISSING_CHAR", "Tags and anchors must be separated from the next token by white space");
+        reqSpace = false;
+      }
+      if (tab) {
+        if (atNewline && token.type !== "comment" && token.type !== "newline") {
+          onError(tab, "TAB_AS_INDENT", "Tabs are not allowed as indentation");
+        }
+        tab = null;
+      }
+      switch (token.type) {
+        case "space":
+          if (!flow && (indicator !== "doc-start" || next?.type !== "flow-collection") && token.source.includes("	")) {
+            tab = token;
+          }
+          hasSpace = true;
+          break;
+        case "comment": {
+          if (!hasSpace)
+            onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
+          const cb = token.source.substring(1) || " ";
+          if (!comment)
+            comment = cb;
+          else
+            comment += commentSep + cb;
+          commentSep = "";
+          atNewline = false;
+          break;
+        }
+        case "newline":
+          if (atNewline) {
+            if (comment)
+              comment += token.source;
+            else if (!found || indicator !== "seq-item-ind")
+              spaceBefore = true;
+          } else
+            commentSep += token.source;
+          atNewline = true;
+          hasNewline = true;
+          if (anchor || tag)
+            newlineAfterProp = token;
+          hasSpace = true;
+          break;
+        case "anchor":
+          if (anchor)
+            onError(token, "MULTIPLE_ANCHORS", "A node can have at most one anchor");
+          if (token.source.endsWith(":"))
+            onError(token.offset + token.source.length - 1, "BAD_ALIAS", "Anchor ending in : is ambiguous", true);
+          anchor = token;
+          start ?? (start = token.offset);
+          atNewline = false;
+          hasSpace = false;
+          reqSpace = true;
+          break;
+        case "tag": {
+          if (tag)
+            onError(token, "MULTIPLE_TAGS", "A node can have at most one tag");
+          tag = token;
+          start ?? (start = token.offset);
+          atNewline = false;
+          hasSpace = false;
+          reqSpace = true;
+          break;
+        }
+        case indicator:
+          if (anchor || tag)
+            onError(token, "BAD_PROP_ORDER", `Anchors and tags must be after the ${token.source} indicator`);
+          if (found)
+            onError(token, "UNEXPECTED_TOKEN", `Unexpected ${token.source} in ${flow ?? "collection"}`);
+          found = token;
+          atNewline = indicator === "seq-item-ind" || indicator === "explicit-key-ind";
+          hasSpace = false;
+          break;
+        case "comma":
+          if (flow) {
+            if (comma)
+              onError(token, "UNEXPECTED_TOKEN", `Unexpected , in ${flow}`);
+            comma = token;
+            atNewline = false;
+            hasSpace = false;
+            break;
+          }
+        // else fallthrough
+        default:
+          onError(token, "UNEXPECTED_TOKEN", `Unexpected ${token.type} token`);
+          atNewline = false;
+          hasSpace = false;
+      }
+    }
+    const last = tokens[tokens.length - 1];
+    const end = last ? last.offset + last.source.length : offset;
+    if (reqSpace && next && next.type !== "space" && next.type !== "newline" && next.type !== "comma" && (next.type !== "scalar" || next.source !== "")) {
+      onError(next.offset, "MISSING_CHAR", "Tags and anchors must be separated from the next token by white space");
+    }
+    if (tab && (atNewline && tab.indent <= parentIndent || next?.type === "block-map" || next?.type === "block-seq"))
+      onError(tab, "TAB_AS_INDENT", "Tabs are not allowed as indentation");
+    return {
+      comma,
+      found,
+      spaceBefore,
+      comment,
+      hasNewline,
+      anchor,
+      tag,
+      newlineAfterProp,
+      end,
+      start: start ?? end
+    };
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/util-contains-newline.js
+  function containsNewline(key) {
+    if (!key)
+      return null;
+    switch (key.type) {
+      case "alias":
+      case "scalar":
+      case "double-quoted-scalar":
+      case "single-quoted-scalar":
+        if (key.source.includes("\n"))
+          return true;
+        if (key.end) {
+          for (const st of key.end)
+            if (st.type === "newline")
+              return true;
+        }
+        return false;
+      case "flow-collection":
+        for (const it of key.items) {
+          for (const st of it.start)
+            if (st.type === "newline")
+              return true;
+          if (it.sep) {
+            for (const st of it.sep)
+              if (st.type === "newline")
+                return true;
+          }
+          if (containsNewline(it.key) || containsNewline(it.value))
+            return true;
+        }
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/util-flow-indent-check.js
+  function flowIndentCheck(indent, fc, onError) {
+    if (fc?.type === "flow-collection") {
+      const end = fc.end[0];
+      if (end.indent === indent && (end.source === "]" || end.source === "}") && containsNewline(fc)) {
+        const msg = "Flow end indicator should be more indented than parent";
+        onError(end, "BAD_INDENT", msg, true);
+      }
+    }
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/util-map-includes.js
+  function mapIncludes(ctx, items, search) {
+    const { uniqueKeys } = ctx.options;
+    if (uniqueKeys === false)
+      return false;
+    const isEqual = typeof uniqueKeys === "function" ? uniqueKeys : (a, b) => a === b || isScalar(a) && isScalar(b) && a.value === b.value;
+    return items.some((pair) => isEqual(pair.key, search));
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/resolve-block-map.js
+  var startColMsg = "All mapping items must start at the same column";
+  function resolveBlockMap({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, bm, onError, tag) {
+    const NodeClass = tag?.nodeClass ?? YAMLMap;
+    const map2 = new NodeClass(ctx.schema);
+    if (ctx.atRoot)
+      ctx.atRoot = false;
+    let offset = bm.offset;
+    let commentEnd = null;
+    for (const collItem of bm.items) {
+      const { start, key, sep, value } = collItem;
+      const keyProps = resolveProps(start, {
+        indicator: "explicit-key-ind",
+        next: key ?? sep?.[0],
+        offset,
+        onError,
+        parentIndent: bm.indent,
+        startOnNewline: true
+      });
+      const implicitKey = !keyProps.found;
+      if (implicitKey) {
+        if (key) {
+          if (key.type === "block-seq")
+            onError(offset, "BLOCK_AS_IMPLICIT_KEY", "A block sequence may not be used as an implicit map key");
+          else if ("indent" in key && key.indent !== bm.indent)
+            onError(offset, "BAD_INDENT", startColMsg);
+        }
+        if (!keyProps.anchor && !keyProps.tag && !sep) {
+          commentEnd = keyProps.end;
+          if (keyProps.comment) {
+            if (map2.comment)
+              map2.comment += "\n" + keyProps.comment;
+            else
+              map2.comment = keyProps.comment;
+          }
+          continue;
+        }
+        if (keyProps.newlineAfterProp || containsNewline(key)) {
+          onError(key ?? start[start.length - 1], "MULTILINE_IMPLICIT_KEY", "Implicit keys need to be on a single line");
+        }
+      } else if (keyProps.found?.indent !== bm.indent) {
+        onError(offset, "BAD_INDENT", startColMsg);
+      }
+      ctx.atKey = true;
+      const keyStart = keyProps.end;
+      const keyNode = key ? composeNode2(ctx, key, keyProps, onError) : composeEmptyNode2(ctx, keyStart, start, null, keyProps, onError);
+      if (ctx.schema.compat)
+        flowIndentCheck(bm.indent, key, onError);
+      ctx.atKey = false;
+      if (mapIncludes(ctx, map2.items, keyNode))
+        onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
+      const valueProps = resolveProps(sep ?? [], {
+        indicator: "map-value-ind",
+        next: value,
+        offset: keyNode.range[2],
+        onError,
+        parentIndent: bm.indent,
+        startOnNewline: !key || key.type === "block-scalar"
+      });
+      offset = valueProps.end;
+      if (valueProps.found) {
+        if (implicitKey) {
+          if (value?.type === "block-map" && !valueProps.hasNewline)
+            onError(offset, "BLOCK_AS_IMPLICIT_KEY", "Nested mappings are not allowed in compact mappings");
+          if (ctx.options.strict && keyProps.start < valueProps.found.offset - 1024)
+            onError(keyNode.range, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit block mapping key");
+        }
+        const valueNode = value ? composeNode2(ctx, value, valueProps, onError) : composeEmptyNode2(ctx, offset, sep, null, valueProps, onError);
+        if (ctx.schema.compat)
+          flowIndentCheck(bm.indent, value, onError);
+        offset = valueNode.range[2];
+        const pair = new Pair(keyNode, valueNode);
+        if (ctx.options.keepSourceTokens)
+          pair.srcToken = collItem;
+        map2.items.push(pair);
+      } else {
+        if (implicitKey)
+          onError(keyNode.range, "MISSING_CHAR", "Implicit map keys need to be followed by map values");
+        if (valueProps.comment) {
+          if (keyNode.comment)
+            keyNode.comment += "\n" + valueProps.comment;
+          else
+            keyNode.comment = valueProps.comment;
+        }
+        const pair = new Pair(keyNode);
+        if (ctx.options.keepSourceTokens)
+          pair.srcToken = collItem;
+        map2.items.push(pair);
+      }
+    }
+    if (commentEnd && commentEnd < offset)
+      onError(commentEnd, "IMPOSSIBLE", "Map comment with trailing content");
+    map2.range = [bm.offset, offset, commentEnd ?? offset];
+    return map2;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/resolve-block-seq.js
+  function resolveBlockSeq({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, bs, onError, tag) {
+    const NodeClass = tag?.nodeClass ?? YAMLSeq;
+    const seq2 = new NodeClass(ctx.schema);
+    if (ctx.atRoot)
+      ctx.atRoot = false;
+    if (ctx.atKey)
+      ctx.atKey = false;
+    let offset = bs.offset;
+    let commentEnd = null;
+    for (const { start, value } of bs.items) {
+      const props = resolveProps(start, {
+        indicator: "seq-item-ind",
+        next: value,
+        offset,
+        onError,
+        parentIndent: bs.indent,
+        startOnNewline: true
+      });
+      if (!props.found) {
+        if (props.anchor || props.tag || value) {
+          if (value?.type === "block-seq")
+            onError(props.end, "BAD_INDENT", "All sequence items must start at the same column");
+          else
+            onError(offset, "MISSING_CHAR", "Sequence item without - indicator");
+        } else {
+          commentEnd = props.end;
+          if (props.comment)
+            seq2.comment = props.comment;
+          continue;
+        }
+      }
+      const node = value ? composeNode2(ctx, value, props, onError) : composeEmptyNode2(ctx, props.end, start, null, props, onError);
+      if (ctx.schema.compat)
+        flowIndentCheck(bs.indent, value, onError);
+      offset = node.range[2];
+      seq2.items.push(node);
+    }
+    seq2.range = [bs.offset, offset, commentEnd ?? offset];
+    return seq2;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/resolve-end.js
+  function resolveEnd(end, offset, reqSpace, onError) {
+    let comment = "";
+    if (end) {
+      let hasSpace = false;
+      let sep = "";
+      for (const token of end) {
+        const { source, type } = token;
+        switch (type) {
+          case "space":
+            hasSpace = true;
+            break;
+          case "comment": {
+            if (reqSpace && !hasSpace)
+              onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
+            const cb = source.substring(1) || " ";
+            if (!comment)
+              comment = cb;
+            else
+              comment += sep + cb;
+            sep = "";
+            break;
+          }
+          case "newline":
+            if (comment)
+              sep += source;
+            hasSpace = true;
+            break;
+          default:
+            onError(token, "UNEXPECTED_TOKEN", `Unexpected ${type} at node end`);
+        }
+        offset += source.length;
+      }
+    }
+    return { comment, offset };
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/resolve-flow-collection.js
+  var blockMsg = "Block collections are not allowed within flow collections";
+  var isBlock = (token) => token && (token.type === "block-map" || token.type === "block-seq");
+  function resolveFlowCollection({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, fc, onError, tag) {
+    const isMap2 = fc.start.source === "{";
+    const fcName = isMap2 ? "flow map" : "flow sequence";
+    const NodeClass = tag?.nodeClass ?? (isMap2 ? YAMLMap : YAMLSeq);
+    const coll = new NodeClass(ctx.schema);
+    coll.flow = true;
+    const atRoot = ctx.atRoot;
+    if (atRoot)
+      ctx.atRoot = false;
+    if (ctx.atKey)
+      ctx.atKey = false;
+    let offset = fc.offset + fc.start.source.length;
+    for (let i = 0; i < fc.items.length; ++i) {
+      const collItem = fc.items[i];
+      const { start, key, sep, value } = collItem;
+      const props = resolveProps(start, {
+        flow: fcName,
+        indicator: "explicit-key-ind",
+        next: key ?? sep?.[0],
+        offset,
+        onError,
+        parentIndent: fc.indent,
+        startOnNewline: false
+      });
+      if (!props.found) {
+        if (!props.anchor && !props.tag && !sep && !value) {
+          if (i === 0 && props.comma)
+            onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
+          else if (i < fc.items.length - 1)
+            onError(props.start, "UNEXPECTED_TOKEN", `Unexpected empty item in ${fcName}`);
+          if (props.comment) {
+            if (coll.comment)
+              coll.comment += "\n" + props.comment;
+            else
+              coll.comment = props.comment;
+          }
+          offset = props.end;
+          continue;
+        }
+        if (!isMap2 && ctx.options.strict && containsNewline(key))
+          onError(
+            key,
+            // checked by containsNewline()
+            "MULTILINE_IMPLICIT_KEY",
+            "Implicit keys of flow sequence pairs need to be on a single line"
+          );
+      }
+      if (i === 0) {
+        if (props.comma)
+          onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
+      } else {
+        if (!props.comma)
+          onError(props.start, "MISSING_CHAR", `Missing , between ${fcName} items`);
+        if (props.comment) {
+          let prevItemComment = "";
+          loop: for (const st of start) {
+            switch (st.type) {
+              case "comma":
+              case "space":
+                break;
+              case "comment":
+                prevItemComment = st.source.substring(1);
+                break loop;
+              default:
+                break loop;
+            }
+          }
+          if (prevItemComment) {
+            let prev = coll.items[coll.items.length - 1];
+            if (isPair(prev))
+              prev = prev.value ?? prev.key;
+            if (prev.comment)
+              prev.comment += "\n" + prevItemComment;
+            else
+              prev.comment = prevItemComment;
+            props.comment = props.comment.substring(prevItemComment.length + 1);
+          }
+        }
+      }
+      if (!isMap2 && !sep && !props.found) {
+        const valueNode = value ? composeNode2(ctx, value, props, onError) : composeEmptyNode2(ctx, props.end, sep, null, props, onError);
+        coll.items.push(valueNode);
+        offset = valueNode.range[2];
+        if (isBlock(value))
+          onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
+      } else {
+        ctx.atKey = true;
+        const keyStart = props.end;
+        const keyNode = key ? composeNode2(ctx, key, props, onError) : composeEmptyNode2(ctx, keyStart, start, null, props, onError);
+        if (isBlock(key))
+          onError(keyNode.range, "BLOCK_IN_FLOW", blockMsg);
+        ctx.atKey = false;
+        const valueProps = resolveProps(sep ?? [], {
+          flow: fcName,
+          indicator: "map-value-ind",
+          next: value,
+          offset: keyNode.range[2],
+          onError,
+          parentIndent: fc.indent,
+          startOnNewline: false
+        });
+        if (valueProps.found) {
+          if (!isMap2 && !props.found && ctx.options.strict) {
+            if (sep)
+              for (const st of sep) {
+                if (st === valueProps.found)
+                  break;
+                if (st.type === "newline") {
+                  onError(st, "MULTILINE_IMPLICIT_KEY", "Implicit keys of flow sequence pairs need to be on a single line");
+                  break;
+                }
+              }
+            if (props.start < valueProps.found.offset - 1024)
+              onError(valueProps.found, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit flow sequence key");
+          }
+        } else if (value) {
+          if ("source" in value && value.source?.[0] === ":")
+            onError(value, "MISSING_CHAR", `Missing space after : in ${fcName}`);
+          else
+            onError(valueProps.start, "MISSING_CHAR", `Missing , or : between ${fcName} items`);
+        }
+        const valueNode = value ? composeNode2(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode2(ctx, valueProps.end, sep, null, valueProps, onError) : null;
+        if (valueNode) {
+          if (isBlock(value))
+            onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
+        } else if (valueProps.comment) {
+          if (keyNode.comment)
+            keyNode.comment += "\n" + valueProps.comment;
+          else
+            keyNode.comment = valueProps.comment;
+        }
+        const pair = new Pair(keyNode, valueNode);
+        if (ctx.options.keepSourceTokens)
+          pair.srcToken = collItem;
+        if (isMap2) {
+          const map2 = coll;
+          if (mapIncludes(ctx, map2.items, keyNode))
+            onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
+          map2.items.push(pair);
+        } else {
+          const map2 = new YAMLMap(ctx.schema);
+          map2.flow = true;
+          map2.items.push(pair);
+          const endRange = (valueNode ?? keyNode).range;
+          map2.range = [keyNode.range[0], endRange[1], endRange[2]];
+          coll.items.push(map2);
+        }
+        offset = valueNode ? valueNode.range[2] : valueProps.end;
+      }
+    }
+    const expectedEnd = isMap2 ? "}" : "]";
+    const [ce, ...ee] = fc.end;
+    let cePos = offset;
+    if (ce?.source === expectedEnd)
+      cePos = ce.offset + ce.source.length;
+    else {
+      const name = fcName[0].toUpperCase() + fcName.substring(1);
+      const msg = atRoot ? `${name} must end with a ${expectedEnd}` : `${name} in block collection must be sufficiently indented and end with a ${expectedEnd}`;
+      onError(offset, atRoot ? "MISSING_CHAR" : "BAD_INDENT", msg);
+      if (ce && ce.source.length !== 1)
+        ee.unshift(ce);
+    }
+    if (ee.length > 0) {
+      const end = resolveEnd(ee, cePos, ctx.options.strict, onError);
+      if (end.comment) {
+        if (coll.comment)
+          coll.comment += "\n" + end.comment;
+        else
+          coll.comment = end.comment;
+      }
+      coll.range = [fc.offset, cePos, end.offset];
+    } else {
+      coll.range = [fc.offset, cePos, cePos];
+    }
+    return coll;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/compose-collection.js
+  function resolveCollection(CN2, ctx, token, onError, tagName, tag) {
+    const coll = token.type === "block-map" ? resolveBlockMap(CN2, ctx, token, onError, tag) : token.type === "block-seq" ? resolveBlockSeq(CN2, ctx, token, onError, tag) : resolveFlowCollection(CN2, ctx, token, onError, tag);
+    const Coll = coll.constructor;
+    if (tagName === "!" || tagName === Coll.tagName) {
+      coll.tag = Coll.tagName;
+      return coll;
+    }
+    if (tagName)
+      coll.tag = tagName;
+    return coll;
+  }
+  function composeCollection(CN2, ctx, token, props, onError) {
+    const tagToken = props.tag;
+    const tagName = !tagToken ? null : ctx.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg));
+    if (token.type === "block-seq") {
+      const { anchor, newlineAfterProp: nl } = props;
+      const lastProp = anchor && tagToken ? anchor.offset > tagToken.offset ? anchor : tagToken : anchor ?? tagToken;
+      if (lastProp && (!nl || nl.offset < lastProp.offset)) {
+        const message2 = "Missing newline after block sequence props";
+        onError(lastProp, "MISSING_CHAR", message2);
+      }
+    }
+    const expType = token.type === "block-map" ? "map" : token.type === "block-seq" ? "seq" : token.start.source === "{" ? "map" : "seq";
+    if (!tagToken || !tagName || tagName === "!" || tagName === YAMLMap.tagName && expType === "map" || tagName === YAMLSeq.tagName && expType === "seq") {
+      return resolveCollection(CN2, ctx, token, onError, tagName);
+    }
+    let tag = ctx.schema.tags.find((t2) => t2.tag === tagName && t2.collection === expType);
+    if (!tag) {
+      const kt = ctx.schema.knownTags[tagName];
+      if (kt?.collection === expType) {
+        ctx.schema.tags.push(Object.assign({}, kt, { default: false }));
+        tag = kt;
+      } else {
+        if (kt) {
+          onError(tagToken, "BAD_COLLECTION_TYPE", `${kt.tag} used for ${expType} collection, but expects ${kt.collection ?? "scalar"}`, true);
+        } else {
+          onError(tagToken, "TAG_RESOLVE_FAILED", `Unresolved tag: ${tagName}`, true);
+        }
+        return resolveCollection(CN2, ctx, token, onError, tagName);
+      }
+    }
+    const coll = resolveCollection(CN2, ctx, token, onError, tagName, tag);
+    const res = tag.resolve?.(coll, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg), ctx.options) ?? coll;
+    const node = isNode(res) ? res : new Scalar(res);
+    node.range = coll.range;
+    node.tag = tagName;
+    if (tag?.format)
+      node.format = tag.format;
+    return node;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/resolve-block-scalar.js
+  function resolveBlockScalar(ctx, scalar, onError) {
+    const start = scalar.offset;
+    const header = parseBlockScalarHeader(scalar, ctx.options.strict, onError);
+    if (!header)
+      return { value: "", type: null, comment: "", range: [start, start, start] };
+    const type = header.mode === ">" ? Scalar.BLOCK_FOLDED : Scalar.BLOCK_LITERAL;
+    const lines = scalar.source ? splitLines(scalar.source) : [];
+    let chompStart = lines.length;
+    for (let i = lines.length - 1; i >= 0; --i) {
+      const content = lines[i][1];
+      if (content === "" || content === "\r")
+        chompStart = i;
+      else
+        break;
+    }
+    if (chompStart === 0) {
+      const value2 = header.chomp === "+" && lines.length > 0 ? "\n".repeat(Math.max(1, lines.length - 1)) : "";
+      let end2 = start + header.length;
+      if (scalar.source)
+        end2 += scalar.source.length;
+      return { value: value2, type, comment: header.comment, range: [start, end2, end2] };
+    }
+    let trimIndent = scalar.indent + header.indent;
+    let offset = scalar.offset + header.length;
+    let contentStart = 0;
+    for (let i = 0; i < chompStart; ++i) {
+      const [indent, content] = lines[i];
+      if (content === "" || content === "\r") {
+        if (header.indent === 0 && indent.length > trimIndent)
+          trimIndent = indent.length;
+      } else {
+        if (indent.length < trimIndent) {
+          const message2 = "Block scalars with more-indented leading empty lines must use an explicit indentation indicator";
+          onError(offset + indent.length, "MISSING_CHAR", message2);
+        }
+        if (header.indent === 0)
+          trimIndent = indent.length;
+        contentStart = i;
+        if (trimIndent === 0 && !ctx.atRoot) {
+          const message2 = "Block scalar values in collections must be indented";
+          onError(offset, "BAD_INDENT", message2);
+        }
+        break;
+      }
+      offset += indent.length + content.length + 1;
+    }
+    for (let i = lines.length - 1; i >= chompStart; --i) {
+      if (lines[i][0].length > trimIndent)
+        chompStart = i + 1;
+    }
+    let value = "";
+    let sep = "";
+    let prevMoreIndented = false;
+    for (let i = 0; i < contentStart; ++i)
+      value += lines[i][0].slice(trimIndent) + "\n";
+    for (let i = contentStart; i < chompStart; ++i) {
+      let [indent, content] = lines[i];
+      offset += indent.length + content.length + 1;
+      const crlf = content[content.length - 1] === "\r";
+      if (crlf)
+        content = content.slice(0, -1);
+      if (content && indent.length < trimIndent) {
+        const src = header.indent ? "explicit indentation indicator" : "first line";
+        const message2 = `Block scalar lines must not be less indented than their ${src}`;
+        onError(offset - content.length - (crlf ? 2 : 1), "BAD_INDENT", message2);
+        indent = "";
+      }
+      if (type === Scalar.BLOCK_LITERAL) {
+        value += sep + indent.slice(trimIndent) + content;
+        sep = "\n";
+      } else if (indent.length > trimIndent || content[0] === "	") {
+        if (sep === " ")
+          sep = "\n";
+        else if (!prevMoreIndented && sep === "\n")
+          sep = "\n\n";
+        value += sep + indent.slice(trimIndent) + content;
+        sep = "\n";
+        prevMoreIndented = true;
+      } else if (content === "") {
+        if (sep === "\n")
+          value += "\n";
+        else
+          sep = "\n";
+      } else {
+        value += sep + content;
+        sep = " ";
+        prevMoreIndented = false;
+      }
+    }
+    switch (header.chomp) {
+      case "-":
+        break;
+      case "+":
+        for (let i = chompStart; i < lines.length; ++i)
+          value += "\n" + lines[i][0].slice(trimIndent);
+        if (value[value.length - 1] !== "\n")
+          value += "\n";
+        break;
+      default:
+        value += "\n";
+    }
+    const end = start + header.length + scalar.source.length;
+    return { value, type, comment: header.comment, range: [start, end, end] };
+  }
+  function parseBlockScalarHeader({ offset, props }, strict, onError) {
+    if (props[0].type !== "block-scalar-header") {
+      onError(props[0], "IMPOSSIBLE", "Block scalar header not found");
+      return null;
+    }
+    const { source } = props[0];
+    const mode = source[0];
+    let indent = 0;
+    let chomp = "";
+    let error2 = -1;
+    for (let i = 1; i < source.length; ++i) {
+      const ch = source[i];
+      if (!chomp && (ch === "-" || ch === "+"))
+        chomp = ch;
+      else {
+        const n = Number(ch);
+        if (!indent && n)
+          indent = n;
+        else if (error2 === -1)
+          error2 = offset + i;
+      }
+    }
+    if (error2 !== -1)
+      onError(error2, "UNEXPECTED_TOKEN", `Block scalar header includes extra characters: ${source}`);
+    let hasSpace = false;
+    let comment = "";
+    let length = source.length;
+    for (let i = 1; i < props.length; ++i) {
+      const token = props[i];
+      switch (token.type) {
+        case "space":
+          hasSpace = true;
+        // fallthrough
+        case "newline":
+          length += token.source.length;
+          break;
+        case "comment":
+          if (strict && !hasSpace) {
+            const message2 = "Comments must be separated from other tokens by white space characters";
+            onError(token, "MISSING_CHAR", message2);
+          }
+          length += token.source.length;
+          comment = token.source.substring(1);
+          break;
+        case "error":
+          onError(token, "UNEXPECTED_TOKEN", token.message);
+          length += token.source.length;
+          break;
+        /* istanbul ignore next should not happen */
+        default: {
+          const message2 = `Unexpected token in block scalar header: ${token.type}`;
+          onError(token, "UNEXPECTED_TOKEN", message2);
+          const ts = token.source;
+          if (ts && typeof ts === "string")
+            length += ts.length;
+        }
+      }
+    }
+    return { mode, indent, chomp, comment, length };
+  }
+  function splitLines(source) {
+    const split2 = source.split(/\n( *)/);
+    const first = split2[0];
+    const m = first.match(/^( *)/);
+    const line0 = m?.[1] ? [m[1], first.slice(m[1].length)] : ["", first];
+    const lines = [line0];
+    for (let i = 1; i < split2.length; i += 2)
+      lines.push([split2[i], split2[i + 1]]);
+    return lines;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/resolve-flow-scalar.js
+  function resolveFlowScalar(scalar, strict, onError) {
+    const { offset, type, source, end } = scalar;
+    let _type;
+    let value;
+    const _onError = (rel, code, msg) => onError(offset + rel, code, msg);
+    switch (type) {
+      case "scalar":
+        _type = Scalar.PLAIN;
+        value = plainValue(source, _onError);
+        break;
+      case "single-quoted-scalar":
+        _type = Scalar.QUOTE_SINGLE;
+        value = singleQuotedValue(source, _onError);
+        break;
+      case "double-quoted-scalar":
+        _type = Scalar.QUOTE_DOUBLE;
+        value = doubleQuotedValue(source, _onError);
+        break;
+      /* istanbul ignore next should not happen */
+      default:
+        onError(scalar, "UNEXPECTED_TOKEN", `Expected a flow scalar value, but found: ${type}`);
+        return {
+          value: "",
+          type: null,
+          comment: "",
+          range: [offset, offset + source.length, offset + source.length]
+        };
+    }
+    const valueEnd = offset + source.length;
+    const re = resolveEnd(end, valueEnd, strict, onError);
+    return {
+      value,
+      type: _type,
+      comment: re.comment,
+      range: [offset, valueEnd, re.offset]
+    };
+  }
+  function plainValue(source, onError) {
+    let badChar = "";
+    switch (source[0]) {
+      /* istanbul ignore next should not happen */
+      case "	":
+        badChar = "a tab character";
+        break;
+      case ",":
+        badChar = "flow indicator character ,";
+        break;
+      case "%":
+        badChar = "directive indicator character %";
+        break;
+      case "|":
+      case ">": {
+        badChar = `block scalar indicator ${source[0]}`;
+        break;
+      }
+      case "@":
+      case "`": {
+        badChar = `reserved character ${source[0]}`;
+        break;
+      }
+    }
+    if (badChar)
+      onError(0, "BAD_SCALAR_START", `Plain value cannot start with ${badChar}`);
+    return foldLines(source);
+  }
+  function singleQuotedValue(source, onError) {
+    if (source[source.length - 1] !== "'" || source.length === 1)
+      onError(source.length, "MISSING_CHAR", "Missing closing 'quote");
+    return foldLines(source.slice(1, -1)).replace(/''/g, "'");
+  }
+  function foldLines(source) {
+    let first, line;
+    try {
+      first = new RegExp("(.*?)(?<![ 	])[ 	]*\r?\n", "sy");
+      line = new RegExp("[ 	]*(.*?)(?:(?<![ 	])[ 	]*)?\r?\n", "sy");
+    } catch {
+      first = /(.*?)[ \t]*\r?\n/sy;
+      line = /[ \t]*(.*?)[ \t]*\r?\n/sy;
+    }
+    let match = first.exec(source);
+    if (!match)
+      return source;
+    let res = match[1];
+    let sep = " ";
+    let pos = first.lastIndex;
+    line.lastIndex = pos;
+    while (match = line.exec(source)) {
+      if (match[1] === "") {
+        if (sep === "\n")
+          res += sep;
+        else
+          sep = "\n";
+      } else {
+        res += sep + match[1];
+        sep = " ";
+      }
+      pos = line.lastIndex;
+    }
+    const last = /[ \t]*(.*)/sy;
+    last.lastIndex = pos;
+    match = last.exec(source);
+    return res + sep + (match?.[1] ?? "");
+  }
+  function doubleQuotedValue(source, onError) {
+    let res = "";
+    for (let i = 1; i < source.length - 1; ++i) {
+      const ch = source[i];
+      if (ch === "\r" && source[i + 1] === "\n")
+        continue;
+      if (ch === "\n") {
+        const { fold, offset } = foldNewline(source, i);
+        res += fold;
+        i = offset;
+      } else if (ch === "\\") {
+        let next = source[++i];
+        const cc = escapeCodes[next];
+        if (cc)
+          res += cc;
+        else if (next === "\n") {
+          next = source[i + 1];
+          while (next === " " || next === "	")
+            next = source[++i + 1];
+        } else if (next === "\r" && source[i + 1] === "\n") {
+          next = source[++i + 1];
+          while (next === " " || next === "	")
+            next = source[++i + 1];
+        } else if (next === "x" || next === "u" || next === "U") {
+          const length = { x: 2, u: 4, U: 8 }[next];
+          res += parseCharCode(source, i + 1, length, onError);
+          i += length;
+        } else {
+          const raw = source.substr(i - 1, 2);
+          onError(i - 1, "BAD_DQ_ESCAPE", `Invalid escape sequence ${raw}`);
+          res += raw;
+        }
+      } else if (ch === " " || ch === "	") {
+        const wsStart = i;
+        let next = source[i + 1];
+        while (next === " " || next === "	")
+          next = source[++i + 1];
+        if (next !== "\n" && !(next === "\r" && source[i + 2] === "\n"))
+          res += i > wsStart ? source.slice(wsStart, i + 1) : ch;
+      } else {
+        res += ch;
+      }
+    }
+    if (source[source.length - 1] !== '"' || source.length === 1)
+      onError(source.length, "MISSING_CHAR", 'Missing closing "quote');
+    return res;
+  }
+  function foldNewline(source, offset) {
+    let fold = "";
+    let ch = source[offset + 1];
+    while (ch === " " || ch === "	" || ch === "\n" || ch === "\r") {
+      if (ch === "\r" && source[offset + 2] !== "\n")
+        break;
+      if (ch === "\n")
+        fold += "\n";
+      offset += 1;
+      ch = source[offset + 1];
+    }
+    if (!fold)
+      fold = " ";
+    return { fold, offset };
+  }
+  var escapeCodes = {
+    "0": "\0",
+    // null character
+    a: "\x07",
+    // bell character
+    b: "\b",
+    // backspace
+    e: "\x1B",
+    // escape character
+    f: "\f",
+    // form feed
+    n: "\n",
+    // line feed
+    r: "\r",
+    // carriage return
+    t: "	",
+    // horizontal tab
+    v: "\v",
+    // vertical tab
+    N: "\x85",
+    // Unicode next line
+    _: "\xA0",
+    // Unicode non-breaking space
+    L: "\u2028",
+    // Unicode line separator
+    P: "\u2029",
+    // Unicode paragraph separator
+    " ": " ",
+    '"': '"',
+    "/": "/",
+    "\\": "\\",
+    "	": "	"
+  };
+  function parseCharCode(source, offset, length, onError) {
+    const cc = source.substr(offset, length);
+    const ok = cc.length === length && /^[0-9a-fA-F]+$/.test(cc);
+    const code = ok ? parseInt(cc, 16) : NaN;
+    if (isNaN(code)) {
+      const raw = source.substr(offset - 2, length + 2);
+      onError(offset - 2, "BAD_DQ_ESCAPE", `Invalid escape sequence ${raw}`);
+      return raw;
+    }
+    return String.fromCodePoint(code);
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/compose-scalar.js
+  function composeScalar(ctx, token, tagToken, onError) {
+    const { value, type, comment, range } = token.type === "block-scalar" ? resolveBlockScalar(ctx, token, onError) : resolveFlowScalar(token, ctx.options.strict, onError);
+    const tagName = tagToken ? ctx.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg)) : null;
+    let tag;
+    if (ctx.options.stringKeys && ctx.atKey) {
+      tag = ctx.schema[SCALAR];
+    } else if (tagName)
+      tag = findScalarTagByName(ctx.schema, value, tagName, tagToken, onError);
+    else if (token.type === "scalar")
+      tag = findScalarTagByTest(ctx, value, token, onError);
+    else
+      tag = ctx.schema[SCALAR];
+    let scalar;
+    try {
+      const res = tag.resolve(value, (msg) => onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg), ctx.options);
+      scalar = isScalar(res) ? res : new Scalar(res);
+    } catch (error2) {
+      const msg = error2 instanceof Error ? error2.message : String(error2);
+      onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg);
+      scalar = new Scalar(value);
+    }
+    scalar.range = range;
+    scalar.source = value;
+    if (type)
+      scalar.type = type;
+    if (tagName)
+      scalar.tag = tagName;
+    if (tag.format)
+      scalar.format = tag.format;
+    if (comment)
+      scalar.comment = comment;
+    return scalar;
+  }
+  function findScalarTagByName(schema4, value, tagName, tagToken, onError) {
+    if (tagName === "!")
+      return schema4[SCALAR];
+    const matchWithTest = [];
+    for (const tag of schema4.tags) {
+      if (!tag.collection && tag.tag === tagName) {
+        if (tag.default && tag.test)
+          matchWithTest.push(tag);
+        else
+          return tag;
+      }
+    }
+    for (const tag of matchWithTest)
+      if (tag.test?.test(value))
+        return tag;
+    const kt = schema4.knownTags[tagName];
+    if (kt && !kt.collection) {
+      schema4.tags.push(Object.assign({}, kt, { default: false, test: void 0 }));
+      return kt;
+    }
+    onError(tagToken, "TAG_RESOLVE_FAILED", `Unresolved tag: ${tagName}`, tagName !== "tag:yaml.org,2002:str");
+    return schema4[SCALAR];
+  }
+  function findScalarTagByTest({ atKey, directives, schema: schema4 }, value, token, onError) {
+    const tag = schema4.tags.find((tag2) => (tag2.default === true || atKey && tag2.default === "key") && tag2.test?.test(value)) || schema4[SCALAR];
+    if (schema4.compat) {
+      const compat = schema4.compat.find((tag2) => tag2.default && tag2.test?.test(value)) ?? schema4[SCALAR];
+      if (tag.tag !== compat.tag) {
+        const ts = directives.tagString(tag.tag);
+        const cs = directives.tagString(compat.tag);
+        const msg = `Value may be parsed as either ${ts} or ${cs}`;
+        onError(token, "TAG_RESOLVE_FAILED", msg, true);
+      }
+    }
+    return tag;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/util-empty-scalar-position.js
+  function emptyScalarPosition(offset, before, pos) {
+    if (before) {
+      pos ?? (pos = before.length);
+      for (let i = pos - 1; i >= 0; --i) {
+        let st = before[i];
+        switch (st.type) {
+          case "space":
+          case "comment":
+          case "newline":
+            offset -= st.source.length;
+            continue;
+        }
+        st = before[++i];
+        while (st?.type === "space") {
+          offset += st.source.length;
+          st = before[++i];
+        }
+        break;
+      }
+    }
+    return offset;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/compose-node.js
+  var CN = { composeNode, composeEmptyNode };
+  function composeNode(ctx, token, props, onError) {
+    const atKey = ctx.atKey;
+    const { spaceBefore, comment, anchor, tag } = props;
+    let node;
+    let isSrcToken = true;
+    switch (token.type) {
+      case "alias":
+        node = composeAlias(ctx, token, onError);
+        if (anchor || tag)
+          onError(token, "ALIAS_PROPS", "An alias node must not specify any properties");
+        break;
+      case "scalar":
+      case "single-quoted-scalar":
+      case "double-quoted-scalar":
+      case "block-scalar":
+        node = composeScalar(ctx, token, tag, onError);
+        if (anchor)
+          node.anchor = anchor.source.substring(1);
+        break;
+      case "block-map":
+      case "block-seq":
+      case "flow-collection":
+        try {
+          node = composeCollection(CN, ctx, token, props, onError);
+          if (anchor)
+            node.anchor = anchor.source.substring(1);
+        } catch (error2) {
+          const message2 = error2 instanceof Error ? error2.message : String(error2);
+          onError(token, "RESOURCE_EXHAUSTION", message2);
+        }
+        break;
+      default: {
+        const message2 = token.type === "error" ? token.message : `Unsupported token (type: ${token.type})`;
+        onError(token, "UNEXPECTED_TOKEN", message2);
+        isSrcToken = false;
+      }
+    }
+    node ?? (node = composeEmptyNode(ctx, token.offset, void 0, null, props, onError));
+    if (anchor && node.anchor === "")
+      onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
+    if (atKey && ctx.options.stringKeys && (!isScalar(node) || typeof node.value !== "string" || node.tag && node.tag !== "tag:yaml.org,2002:str")) {
+      const msg = "With stringKeys, all keys must be strings";
+      onError(tag ?? token, "NON_STRING_KEY", msg);
+    }
+    if (spaceBefore)
+      node.spaceBefore = true;
+    if (comment) {
+      if (token.type === "scalar" && token.source === "")
+        node.comment = comment;
+      else
+        node.commentBefore = comment;
+    }
+    if (ctx.options.keepSourceTokens && isSrcToken)
+      node.srcToken = token;
+    return node;
+  }
+  function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anchor, tag, end }, onError) {
+    const token = {
+      type: "scalar",
+      offset: emptyScalarPosition(offset, before, pos),
+      indent: -1,
+      source: ""
+    };
+    const node = composeScalar(ctx, token, tag, onError);
+    if (anchor) {
+      node.anchor = anchor.source.substring(1);
+      if (node.anchor === "")
+        onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
+    }
+    if (spaceBefore)
+      node.spaceBefore = true;
+    if (comment) {
+      node.comment = comment;
+      node.range[2] = end;
+    }
+    return node;
+  }
+  function composeAlias({ options }, { offset, source, end }, onError) {
+    const alias = new Alias(source.substring(1));
+    if (alias.source === "")
+      onError(offset, "BAD_ALIAS", "Alias cannot be an empty string");
+    if (alias.source.endsWith(":"))
+      onError(offset + source.length - 1, "BAD_ALIAS", "Alias ending in : is ambiguous", true);
+    const valueEnd = offset + source.length;
+    const re = resolveEnd(end, valueEnd, options.strict, onError);
+    alias.range = [offset, valueEnd, re.offset];
+    if (re.comment)
+      alias.comment = re.comment;
+    return alias;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/compose-doc.js
+  function composeDoc(options, directives, { offset, start, value, end }, onError) {
+    const opts = Object.assign({ _directives: directives }, options);
+    const doc = new Document(void 0, opts);
+    const ctx = {
+      atKey: false,
+      atRoot: true,
+      directives: doc.directives,
+      options: doc.options,
+      schema: doc.schema
+    };
+    const props = resolveProps(start, {
+      indicator: "doc-start",
+      next: value ?? end?.[0],
+      offset,
+      onError,
+      parentIndent: 0,
+      startOnNewline: true
+    });
+    if (props.found) {
+      doc.directives.docStart = true;
+      if (value && (value.type === "block-map" || value.type === "block-seq") && !props.hasNewline)
+        onError(props.end, "MISSING_CHAR", "Block collection cannot start on same line with directives-end marker");
+    }
+    doc.contents = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, start, null, props, onError);
+    const contentEnd = doc.contents.range[2];
+    const re = resolveEnd(end, contentEnd, false, onError);
+    if (re.comment)
+      doc.comment = re.comment;
+    doc.range = [offset, contentEnd, re.offset];
+    return doc;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/compose/composer.js
+  function getErrorPos(src) {
+    if (typeof src === "number")
+      return [src, src + 1];
+    if (Array.isArray(src))
+      return src.length === 2 ? src : [src[0], src[1]];
+    const { offset, source } = src;
+    return [offset, offset + (typeof source === "string" ? source.length : 1)];
+  }
+  function parsePrelude(prelude) {
+    let comment = "";
+    let atComment = false;
+    let afterEmptyLine = false;
+    for (let i = 0; i < prelude.length; ++i) {
+      const source = prelude[i];
+      switch (source[0]) {
+        case "#":
+          comment += (comment === "" ? "" : afterEmptyLine ? "\n\n" : "\n") + (source.substring(1) || " ");
+          atComment = true;
+          afterEmptyLine = false;
+          break;
+        case "%":
+          if (prelude[i + 1]?.[0] !== "#")
+            i += 1;
+          atComment = false;
+          break;
+        default:
+          if (!atComment)
+            afterEmptyLine = true;
+          atComment = false;
+      }
+    }
+    return { comment, afterEmptyLine };
+  }
+  var Composer = class {
+    constructor(options = {}) {
+      this.doc = null;
+      this.atDirectives = false;
+      this.prelude = [];
+      this.errors = [];
+      this.warnings = [];
+      this.onError = (source, code, message2, warning) => {
+        const pos = getErrorPos(source);
+        if (warning)
+          this.warnings.push(new YAMLWarning(pos, code, message2));
+        else
+          this.errors.push(new YAMLParseError(pos, code, message2));
+      };
+      this.directives = new Directives({ version: options.version || "1.2" });
+      this.options = options;
+    }
+    decorate(doc, afterDoc) {
+      const { comment, afterEmptyLine } = parsePrelude(this.prelude);
+      if (comment) {
+        const dc = doc.contents;
+        if (afterDoc) {
+          doc.comment = doc.comment ? `${doc.comment}
+${comment}` : comment;
+        } else if (afterEmptyLine || doc.directives.docStart || !dc) {
+          doc.commentBefore = comment;
+        } else if (isCollection(dc) && !dc.flow && dc.items.length > 0) {
+          let it = dc.items[0];
+          if (isPair(it))
+            it = it.key;
+          const cb = it.commentBefore;
+          it.commentBefore = cb ? `${comment}
+${cb}` : comment;
+        } else {
+          const cb = dc.commentBefore;
+          dc.commentBefore = cb ? `${comment}
+${cb}` : comment;
+        }
+      }
+      if (afterDoc) {
+        Array.prototype.push.apply(doc.errors, this.errors);
+        Array.prototype.push.apply(doc.warnings, this.warnings);
+      } else {
+        doc.errors = this.errors;
+        doc.warnings = this.warnings;
+      }
+      this.prelude = [];
+      this.errors = [];
+      this.warnings = [];
+    }
+    /**
+     * Current stream status information.
+     *
+     * Mostly useful at the end of input for an empty stream.
+     */
+    streamInfo() {
+      return {
+        comment: parsePrelude(this.prelude).comment,
+        directives: this.directives,
+        errors: this.errors,
+        warnings: this.warnings
+      };
+    }
+    /**
+     * Compose tokens into documents.
+     *
+     * @param forceDoc - If the stream contains no document, still emit a final document including any comments and directives that would be applied to a subsequent document.
+     * @param endOffset - Should be set if `forceDoc` is also set, to set the document range end and to indicate errors correctly.
+     */
+    *compose(tokens, forceDoc = false, endOffset = -1) {
+      for (const token of tokens)
+        yield* this.next(token);
+      yield* this.end(forceDoc, endOffset);
+    }
+    /** Advance the composer by one CST token. */
+    *next(token) {
+      switch (token.type) {
+        case "directive":
+          this.directives.add(token.source, (offset, message2, warning) => {
+            const pos = getErrorPos(token);
+            pos[0] += offset;
+            this.onError(pos, "BAD_DIRECTIVE", message2, warning);
+          });
+          this.prelude.push(token.source);
+          this.atDirectives = true;
+          break;
+        case "document": {
+          const doc = composeDoc(this.options, this.directives, token, this.onError);
+          if (this.atDirectives && !doc.directives.docStart)
+            this.onError(token, "MISSING_CHAR", "Missing directives-end/doc-start indicator line");
+          this.decorate(doc, false);
+          if (this.doc)
+            yield this.doc;
+          this.doc = doc;
+          this.atDirectives = false;
+          break;
+        }
+        case "byte-order-mark":
+        case "space":
+          break;
+        case "comment":
+        case "newline":
+          this.prelude.push(token.source);
+          break;
+        case "error": {
+          const msg = token.source ? `${token.message}: ${JSON.stringify(token.source)}` : token.message;
+          const error2 = new YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", msg);
+          if (this.atDirectives || !this.doc)
+            this.errors.push(error2);
+          else
+            this.doc.errors.push(error2);
+          break;
+        }
+        case "doc-end": {
+          if (!this.doc) {
+            const msg = "Unexpected doc-end without preceding document";
+            this.errors.push(new YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", msg));
+            break;
+          }
+          this.doc.directives.docEnd = true;
+          const end = resolveEnd(token.end, token.offset + token.source.length, this.doc.options.strict, this.onError);
+          this.decorate(this.doc, true);
+          if (end.comment) {
+            const dc = this.doc.comment;
+            this.doc.comment = dc ? `${dc}
+${end.comment}` : end.comment;
+          }
+          this.doc.range[2] = end.offset;
+          break;
+        }
+        default:
+          this.errors.push(new YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", `Unsupported token ${token.type}`));
+      }
+    }
+    /**
+     * Call at end of input to yield any remaining document.
+     *
+     * @param forceDoc - If the stream contains no document, still emit a final document including any comments and directives that would be applied to a subsequent document.
+     * @param endOffset - Should be set if `forceDoc` is also set, to set the document range end and to indicate errors correctly.
+     */
+    *end(forceDoc = false, endOffset = -1) {
+      if (this.doc) {
+        this.decorate(this.doc, true);
+        yield this.doc;
+        this.doc = null;
+      } else if (forceDoc) {
+        const opts = Object.assign({ _directives: this.directives }, this.options);
+        const doc = new Document(void 0, opts);
+        if (this.atDirectives)
+          this.onError(endOffset, "MISSING_CHAR", "Missing directives-end indicator line");
+        doc.range = [0, endOffset, endOffset];
+        this.decorate(doc, false);
+        yield doc;
+      }
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/parse/cst-visit.js
+  var BREAK2 = /* @__PURE__ */ Symbol("break visit");
+  var SKIP2 = /* @__PURE__ */ Symbol("skip children");
+  var REMOVE2 = /* @__PURE__ */ Symbol("remove item");
+  function visit2(cst, visitor) {
+    if ("type" in cst && cst.type === "document")
+      cst = { start: cst.start, value: cst.value };
+    _visit(Object.freeze([]), cst, visitor);
+  }
+  visit2.BREAK = BREAK2;
+  visit2.SKIP = SKIP2;
+  visit2.REMOVE = REMOVE2;
+  visit2.itemAtPath = (cst, path) => {
+    let item = cst;
+    for (const [field, index] of path) {
+      const tok = item?.[field];
+      if (tok && "items" in tok) {
+        item = tok.items[index];
+      } else
+        return void 0;
+    }
+    return item;
+  };
+  visit2.parentCollection = (cst, path) => {
+    const parent = visit2.itemAtPath(cst, path.slice(0, -1));
+    const field = path[path.length - 1][0];
+    const coll = parent?.[field];
+    if (coll && "items" in coll)
+      return coll;
+    throw new Error("Parent collection not found");
+  };
+  function _visit(path, item, visitor) {
+    let ctrl = visitor(item, path);
+    if (typeof ctrl === "symbol")
+      return ctrl;
+    for (const field of ["key", "value"]) {
+      const token = item[field];
+      if (token && "items" in token) {
+        for (let i = 0; i < token.items.length; ++i) {
+          const ci = _visit(Object.freeze(path.concat([[field, i]])), token.items[i], visitor);
+          if (typeof ci === "number")
+            i = ci - 1;
+          else if (ci === BREAK2)
+            return BREAK2;
+          else if (ci === REMOVE2) {
+            token.items.splice(i, 1);
+            i -= 1;
+          }
+        }
+        if (typeof ctrl === "function" && field === "key")
+          ctrl = ctrl(item, path);
+      }
+    }
+    return typeof ctrl === "function" ? ctrl(item, path) : ctrl;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/parse/cst.js
+  var BOM = "\uFEFF";
+  var DOCUMENT = "";
+  var FLOW_END = "";
+  var SCALAR2 = "";
+  function tokenType(source) {
+    switch (source) {
+      case BOM:
+        return "byte-order-mark";
+      case DOCUMENT:
+        return "doc-mode";
+      case FLOW_END:
+        return "flow-error-end";
+      case SCALAR2:
+        return "scalar";
+      case "---":
+        return "doc-start";
+      case "...":
+        return "doc-end";
+      case "":
+      case "\n":
+      case "\r\n":
+        return "newline";
+      case "-":
+        return "seq-item-ind";
+      case "?":
+        return "explicit-key-ind";
+      case ":":
+        return "map-value-ind";
+      case "{":
+        return "flow-map-start";
+      case "}":
+        return "flow-map-end";
+      case "[":
+        return "flow-seq-start";
+      case "]":
+        return "flow-seq-end";
+      case ",":
+        return "comma";
+    }
+    switch (source[0]) {
+      case " ":
+      case "	":
+        return "space";
+      case "#":
+        return "comment";
+      case "%":
+        return "directive-line";
+      case "*":
+        return "alias";
+      case "&":
+        return "anchor";
+      case "!":
+        return "tag";
+      case "'":
+        return "single-quoted-scalar";
+      case '"':
+        return "double-quoted-scalar";
+      case "|":
+      case ">":
+        return "block-scalar-header";
+    }
+    return null;
+  }
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/parse/lexer.js
+  function isEmpty(ch) {
+    switch (ch) {
+      case void 0:
+      case " ":
+      case "\n":
+      case "\r":
+      case "	":
+        return true;
+      default:
+        return false;
+    }
+  }
+  var hexDigits = new Set("0123456789ABCDEFabcdef");
+  var tagChars = new Set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-#;/?:@&=+$_.!~*'()");
+  var flowIndicatorChars = new Set(",[]{}");
+  var invalidAnchorChars = new Set(" ,[]{}\n\r	");
+  var isNotAnchorChar = (ch) => !ch || invalidAnchorChars.has(ch);
+  var Lexer = class {
+    constructor() {
+      this.atEnd = false;
+      this.blockScalarIndent = -1;
+      this.blockScalarKeep = false;
+      this.buffer = "";
+      this.flowKey = false;
+      this.flowLevel = 0;
+      this.indentNext = 0;
+      this.indentValue = 0;
+      this.lineEndPos = null;
+      this.next = null;
+      this.pos = 0;
+    }
+    /**
+     * Generate YAML tokens from the `source` string. If `incomplete`,
+     * a part of the last line may be left as a buffer for the next call.
+     *
+     * @returns A generator of lexical tokens
+     */
+    *lex(source, incomplete = false) {
+      if (source) {
+        if (typeof source !== "string")
+          throw TypeError("source is not a string");
+        this.buffer = this.buffer ? this.buffer + source : source;
+        this.lineEndPos = null;
+      }
+      this.atEnd = !incomplete;
+      let next = this.next ?? "stream";
+      while (next && (incomplete || this.hasChars(1)))
+        next = yield* this.parseNext(next);
+    }
+    atLineEnd() {
+      let i = this.pos;
+      let ch = this.buffer[i];
+      while (ch === " " || ch === "	")
+        ch = this.buffer[++i];
+      if (!ch || ch === "#" || ch === "\n")
+        return true;
+      if (ch === "\r")
+        return this.buffer[i + 1] === "\n";
+      return false;
+    }
+    charAt(n) {
+      return this.buffer[this.pos + n];
+    }
+    continueScalar(offset) {
+      let ch = this.buffer[offset];
+      if (this.indentNext > 0) {
+        let indent = 0;
+        while (ch === " ")
+          ch = this.buffer[++indent + offset];
+        if (ch === "\r") {
+          const next = this.buffer[indent + offset + 1];
+          if (next === "\n" || !next && !this.atEnd)
+            return offset + indent + 1;
+        }
+        return ch === "\n" || indent >= this.indentNext || !ch && !this.atEnd ? offset + indent : -1;
+      }
+      if (ch === "-" || ch === ".") {
+        const dt = this.buffer.substr(offset, 3);
+        if ((dt === "---" || dt === "...") && isEmpty(this.buffer[offset + 3]))
+          return -1;
+      }
+      return offset;
+    }
+    getLine() {
+      let end = this.lineEndPos;
+      if (typeof end !== "number" || end !== -1 && end < this.pos) {
+        end = this.buffer.indexOf("\n", this.pos);
+        this.lineEndPos = end;
+      }
+      if (end === -1)
+        return this.atEnd ? this.buffer.substring(this.pos) : null;
+      if (this.buffer[end - 1] === "\r")
+        end -= 1;
+      return this.buffer.substring(this.pos, end);
+    }
+    hasChars(n) {
+      return this.pos + n <= this.buffer.length;
+    }
+    setNext(state) {
+      this.buffer = this.buffer.substring(this.pos);
+      this.pos = 0;
+      this.lineEndPos = null;
+      this.next = state;
+      return null;
+    }
+    peek(n) {
+      return this.buffer.substr(this.pos, n);
+    }
+    *parseNext(next) {
+      switch (next) {
+        case "stream":
+          return yield* this.parseStream();
+        case "line-start":
+          return yield* this.parseLineStart();
+        case "block-start":
+          return yield* this.parseBlockStart();
+        case "doc":
+          return yield* this.parseDocument();
+        case "flow":
+          return yield* this.parseFlowCollection();
+        case "quoted-scalar":
+          return yield* this.parseQuotedScalar();
+        case "block-scalar":
+          return yield* this.parseBlockScalar();
+        case "plain-scalar":
+          return yield* this.parsePlainScalar();
+      }
+    }
+    *parseStream() {
+      let line = this.getLine();
+      if (line === null)
+        return this.setNext("stream");
+      if (line[0] === BOM) {
+        yield* this.pushCount(1);
+        line = line.substring(1);
+      }
+      if (line[0] === "%") {
+        let dirEnd = line.length;
+        let cs = line.indexOf("#");
+        while (cs !== -1) {
+          const ch = line[cs - 1];
+          if (ch === " " || ch === "	") {
+            dirEnd = cs - 1;
+            break;
+          } else {
+            cs = line.indexOf("#", cs + 1);
+          }
+        }
+        while (true) {
+          const ch = line[dirEnd - 1];
+          if (ch === " " || ch === "	")
+            dirEnd -= 1;
+          else
+            break;
+        }
+        const n = (yield* this.pushCount(dirEnd)) + (yield* this.pushSpaces(true));
+        yield* this.pushCount(line.length - n);
+        this.pushNewline();
+        return "stream";
+      }
+      if (this.atLineEnd()) {
+        const sp = yield* this.pushSpaces(true);
+        yield* this.pushCount(line.length - sp);
+        yield* this.pushNewline();
+        return "stream";
+      }
+      yield DOCUMENT;
+      return yield* this.parseLineStart();
+    }
+    *parseLineStart() {
+      const ch = this.charAt(0);
+      if (!ch && !this.atEnd)
+        return this.setNext("line-start");
+      if (ch === "-" || ch === ".") {
+        if (!this.atEnd && !this.hasChars(4))
+          return this.setNext("line-start");
+        const s = this.peek(3);
+        if ((s === "---" || s === "...") && isEmpty(this.charAt(3))) {
+          yield* this.pushCount(3);
+          this.indentValue = 0;
+          this.indentNext = 0;
+          return s === "---" ? "doc" : "stream";
+        }
+      }
+      this.indentValue = yield* this.pushSpaces(false);
+      if (this.indentNext > this.indentValue && !isEmpty(this.charAt(1)))
+        this.indentNext = this.indentValue;
+      return yield* this.parseBlockStart();
+    }
+    *parseBlockStart() {
+      const [ch0, ch1] = this.peek(2);
+      if (!ch1 && !this.atEnd)
+        return this.setNext("block-start");
+      if ((ch0 === "-" || ch0 === "?" || ch0 === ":") && isEmpty(ch1)) {
+        const n = (yield* this.pushCount(1)) + (yield* this.pushSpaces(true));
+        this.indentNext = this.indentValue + 1;
+        this.indentValue += n;
+        return yield* this.parseBlockStart();
+      }
+      return "doc";
+    }
+    *parseDocument() {
+      yield* this.pushSpaces(true);
+      const line = this.getLine();
+      if (line === null)
+        return this.setNext("doc");
+      let n = yield* this.pushIndicators();
+      switch (line[n]) {
+        case "#":
+          yield* this.pushCount(line.length - n);
+        // fallthrough
+        case void 0:
+          yield* this.pushNewline();
+          return yield* this.parseLineStart();
+        case "{":
+        case "[":
+          yield* this.pushCount(1);
+          this.flowKey = false;
+          this.flowLevel = 1;
+          return "flow";
+        case "}":
+        case "]":
+          yield* this.pushCount(1);
+          return "doc";
+        case "*":
+          yield* this.pushUntil(isNotAnchorChar);
+          return "doc";
+        case '"':
+        case "'":
+          return yield* this.parseQuotedScalar();
+        case "|":
+        case ">":
+          n += yield* this.parseBlockScalarHeader();
+          n += yield* this.pushSpaces(true);
+          yield* this.pushCount(line.length - n);
+          yield* this.pushNewline();
+          return yield* this.parseBlockScalar();
+        default:
+          return yield* this.parsePlainScalar();
+      }
+    }
+    *parseFlowCollection() {
+      let nl, sp;
+      let indent = -1;
+      do {
+        nl = yield* this.pushNewline();
+        if (nl > 0) {
+          sp = yield* this.pushSpaces(false);
+          this.indentValue = indent = sp;
+        } else {
+          sp = 0;
+        }
+        sp += yield* this.pushSpaces(true);
+      } while (nl + sp > 0);
+      const line = this.getLine();
+      if (line === null)
+        return this.setNext("flow");
+      if (indent !== -1 && indent < this.indentNext && line[0] !== "#" || indent === 0 && (line.startsWith("---") || line.startsWith("...")) && isEmpty(line[3])) {
+        const atFlowEndMarker = indent === this.indentNext - 1 && this.flowLevel === 1 && (line[0] === "]" || line[0] === "}");
+        if (!atFlowEndMarker) {
+          this.flowLevel = 0;
+          yield FLOW_END;
+          return yield* this.parseLineStart();
+        }
+      }
+      let n = 0;
+      while (line[n] === ",") {
+        n += yield* this.pushCount(1);
+        n += yield* this.pushSpaces(true);
+        this.flowKey = false;
+      }
+      n += yield* this.pushIndicators();
+      switch (line[n]) {
+        case void 0:
+          return "flow";
+        case "#":
+          yield* this.pushCount(line.length - n);
+          return "flow";
+        case "{":
+        case "[":
+          yield* this.pushCount(1);
+          this.flowKey = false;
+          this.flowLevel += 1;
+          return "flow";
+        case "}":
+        case "]":
+          yield* this.pushCount(1);
+          this.flowKey = true;
+          this.flowLevel -= 1;
+          return this.flowLevel ? "flow" : "doc";
+        case "*":
+          yield* this.pushUntil(isNotAnchorChar);
+          return "flow";
+        case '"':
+        case "'":
+          this.flowKey = true;
+          return yield* this.parseQuotedScalar();
+        case ":": {
+          const next = this.charAt(1);
+          if (this.flowKey || isEmpty(next) || next === ",") {
+            this.flowKey = false;
+            yield* this.pushCount(1);
+            yield* this.pushSpaces(true);
+            return "flow";
+          }
+        }
+        // fallthrough
+        default:
+          this.flowKey = false;
+          return yield* this.parsePlainScalar();
+      }
+    }
+    *parseQuotedScalar() {
+      const quote = this.charAt(0);
+      let end = this.buffer.indexOf(quote, this.pos + 1);
+      if (quote === "'") {
+        while (end !== -1 && this.buffer[end + 1] === "'")
+          end = this.buffer.indexOf("'", end + 2);
+      } else {
+        while (end !== -1) {
+          let n = 0;
+          while (this.buffer[end - 1 - n] === "\\")
+            n += 1;
+          if (n % 2 === 0)
+            break;
+          end = this.buffer.indexOf('"', end + 1);
+        }
+      }
+      const qb = this.buffer.substring(0, end);
+      let nl = qb.indexOf("\n", this.pos);
+      if (nl !== -1) {
+        while (nl !== -1) {
+          const cs = this.continueScalar(nl + 1);
+          if (cs === -1)
+            break;
+          nl = qb.indexOf("\n", cs);
+        }
+        if (nl !== -1) {
+          end = nl - (qb[nl - 1] === "\r" ? 2 : 1);
+        }
+      }
+      if (end === -1) {
+        if (!this.atEnd)
+          return this.setNext("quoted-scalar");
+        end = this.buffer.length;
+      }
+      yield* this.pushToIndex(end + 1, false);
+      return this.flowLevel ? "flow" : "doc";
+    }
+    *parseBlockScalarHeader() {
+      this.blockScalarIndent = -1;
+      this.blockScalarKeep = false;
+      let i = this.pos;
+      while (true) {
+        const ch = this.buffer[++i];
+        if (ch === "+")
+          this.blockScalarKeep = true;
+        else if (ch > "0" && ch <= "9")
+          this.blockScalarIndent = Number(ch) - 1;
+        else if (ch !== "-")
+          break;
+      }
+      return yield* this.pushUntil((ch) => isEmpty(ch) || ch === "#");
+    }
+    *parseBlockScalar() {
+      let nl = this.pos - 1;
+      let indent = 0;
+      let ch;
+      loop: for (let i2 = this.pos; ch = this.buffer[i2]; ++i2) {
+        switch (ch) {
+          case " ":
+            indent += 1;
+            break;
+          case "\n":
+            nl = i2;
+            indent = 0;
+            break;
+          case "\r": {
+            const next = this.buffer[i2 + 1];
+            if (!next && !this.atEnd)
+              return this.setNext("block-scalar");
+            if (next === "\n")
+              break;
+          }
+          // fallthrough
+          default:
+            break loop;
+        }
+      }
+      if (!ch && !this.atEnd)
+        return this.setNext("block-scalar");
+      if (indent >= this.indentNext) {
+        if (this.blockScalarIndent === -1)
+          this.indentNext = indent;
+        else {
+          this.indentNext = this.blockScalarIndent + (this.indentNext === 0 ? 1 : this.indentNext);
+        }
+        do {
+          const cs = this.continueScalar(nl + 1);
+          if (cs === -1)
+            break;
+          nl = this.buffer.indexOf("\n", cs);
+        } while (nl !== -1);
+        if (nl === -1) {
+          if (!this.atEnd)
+            return this.setNext("block-scalar");
+          nl = this.buffer.length;
+        }
+      }
+      let i = nl + 1;
+      ch = this.buffer[i];
+      while (ch === " ")
+        ch = this.buffer[++i];
+      if (ch === "	") {
+        while (ch === "	" || ch === " " || ch === "\r" || ch === "\n")
+          ch = this.buffer[++i];
+        nl = i - 1;
+      } else if (!this.blockScalarKeep) {
+        do {
+          let i2 = nl - 1;
+          let ch2 = this.buffer[i2];
+          if (ch2 === "\r")
+            ch2 = this.buffer[--i2];
+          const lastChar = i2;
+          while (ch2 === " ")
+            ch2 = this.buffer[--i2];
+          if (ch2 === "\n" && i2 >= this.pos && i2 + 1 + indent > lastChar)
+            nl = i2;
+          else
+            break;
+        } while (true);
+      }
+      yield SCALAR2;
+      yield* this.pushToIndex(nl + 1, true);
+      return yield* this.parseLineStart();
+    }
+    *parsePlainScalar() {
+      const inFlow = this.flowLevel > 0;
+      let end = this.pos - 1;
+      let i = this.pos - 1;
+      let ch;
+      while (ch = this.buffer[++i]) {
+        if (ch === ":") {
+          const next = this.buffer[i + 1];
+          if (isEmpty(next) || inFlow && flowIndicatorChars.has(next))
+            break;
+          end = i;
+        } else if (isEmpty(ch)) {
+          let next = this.buffer[i + 1];
+          if (ch === "\r") {
+            if (next === "\n") {
+              i += 1;
+              ch = "\n";
+              next = this.buffer[i + 1];
+            } else
+              end = i;
+          }
+          if (next === "#" || inFlow && flowIndicatorChars.has(next))
+            break;
+          if (ch === "\n") {
+            const cs = this.continueScalar(i + 1);
+            if (cs === -1)
+              break;
+            i = Math.max(i, cs - 2);
+          }
+        } else {
+          if (inFlow && flowIndicatorChars.has(ch))
+            break;
+          end = i;
+        }
+      }
+      if (!ch && !this.atEnd)
+        return this.setNext("plain-scalar");
+      yield SCALAR2;
+      yield* this.pushToIndex(end + 1, true);
+      return inFlow ? "flow" : "doc";
+    }
+    *pushCount(n) {
+      if (n > 0) {
+        yield this.buffer.substr(this.pos, n);
+        this.pos += n;
+        return n;
+      }
+      return 0;
+    }
+    *pushToIndex(i, allowEmpty) {
+      const s = this.buffer.slice(this.pos, i);
+      if (s) {
+        yield s;
+        this.pos += s.length;
+        return s.length;
+      } else if (allowEmpty)
+        yield "";
+      return 0;
+    }
+    *pushIndicators() {
+      switch (this.charAt(0)) {
+        case "!":
+          return (yield* this.pushTag()) + (yield* this.pushSpaces(true)) + (yield* this.pushIndicators());
+        case "&":
+          return (yield* this.pushUntil(isNotAnchorChar)) + (yield* this.pushSpaces(true)) + (yield* this.pushIndicators());
+        case "-":
+        // this is an error
+        case "?":
+        // this is an error outside flow collections
+        case ":": {
+          const inFlow = this.flowLevel > 0;
+          const ch1 = this.charAt(1);
+          if (isEmpty(ch1) || inFlow && flowIndicatorChars.has(ch1)) {
+            if (!inFlow)
+              this.indentNext = this.indentValue + 1;
+            else if (this.flowKey)
+              this.flowKey = false;
+            return (yield* this.pushCount(1)) + (yield* this.pushSpaces(true)) + (yield* this.pushIndicators());
+          }
+        }
+      }
+      return 0;
+    }
+    *pushTag() {
+      if (this.charAt(1) === "<") {
+        let i = this.pos + 2;
+        let ch = this.buffer[i];
+        while (!isEmpty(ch) && ch !== ">")
+          ch = this.buffer[++i];
+        return yield* this.pushToIndex(ch === ">" ? i + 1 : i, false);
+      } else {
+        let i = this.pos + 1;
+        let ch = this.buffer[i];
+        while (ch) {
+          if (tagChars.has(ch))
+            ch = this.buffer[++i];
+          else if (ch === "%" && hexDigits.has(this.buffer[i + 1]) && hexDigits.has(this.buffer[i + 2])) {
+            ch = this.buffer[i += 3];
+          } else
+            break;
+        }
+        return yield* this.pushToIndex(i, false);
+      }
+    }
+    *pushNewline() {
+      const ch = this.buffer[this.pos];
+      if (ch === "\n")
+        return yield* this.pushCount(1);
+      else if (ch === "\r" && this.charAt(1) === "\n")
+        return yield* this.pushCount(2);
+      else
+        return 0;
+    }
+    *pushSpaces(allowTabs) {
+      let i = this.pos - 1;
+      let ch;
+      do {
+        ch = this.buffer[++i];
+      } while (ch === " " || allowTabs && ch === "	");
+      const n = i - this.pos;
+      if (n > 0) {
+        yield this.buffer.substr(this.pos, n);
+        this.pos = i;
+      }
+      return n;
+    }
+    *pushUntil(test) {
+      let i = this.pos;
+      let ch = this.buffer[i];
+      while (!test(ch))
+        ch = this.buffer[++i];
+      return yield* this.pushToIndex(i, false);
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/parse/line-counter.js
+  var LineCounter = class {
+    constructor() {
+      this.lineStarts = [];
+      this.addNewLine = (offset) => this.lineStarts.push(offset);
+      this.linePos = (offset) => {
+        let low = 0;
+        let high = this.lineStarts.length;
+        while (low < high) {
+          const mid = low + high >> 1;
+          if (this.lineStarts[mid] < offset)
+            low = mid + 1;
+          else
+            high = mid;
+        }
+        if (this.lineStarts[low] === offset)
+          return { line: low + 1, col: 1 };
+        if (low === 0)
+          return { line: 0, col: offset };
+        const start = this.lineStarts[low - 1];
+        return { line: low, col: offset - start + 1 };
+      };
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/parse/parser.js
+  function includesToken(list, type) {
+    for (let i = 0; i < list.length; ++i)
+      if (list[i].type === type)
+        return true;
+    return false;
+  }
+  function findNonEmptyIndex(list) {
+    for (let i = 0; i < list.length; ++i) {
+      switch (list[i].type) {
+        case "space":
+        case "comment":
+        case "newline":
+          break;
+        default:
+          return i;
+      }
+    }
+    return -1;
+  }
+  function isFlowToken(token) {
+    switch (token?.type) {
+      case "alias":
+      case "scalar":
+      case "single-quoted-scalar":
+      case "double-quoted-scalar":
+      case "flow-collection":
+        return true;
+      default:
+        return false;
+    }
+  }
+  function getPrevProps(parent) {
+    switch (parent.type) {
+      case "document":
+        return parent.start;
+      case "block-map": {
+        const it = parent.items[parent.items.length - 1];
+        return it.sep ?? it.start;
+      }
+      case "block-seq":
+        return parent.items[parent.items.length - 1].start;
+      /* istanbul ignore next should not happen */
+      default:
+        return [];
+    }
+  }
+  function getFirstKeyStartProps(prev) {
+    if (prev.length === 0)
+      return [];
+    let i = prev.length;
+    loop: while (--i >= 0) {
+      switch (prev[i].type) {
+        case "doc-start":
+        case "explicit-key-ind":
+        case "map-value-ind":
+        case "seq-item-ind":
+        case "newline":
+          break loop;
+      }
+    }
+    while (prev[++i]?.type === "space") {
+    }
+    return prev.splice(i, prev.length);
+  }
+  function fixFlowSeqItems(fc) {
+    if (fc.start.type === "flow-seq-start") {
+      for (const it of fc.items) {
+        if (it.sep && !it.value && !includesToken(it.start, "explicit-key-ind") && !includesToken(it.sep, "map-value-ind")) {
+          if (it.key)
+            it.value = it.key;
+          delete it.key;
+          if (isFlowToken(it.value)) {
+            if (it.value.end)
+              Array.prototype.push.apply(it.value.end, it.sep);
+            else
+              it.value.end = it.sep;
+          } else
+            Array.prototype.push.apply(it.start, it.sep);
+          delete it.sep;
+        }
+      }
+    }
+  }
+  var Parser = class {
+    /**
+     * @param onNewLine - If defined, called separately with the start position of
+     *   each new line (in `parse()`, including the start of input).
+     */
+    constructor(onNewLine) {
+      this.atNewLine = true;
+      this.atScalar = false;
+      this.indent = 0;
+      this.offset = 0;
+      this.onKeyLine = false;
+      this.stack = [];
+      this.source = "";
+      this.type = "";
+      this.lexer = new Lexer();
+      this.onNewLine = onNewLine;
+    }
+    /**
+     * Parse `source` as a YAML stream.
+     * If `incomplete`, a part of the last line may be left as a buffer for the next call.
+     *
+     * Errors are not thrown, but yielded as `{ type: 'error', message }` tokens.
+     *
+     * @returns A generator of tokens representing each directive, document, and other structure.
+     */
+    *parse(source, incomplete = false) {
+      if (this.onNewLine && this.offset === 0)
+        this.onNewLine(0);
+      for (const lexeme of this.lexer.lex(source, incomplete))
+        yield* this.next(lexeme);
+      if (!incomplete)
+        yield* this.end();
+    }
+    /**
+     * Advance the parser by the `source` of one lexical token.
+     */
+    *next(source) {
+      this.source = source;
+      if (this.atScalar) {
+        this.atScalar = false;
+        yield* this.step();
+        this.offset += source.length;
+        return;
+      }
+      const type = tokenType(source);
+      if (!type) {
+        const message2 = `Not a YAML token: ${source}`;
+        yield* this.pop({ type: "error", offset: this.offset, message: message2, source });
+        this.offset += source.length;
+      } else if (type === "scalar") {
+        this.atNewLine = false;
+        this.atScalar = true;
+        this.type = "scalar";
+      } else {
+        this.type = type;
+        yield* this.step();
+        switch (type) {
+          case "newline":
+            this.atNewLine = true;
+            this.indent = 0;
+            if (this.onNewLine)
+              this.onNewLine(this.offset + source.length);
+            break;
+          case "space":
+            if (this.atNewLine && source[0] === " ")
+              this.indent += source.length;
+            break;
+          case "explicit-key-ind":
+          case "map-value-ind":
+          case "seq-item-ind":
+            if (this.atNewLine)
+              this.indent += source.length;
+            break;
+          case "doc-mode":
+          case "flow-error-end":
+            return;
+          default:
+            this.atNewLine = false;
+        }
+        this.offset += source.length;
+      }
+    }
+    /** Call at end of input to push out any remaining constructions */
+    *end() {
+      while (this.stack.length > 0)
+        yield* this.pop();
+    }
+    get sourceToken() {
+      const st = {
+        type: this.type,
+        offset: this.offset,
+        indent: this.indent,
+        source: this.source
+      };
+      return st;
+    }
+    *step() {
+      const top = this.peek(1);
+      if (this.type === "doc-end" && top?.type !== "doc-end") {
+        while (this.stack.length > 0)
+          yield* this.pop();
+        this.stack.push({
+          type: "doc-end",
+          offset: this.offset,
+          source: this.source
+        });
+        return;
+      }
+      if (!top)
+        return yield* this.stream();
+      switch (top.type) {
+        case "document":
+          return yield* this.document(top);
+        case "alias":
+        case "scalar":
+        case "single-quoted-scalar":
+        case "double-quoted-scalar":
+          return yield* this.scalar(top);
+        case "block-scalar":
+          return yield* this.blockScalar(top);
+        case "block-map":
+          return yield* this.blockMap(top);
+        case "block-seq":
+          return yield* this.blockSequence(top);
+        case "flow-collection":
+          return yield* this.flowCollection(top);
+        case "doc-end":
+          return yield* this.documentEnd(top);
+      }
+      yield* this.pop();
+    }
+    peek(n) {
+      return this.stack[this.stack.length - n];
+    }
+    *pop(error2) {
+      const token = error2 ?? this.stack.pop();
+      if (!token) {
+        const message2 = "Tried to pop an empty stack";
+        yield { type: "error", offset: this.offset, source: "", message: message2 };
+      } else if (this.stack.length === 0) {
+        yield token;
+      } else {
+        const top = this.peek(1);
+        if (token.type === "block-scalar") {
+          token.indent = "indent" in top ? top.indent : 0;
+        } else if (token.type === "flow-collection" && top.type === "document") {
+          token.indent = 0;
+        }
+        if (token.type === "flow-collection")
+          fixFlowSeqItems(token);
+        switch (top.type) {
+          case "document":
+            top.value = token;
+            break;
+          case "block-scalar":
+            top.props.push(token);
+            break;
+          case "block-map": {
+            const it = top.items[top.items.length - 1];
+            if (it.value) {
+              top.items.push({ start: [], key: token, sep: [] });
+              this.onKeyLine = true;
+              return;
+            } else if (it.sep) {
+              it.value = token;
+            } else {
+              Object.assign(it, { key: token, sep: [] });
+              this.onKeyLine = !it.explicitKey;
+              return;
+            }
+            break;
+          }
+          case "block-seq": {
+            const it = top.items[top.items.length - 1];
+            if (it.value)
+              top.items.push({ start: [], value: token });
+            else
+              it.value = token;
+            break;
+          }
+          case "flow-collection": {
+            const it = top.items[top.items.length - 1];
+            if (!it || it.value)
+              top.items.push({ start: [], key: token, sep: [] });
+            else if (it.sep)
+              it.value = token;
+            else
+              Object.assign(it, { key: token, sep: [] });
+            return;
+          }
+          /* istanbul ignore next should not happen */
+          default:
+            yield* this.pop();
+            yield* this.pop(token);
+        }
+        if ((top.type === "document" || top.type === "block-map" || top.type === "block-seq") && (token.type === "block-map" || token.type === "block-seq")) {
+          const last = token.items[token.items.length - 1];
+          if (last && !last.sep && !last.value && last.start.length > 0 && findNonEmptyIndex(last.start) === -1 && (token.indent === 0 || last.start.every((st) => st.type !== "comment" || st.indent < token.indent))) {
+            if (top.type === "document")
+              top.end = last.start;
+            else
+              top.items.push({ start: last.start });
+            token.items.splice(-1, 1);
+          }
+        }
+      }
+    }
+    *stream() {
+      switch (this.type) {
+        case "directive-line":
+          yield { type: "directive", offset: this.offset, source: this.source };
+          return;
+        case "byte-order-mark":
+        case "space":
+        case "comment":
+        case "newline":
+          yield this.sourceToken;
+          return;
+        case "doc-mode":
+        case "doc-start": {
+          const doc = {
+            type: "document",
+            offset: this.offset,
+            start: []
+          };
+          if (this.type === "doc-start")
+            doc.start.push(this.sourceToken);
+          this.stack.push(doc);
+          return;
+        }
+      }
+      yield {
+        type: "error",
+        offset: this.offset,
+        message: `Unexpected ${this.type} token in YAML stream`,
+        source: this.source
+      };
+    }
+    *document(doc) {
+      if (doc.value)
+        return yield* this.lineEnd(doc);
+      switch (this.type) {
+        case "doc-start": {
+          if (findNonEmptyIndex(doc.start) !== -1) {
+            yield* this.pop();
+            yield* this.step();
+          } else
+            doc.start.push(this.sourceToken);
+          return;
+        }
+        case "anchor":
+        case "tag":
+        case "space":
+        case "comment":
+        case "newline":
+          doc.start.push(this.sourceToken);
+          return;
+      }
+      const bv = this.startBlockValue(doc);
+      if (bv)
+        this.stack.push(bv);
+      else {
+        yield {
+          type: "error",
+          offset: this.offset,
+          message: `Unexpected ${this.type} token in YAML document`,
+          source: this.source
+        };
+      }
+    }
+    *scalar(scalar) {
+      if (this.type === "map-value-ind") {
+        const prev = getPrevProps(this.peek(2));
+        const start = getFirstKeyStartProps(prev);
+        let sep;
+        if (scalar.end) {
+          sep = scalar.end;
+          sep.push(this.sourceToken);
+          delete scalar.end;
+        } else
+          sep = [this.sourceToken];
+        const map2 = {
+          type: "block-map",
+          offset: scalar.offset,
+          indent: scalar.indent,
+          items: [{ start, key: scalar, sep }]
+        };
+        this.onKeyLine = true;
+        this.stack[this.stack.length - 1] = map2;
+      } else
+        yield* this.lineEnd(scalar);
+    }
+    *blockScalar(scalar) {
+      switch (this.type) {
+        case "space":
+        case "comment":
+        case "newline":
+          scalar.props.push(this.sourceToken);
+          return;
+        case "scalar":
+          scalar.source = this.source;
+          this.atNewLine = true;
+          this.indent = 0;
+          if (this.onNewLine) {
+            let nl = this.source.indexOf("\n") + 1;
+            while (nl !== 0) {
+              this.onNewLine(this.offset + nl);
+              nl = this.source.indexOf("\n", nl) + 1;
+            }
+          }
+          yield* this.pop();
+          break;
+        /* istanbul ignore next should not happen */
+        default:
+          yield* this.pop();
+          yield* this.step();
+      }
+    }
+    *blockMap(map2) {
+      const it = map2.items[map2.items.length - 1];
+      switch (this.type) {
+        case "newline":
+          this.onKeyLine = false;
+          if (it.value) {
+            const end = "end" in it.value ? it.value.end : void 0;
+            const last = Array.isArray(end) ? end[end.length - 1] : void 0;
+            if (last?.type === "comment")
+              end?.push(this.sourceToken);
+            else
+              map2.items.push({ start: [this.sourceToken] });
+          } else if (it.sep) {
+            it.sep.push(this.sourceToken);
+          } else {
+            it.start.push(this.sourceToken);
+          }
+          return;
+        case "space":
+        case "comment":
+          if (it.value) {
+            map2.items.push({ start: [this.sourceToken] });
+          } else if (it.sep) {
+            it.sep.push(this.sourceToken);
+          } else {
+            if (this.atIndentedComment(it.start, map2.indent)) {
+              const prev = map2.items[map2.items.length - 2];
+              const end = prev?.value?.end;
+              if (Array.isArray(end)) {
+                Array.prototype.push.apply(end, it.start);
+                end.push(this.sourceToken);
+                map2.items.pop();
+                return;
+              }
+            }
+            it.start.push(this.sourceToken);
+          }
+          return;
+      }
+      if (this.indent >= map2.indent) {
+        const atMapIndent = !this.onKeyLine && this.indent === map2.indent;
+        const atNextItem = atMapIndent && (it.sep || it.explicitKey) && this.type !== "seq-item-ind";
+        let start = [];
+        if (atNextItem && it.sep && !it.value) {
+          const nl = [];
+          for (let i = 0; i < it.sep.length; ++i) {
+            const st = it.sep[i];
+            switch (st.type) {
+              case "newline":
+                nl.push(i);
+                break;
+              case "space":
+                break;
+              case "comment":
+                if (st.indent > map2.indent)
+                  nl.length = 0;
+                break;
+              default:
+                nl.length = 0;
+            }
+          }
+          if (nl.length >= 2)
+            start = it.sep.splice(nl[1]);
+        }
+        switch (this.type) {
+          case "anchor":
+          case "tag":
+            if (atNextItem || it.value) {
+              start.push(this.sourceToken);
+              map2.items.push({ start });
+              this.onKeyLine = true;
+            } else if (it.sep) {
+              it.sep.push(this.sourceToken);
+            } else {
+              it.start.push(this.sourceToken);
+            }
+            return;
+          case "explicit-key-ind":
+            if (!it.sep && !it.explicitKey) {
+              it.start.push(this.sourceToken);
+              it.explicitKey = true;
+            } else if (atNextItem || it.value) {
+              start.push(this.sourceToken);
+              map2.items.push({ start, explicitKey: true });
+            } else {
+              this.stack.push({
+                type: "block-map",
+                offset: this.offset,
+                indent: this.indent,
+                items: [{ start: [this.sourceToken], explicitKey: true }]
+              });
+            }
+            this.onKeyLine = true;
+            return;
+          case "map-value-ind":
+            if (it.explicitKey) {
+              if (!it.sep) {
+                if (includesToken(it.start, "newline")) {
+                  Object.assign(it, { key: null, sep: [this.sourceToken] });
+                } else {
+                  const start2 = getFirstKeyStartProps(it.start);
+                  this.stack.push({
+                    type: "block-map",
+                    offset: this.offset,
+                    indent: this.indent,
+                    items: [{ start: start2, key: null, sep: [this.sourceToken] }]
+                  });
+                }
+              } else if (it.value) {
+                map2.items.push({ start: [], key: null, sep: [this.sourceToken] });
+              } else if (includesToken(it.sep, "map-value-ind")) {
+                this.stack.push({
+                  type: "block-map",
+                  offset: this.offset,
+                  indent: this.indent,
+                  items: [{ start, key: null, sep: [this.sourceToken] }]
+                });
+              } else if (isFlowToken(it.key) && !includesToken(it.sep, "newline")) {
+                const start2 = getFirstKeyStartProps(it.start);
+                const key = it.key;
+                const sep = it.sep;
+                sep.push(this.sourceToken);
+                delete it.key;
+                delete it.sep;
+                this.stack.push({
+                  type: "block-map",
+                  offset: this.offset,
+                  indent: this.indent,
+                  items: [{ start: start2, key, sep }]
+                });
+              } else if (start.length > 0) {
+                it.sep = it.sep.concat(start, this.sourceToken);
+              } else {
+                it.sep.push(this.sourceToken);
+              }
+            } else {
+              if (!it.sep) {
+                Object.assign(it, { key: null, sep: [this.sourceToken] });
+              } else if (it.value || atNextItem) {
+                map2.items.push({ start, key: null, sep: [this.sourceToken] });
+              } else if (includesToken(it.sep, "map-value-ind")) {
+                this.stack.push({
+                  type: "block-map",
+                  offset: this.offset,
+                  indent: this.indent,
+                  items: [{ start: [], key: null, sep: [this.sourceToken] }]
+                });
+              } else {
+                it.sep.push(this.sourceToken);
+              }
+            }
+            this.onKeyLine = true;
+            return;
+          case "alias":
+          case "scalar":
+          case "single-quoted-scalar":
+          case "double-quoted-scalar": {
+            const fs = this.flowScalar(this.type);
+            if (atNextItem || it.value) {
+              map2.items.push({ start, key: fs, sep: [] });
+              this.onKeyLine = true;
+            } else if (it.sep) {
+              this.stack.push(fs);
+            } else {
+              Object.assign(it, { key: fs, sep: [] });
+              this.onKeyLine = true;
+            }
+            return;
+          }
+          default: {
+            const bv = this.startBlockValue(map2);
+            if (bv) {
+              if (bv.type === "block-seq") {
+                if (!it.explicitKey && it.sep && !includesToken(it.sep, "newline")) {
+                  yield* this.pop({
+                    type: "error",
+                    offset: this.offset,
+                    message: "Unexpected block-seq-ind on same line with key",
+                    source: this.source
+                  });
+                  return;
+                }
+              } else if (atMapIndent) {
+                map2.items.push({ start });
+              }
+              this.stack.push(bv);
+              return;
+            }
+          }
+        }
+      }
+      yield* this.pop();
+      yield* this.step();
+    }
+    *blockSequence(seq2) {
+      const it = seq2.items[seq2.items.length - 1];
+      switch (this.type) {
+        case "newline":
+          if (it.value) {
+            const end = "end" in it.value ? it.value.end : void 0;
+            const last = Array.isArray(end) ? end[end.length - 1] : void 0;
+            if (last?.type === "comment")
+              end?.push(this.sourceToken);
+            else
+              seq2.items.push({ start: [this.sourceToken] });
+          } else
+            it.start.push(this.sourceToken);
+          return;
+        case "space":
+        case "comment":
+          if (it.value)
+            seq2.items.push({ start: [this.sourceToken] });
+          else {
+            if (this.atIndentedComment(it.start, seq2.indent)) {
+              const prev = seq2.items[seq2.items.length - 2];
+              const end = prev?.value?.end;
+              if (Array.isArray(end)) {
+                Array.prototype.push.apply(end, it.start);
+                end.push(this.sourceToken);
+                seq2.items.pop();
+                return;
+              }
+            }
+            it.start.push(this.sourceToken);
+          }
+          return;
+        case "anchor":
+        case "tag":
+          if (it.value || this.indent <= seq2.indent)
+            break;
+          it.start.push(this.sourceToken);
+          return;
+        case "seq-item-ind":
+          if (this.indent !== seq2.indent)
+            break;
+          if (it.value || includesToken(it.start, "seq-item-ind"))
+            seq2.items.push({ start: [this.sourceToken] });
+          else
+            it.start.push(this.sourceToken);
+          return;
+      }
+      if (this.indent > seq2.indent) {
+        const bv = this.startBlockValue(seq2);
+        if (bv) {
+          this.stack.push(bv);
+          return;
+        }
+      }
+      yield* this.pop();
+      yield* this.step();
+    }
+    *flowCollection(fc) {
+      const it = fc.items[fc.items.length - 1];
+      if (this.type === "flow-error-end") {
+        let top;
+        do {
+          yield* this.pop();
+          top = this.peek(1);
+        } while (top?.type === "flow-collection");
+      } else if (fc.end.length === 0) {
+        switch (this.type) {
+          case "comma":
+          case "explicit-key-ind":
+            if (!it || it.sep)
+              fc.items.push({ start: [this.sourceToken] });
+            else
+              it.start.push(this.sourceToken);
+            return;
+          case "map-value-ind":
+            if (!it || it.value)
+              fc.items.push({ start: [], key: null, sep: [this.sourceToken] });
+            else if (it.sep)
+              it.sep.push(this.sourceToken);
+            else
+              Object.assign(it, { key: null, sep: [this.sourceToken] });
+            return;
+          case "space":
+          case "comment":
+          case "newline":
+          case "anchor":
+          case "tag":
+            if (!it || it.value)
+              fc.items.push({ start: [this.sourceToken] });
+            else if (it.sep)
+              it.sep.push(this.sourceToken);
+            else
+              it.start.push(this.sourceToken);
+            return;
+          case "alias":
+          case "scalar":
+          case "single-quoted-scalar":
+          case "double-quoted-scalar": {
+            const fs = this.flowScalar(this.type);
+            if (!it || it.value)
+              fc.items.push({ start: [], key: fs, sep: [] });
+            else if (it.sep)
+              this.stack.push(fs);
+            else
+              Object.assign(it, { key: fs, sep: [] });
+            return;
+          }
+          case "flow-map-end":
+          case "flow-seq-end":
+            fc.end.push(this.sourceToken);
+            return;
+        }
+        const bv = this.startBlockValue(fc);
+        if (bv)
+          this.stack.push(bv);
+        else {
+          yield* this.pop();
+          yield* this.step();
+        }
+      } else {
+        const parent = this.peek(2);
+        if (parent.type === "block-map" && (this.type === "map-value-ind" && parent.indent === fc.indent || this.type === "newline" && !parent.items[parent.items.length - 1].sep)) {
+          yield* this.pop();
+          yield* this.step();
+        } else if (this.type === "map-value-ind" && parent.type !== "flow-collection") {
+          const prev = getPrevProps(parent);
+          const start = getFirstKeyStartProps(prev);
+          fixFlowSeqItems(fc);
+          const sep = fc.end.splice(1, fc.end.length);
+          sep.push(this.sourceToken);
+          const map2 = {
+            type: "block-map",
+            offset: fc.offset,
+            indent: fc.indent,
+            items: [{ start, key: fc, sep }]
+          };
+          this.onKeyLine = true;
+          this.stack[this.stack.length - 1] = map2;
+        } else {
+          yield* this.lineEnd(fc);
+        }
+      }
+    }
+    flowScalar(type) {
+      if (this.onNewLine) {
+        let nl = this.source.indexOf("\n") + 1;
+        while (nl !== 0) {
+          this.onNewLine(this.offset + nl);
+          nl = this.source.indexOf("\n", nl) + 1;
+        }
+      }
+      return {
+        type,
+        offset: this.offset,
+        indent: this.indent,
+        source: this.source
+      };
+    }
+    startBlockValue(parent) {
+      switch (this.type) {
+        case "alias":
+        case "scalar":
+        case "single-quoted-scalar":
+        case "double-quoted-scalar":
+          return this.flowScalar(this.type);
+        case "block-scalar-header":
+          return {
+            type: "block-scalar",
+            offset: this.offset,
+            indent: this.indent,
+            props: [this.sourceToken],
+            source: ""
+          };
+        case "flow-map-start":
+        case "flow-seq-start":
+          return {
+            type: "flow-collection",
+            offset: this.offset,
+            indent: this.indent,
+            start: this.sourceToken,
+            items: [],
+            end: []
+          };
+        case "seq-item-ind":
+          return {
+            type: "block-seq",
+            offset: this.offset,
+            indent: this.indent,
+            items: [{ start: [this.sourceToken] }]
+          };
+        case "explicit-key-ind": {
+          this.onKeyLine = true;
+          const prev = getPrevProps(parent);
+          const start = getFirstKeyStartProps(prev);
+          start.push(this.sourceToken);
+          return {
+            type: "block-map",
+            offset: this.offset,
+            indent: this.indent,
+            items: [{ start, explicitKey: true }]
+          };
+        }
+        case "map-value-ind": {
+          this.onKeyLine = true;
+          const prev = getPrevProps(parent);
+          const start = getFirstKeyStartProps(prev);
+          return {
+            type: "block-map",
+            offset: this.offset,
+            indent: this.indent,
+            items: [{ start, key: null, sep: [this.sourceToken] }]
+          };
+        }
+      }
+      return null;
+    }
+    atIndentedComment(start, indent) {
+      if (this.type !== "comment")
+        return false;
+      if (this.indent <= indent)
+        return false;
+      return start.every((st) => st.type === "newline" || st.type === "space");
+    }
+    *documentEnd(docEnd) {
+      if (this.type !== "doc-mode") {
+        if (docEnd.end)
+          docEnd.end.push(this.sourceToken);
+        else
+          docEnd.end = [this.sourceToken];
+        if (this.type === "newline")
+          yield* this.pop();
+      }
+    }
+    *lineEnd(token) {
+      switch (this.type) {
+        case "comma":
+        case "doc-start":
+        case "doc-end":
+        case "flow-seq-end":
+        case "flow-map-end":
+        case "map-value-ind":
+          yield* this.pop();
+          yield* this.step();
+          break;
+        case "newline":
+          this.onKeyLine = false;
+        // fallthrough
+        case "space":
+        case "comment":
+        default:
+          if (token.end)
+            token.end.push(this.sourceToken);
+          else
+            token.end = [this.sourceToken];
+          if (this.type === "newline")
+            yield* this.pop();
+      }
+    }
+  };
+
+  // node_modules/.pnpm/yaml@2.8.3/node_modules/yaml/browser/dist/public-api.js
+  function parseOptions(options) {
+    const prettyErrors = options.prettyErrors !== false;
+    const lineCounter = options.lineCounter || prettyErrors && new LineCounter() || null;
+    return { lineCounter, prettyErrors };
+  }
+  function parseDocument(source, options = {}) {
+    const { lineCounter, prettyErrors } = parseOptions(options);
+    const parser = new Parser(lineCounter?.addNewLine);
+    const composer = new Composer(options);
+    let doc = null;
+    for (const _doc of composer.compose(parser.parse(source), true, source.length)) {
+      if (!doc)
+        doc = _doc;
+      else if (doc.options.logLevel !== "silent") {
+        doc.errors.push(new YAMLParseError(_doc.range.slice(0, 2), "MULTIPLE_DOCS", "Source contains multiple documents; please use YAML.parseAllDocuments()"));
+        break;
+      }
+    }
+    if (prettyErrors && lineCounter) {
+      doc.errors.forEach(prettifyError(source, lineCounter));
+      doc.warnings.forEach(prettifyError(source, lineCounter));
+    }
+    return doc;
+  }
+  function parse(src, reviver, options) {
+    let _reviver = void 0;
+    if (typeof reviver === "function") {
+      _reviver = reviver;
+    } else if (options === void 0 && reviver && typeof reviver === "object") {
+      options = reviver;
+    }
+    const doc = parseDocument(src, options);
+    if (!doc)
+      return null;
+    doc.warnings.forEach((warning) => warn(doc.options.logLevel, warning));
+    if (doc.errors.length > 0) {
+      if (doc.options.logLevel !== "silent")
+        throw doc.errors[0];
+      else
+        doc.errors = [];
+    }
+    return doc.toJS(Object.assign({ reviver: _reviver }, options));
+  }
+
+  // src/panel/action-dialogs.ts
+  var activeDialogs = /* @__PURE__ */ new Set();
+  function closeAllDialogs(doc) {
+    for (const entry of [...activeDialogs]) {
+      if (!doc || entry.doc === doc) entry.close();
+    }
+  }
+  function createModal(doc, title, danger = false) {
+    const backdrop = doc.createElement("div");
+    backdrop.className = "argocd-dialog-backdrop";
+    backdrop.setAttribute("role", "dialog");
+    backdrop.setAttribute("aria-modal", "true");
+    backdrop.setAttribute("aria-label", t(title));
+    const box = doc.createElement("div");
+    box.className = `argocd-dialog${danger ? " argocd-dialog-danger" : ""}`;
+    const heading = doc.createElement("h3");
+    heading.textContent = t(title);
+    const body = doc.createElement("div");
+    body.className = "argocd-dialog-body";
+    const footer = doc.createElement("div");
+    footer.className = "argocd-dialog-footer";
+    box.append(heading, body, footer);
+    backdrop.append(box);
+    doc.body.append(backdrop);
+    return { backdrop, box, body, footer };
+  }
+  function bindModalDismiss(doc, backdrop, resolve, signal) {
+    let settled = false;
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      activeDialogs.delete(entry);
+      doc.removeEventListener("keydown", onKey);
+      signal?.removeEventListener("abort", onAbort);
+      backdrop.remove();
+      resolve(result);
+    };
+    const onKey = (event) => {
+      if (event.key === "Escape") finish(null);
+    };
+    const onAbort = () => finish(null);
+    const entry = { doc, close: () => finish(null) };
+    activeDialogs.add(entry);
+    doc.addEventListener("keydown", onKey);
+    signal?.addEventListener("abort", onAbort, { once: true });
+    return finish;
+  }
+  function makeButton(doc, label, className, onClick) {
+    const button2 = doc.createElement("button");
+    button2.type = "button";
+    button2.className = className;
+    button2.textContent = t(label);
+    button2.addEventListener("click", onClick);
+    return button2;
+  }
+  function openConfirmDialog(doc, options) {
+    if (options.signal?.aborted) return Promise.resolve(null);
+    return new Promise((resolve) => {
+      const { backdrop, body, footer } = createModal(doc, options.title, options.danger);
+      const desc = doc.createElement("p");
+      desc.textContent = t(options.description);
+      body.append(desc);
+      if (options.targetLabel) {
+        const target = doc.createElement("code");
+        target.className = "argocd-dialog-target";
+        target.textContent = options.targetLabel;
+        body.append(target);
+      }
+      const flags = {};
+      const selectNodes = /* @__PURE__ */ new Map();
+      const syncDependentSelects = () => {
+        for (const { el: el2, dep } of selectNodes.values()) {
+          if (dep) el2.disabled = !flags[dep];
+        }
+      };
+      for (const item of options.checkboxes ?? []) {
+        flags[item.id] = Boolean(item.checked);
+        const row = doc.createElement("label");
+        row.className = "argocd-dialog-check";
+        const input = doc.createElement("input");
+        input.type = "checkbox";
+        input.checked = Boolean(item.checked);
+        input.addEventListener("change", () => {
+          flags[item.id] = input.checked;
+          syncDependentSelects();
+        });
+        const text2 = doc.createElement("span");
+        text2.textContent = t(item.label);
+        row.append(input, text2);
+        body.append(row);
+      }
+      const selects = {};
+      for (const item of options.selects ?? []) {
+        selects[item.id] = item.value;
+        const row = doc.createElement("label");
+        row.className = "argocd-dialog-field";
+        const label = doc.createElement("span");
+        label.textContent = t(item.label);
+        const select2 = doc.createElement("select");
+        for (const opt of item.options) {
+          const option = doc.createElement("option");
+          option.value = opt.value;
+          option.textContent = t(opt.label);
+          if (opt.value === item.value) option.selected = true;
+          select2.append(option);
+        }
+        select2.addEventListener("change", () => {
+          selects[item.id] = select2.value;
+        });
+        selectNodes.set(item.id, { el: select2, ...item.disabledWhenUnchecked ? { dep: item.disabledWhenUnchecked } : {} });
+        row.append(label, select2);
+        body.append(row);
+      }
+      syncDependentSelects();
+      let confirmBtn;
+      if (options.requireInput) {
+        const row = doc.createElement("label");
+        row.className = "argocd-dialog-field";
+        const prompt = doc.createElement("span");
+        prompt.textContent = t`Type ${options.requireInput} to confirm`;
+        const input = doc.createElement("input");
+        input.type = "text";
+        input.autocomplete = "off";
+        input.placeholder = options.requireInput;
+        input.addEventListener("input", () => {
+          confirmBtn.disabled = input.value.trim() !== options.requireInput;
+        });
+        row.append(prompt, input);
+        body.append(row);
+      }
+      const finish = bindModalDismiss(doc, backdrop, resolve, options.signal);
+      const cancelBtn = makeButton(doc, "Cancel", "argocd-btn", () => finish(null));
+      confirmBtn = makeButton(doc, options.confirmLabel ?? "Confirm", options.danger ? "argocd-btn argocd-btn-danger" : "argocd-btn argocd-btn-primary", () => finish({ confirmed: true, flags, selects }));
+      if (options.requireInput) confirmBtn.disabled = true;
+      footer.append(cancelBtn, confirmBtn);
+    });
+  }
+  function openSyncDialog(doc, target, resources, options = {}) {
+    if (options.signal?.aborted) return Promise.resolve(null);
+    return new Promise((resolve) => {
+      const { backdrop, body, footer } = createModal(doc, "Sync application");
+      const targetEl = doc.createElement("code");
+      targetEl.className = "argocd-dialog-target";
+      targetEl.textContent = resources?.length ? `${target} (${resources.map((r) => `${r.kind}/${r.name}`).join(", ")})` : target;
+      body.append(targetEl);
+      const state = { prune: false, dryRun: false, force: false, replace: false, serverSideApply: false, applyOutOfSyncOnly: false, ...resources?.length ? { resources } : {} };
+      let revInput;
+      const sourceInputs = [];
+      if (options.multipleSources && (options.sourceCount ?? 0) > 0) {
+        const count2 = Math.min(options.sourceCount, 20);
+        for (let i = 1; i <= count2; i++) {
+          const row = doc.createElement("label");
+          row.className = "argocd-dialog-field";
+          const label = doc.createElement("span");
+          label.textContent = `${t("Target revision (optional)")} #${i}`;
+          const input = doc.createElement("input");
+          input.type = "text";
+          input.placeholder = "HEAD";
+          sourceInputs.push({ position: i, input });
+          row.append(label, input);
+          body.append(row);
+        }
+      } else if (!options.multipleSources) {
+        const revRow = doc.createElement("label");
+        revRow.className = "argocd-dialog-field";
+        const revLabel = doc.createElement("span");
+        revLabel.textContent = t("Target revision (optional)");
+        revInput = doc.createElement("input");
+        revInput.type = "text";
+        revInput.placeholder = "HEAD";
+        revRow.append(revLabel, revInput);
+        body.append(revRow);
+      }
+      const retryRow = doc.createElement("label");
+      retryRow.className = "argocd-dialog-field";
+      const retryLabel = doc.createElement("span");
+      retryLabel.textContent = t("Retry limit (optional)");
+      const retryInput = doc.createElement("input");
+      retryInput.type = "number";
+      retryInput.min = "0";
+      retryInput.max = "100";
+      retryInput.placeholder = "0";
+      retryRow.append(retryLabel, retryInput);
+      body.append(retryRow);
+      for (const [key, label] of [
+        ["prune", "Prune"],
+        ["dryRun", "Dry run"],
+        ["force", "Force"],
+        ["replace", "Replace"],
+        ["serverSideApply", "Server-Side Apply"],
+        ["applyOutOfSyncOnly", "Apply Out-Of-Sync Only"]
+      ]) {
+        const row = doc.createElement("label");
+        row.className = "argocd-dialog-check";
+        const input = doc.createElement("input");
+        input.type = "checkbox";
+        input.addEventListener("change", () => {
+          state[key] = input.checked;
+        });
+        const span = doc.createElement("span");
+        span.textContent = t(label);
+        row.append(input, span);
+        body.append(row);
+      }
+      const errorEl = doc.createElement("p");
+      errorEl.className = "argocd-dialog-error";
+      errorEl.hidden = true;
+      body.append(errorEl);
+      const finish = bindModalDismiss(doc, backdrop, resolve, options.signal);
+      footer.append(
+        makeButton(doc, "Cancel", "argocd-btn", () => finish(null)),
+        makeButton(doc, "Sync", "argocd-btn argocd-btn-primary", () => {
+          const retryRaw = retryInput.value.trim();
+          let retryLimit;
+          if (retryRaw !== "") {
+            const parsedRetry = Number(retryRaw);
+            if (!/^\d+$/.test(retryRaw) || !Number.isSafeInteger(parsedRetry) || parsedRetry < 0 || parsedRetry > 100) {
+              errorEl.textContent = t("Invalid retry limit (0\u2013100).");
+              errorEl.hidden = false;
+              return;
+            }
+            retryLimit = parsedRetry;
+          }
+          const rev = revInput?.value.trim() ?? "";
+          const selectedSources = sourceInputs.map(({ position, input }) => ({ position, revision: input.value.trim() })).filter((entry) => entry.revision !== "");
+          finish({
+            ...state,
+            ...rev ? { revision: rev } : {},
+            ...selectedSources.length ? {
+              sourcePositions: selectedSources.map((s) => s.position),
+              revisions: selectedSources.map((s) => s.revision)
+            } : {},
+            ...retryLimit !== void 0 ? { retryLimit } : {}
+          });
+        })
+      );
+    });
+  }
+  function openRollbackDialog(doc, target, history, initialId, signal) {
+    if (signal?.aborted) return Promise.resolve(null);
+    return new Promise((resolve) => {
+      const entries = [...history].reverse();
+      const { backdrop, body, footer } = createModal(doc, "Rollback application", true);
+      const targetEl = doc.createElement("code");
+      targetEl.className = "argocd-dialog-target";
+      targetEl.textContent = target;
+      body.append(targetEl);
+      const row = doc.createElement("label");
+      row.className = "argocd-dialog-field";
+      const label = doc.createElement("span");
+      label.textContent = t("Revision history");
+      const select2 = doc.createElement("select");
+      for (const item of entries) {
+        const opt = doc.createElement("option");
+        opt.value = String(item.id);
+        opt.textContent = `#${item.id} \xB7 ${item.deployedAt || t("Time unknown")} \xB7 ${item.revisions.join(", ")}`;
+        if (initialId !== void 0 && Number(item.id) === initialId) opt.selected = true;
+        select2.append(opt);
+      }
+      row.append(label, select2);
+      body.append(row);
+      let prune = false;
+      let dryRun = false;
+      for (const [id2, text2] of [["prune", "Prune"], ["dryRun", "Dry run"]]) {
+        const checkRow = doc.createElement("label");
+        checkRow.className = "argocd-dialog-check";
+        const input = doc.createElement("input");
+        input.type = "checkbox";
+        input.addEventListener("change", () => {
+          if (id2 === "prune") prune = input.checked;
+          else dryRun = input.checked;
+        });
+        const span = doc.createElement("span");
+        span.textContent = t(text2);
+        checkRow.append(input, span);
+        body.append(checkRow);
+      }
+      const finish = bindModalDismiss(doc, backdrop, resolve, signal);
+      footer.append(
+        makeButton(doc, "Cancel", "argocd-btn", () => finish(null)),
+        makeButton(doc, "Rollback", "argocd-btn argocd-btn-danger", () => finish({ id: Number(select2.value), prune, dryRun }))
+      );
+    });
+  }
+  function openResourceActionDialog(doc, target, action, signal) {
+    if (signal?.aborted) return Promise.resolve(null);
+    return new Promise((resolve) => {
+      const { backdrop, body, footer } = createModal(doc, "Run resource action");
+      const targetEl = doc.createElement("code");
+      targetEl.className = "argocd-dialog-target";
+      targetEl.textContent = `${target} \xB7 ${action.displayName || action.name}`;
+      body.append(targetEl);
+      const inputs = /* @__PURE__ */ new Map();
+      for (const param of action.params) {
+        const row = doc.createElement("label");
+        row.className = "argocd-dialog-field";
+        const label = doc.createElement("span");
+        label.textContent = param.name;
+        const input = doc.createElement("input");
+        input.type = "text";
+        input.value = param.default ?? "";
+        inputs.set(param.name, input);
+        row.append(label, input);
+        body.append(row);
+      }
+      const finish = bindModalDismiss(doc, backdrop, resolve, signal);
+      footer.append(
+        makeButton(doc, "Cancel", "argocd-btn", () => finish(null)),
+        makeButton(doc, "Run action", "argocd-btn argocd-btn-primary", () => finish([...inputs.entries()].map(([name, input]) => ({ name, value: input.value }))))
+      );
+    });
+  }
+  function openEditorDialog(doc, options) {
+    if (options.signal?.aborted) return Promise.resolve(null);
+    return new Promise((resolve) => {
+      const { backdrop, body, footer } = createModal(doc, options.title);
+      if (options.targetLabel) {
+        const targetEl = doc.createElement("code");
+        targetEl.className = "argocd-dialog-target";
+        targetEl.textContent = options.targetLabel;
+        body.append(targetEl);
+      }
+      const allowedPatchTypes = options.patchTypes?.length ? options.patchTypes : ["merge", "strategic", "json"];
+      let patchType = allowedPatchTypes[0];
+      let upsert = false;
+      if (options.mode === "patch") {
+        const row = doc.createElement("label");
+        row.className = "argocd-dialog-field";
+        const label = doc.createElement("span");
+        label.textContent = t("Patch type");
+        const select2 = doc.createElement("select");
+        for (const value of allowedPatchTypes) {
+          const opt = doc.createElement("option");
+          opt.value = value;
+          opt.textContent = value;
+          select2.append(opt);
+        }
+        select2.addEventListener("change", () => {
+          patchType = select2.value;
+        });
+        row.append(label, select2);
+        body.append(row);
+      } else if (options.allowUpsert !== false) {
+        const row = doc.createElement("label");
+        row.className = "argocd-dialog-check";
+        const input = doc.createElement("input");
+        input.type = "checkbox";
+        input.addEventListener("change", () => {
+          upsert = input.checked;
+        });
+        const span = doc.createElement("span");
+        span.textContent = t("Upsert if already exists");
+        row.append(input, span);
+        body.append(row);
+      }
+      const textarea = doc.createElement("textarea");
+      textarea.className = "argocd-dialog-editor";
+      textarea.rows = 14;
+      textarea.value = options.initialText;
+      const errorEl = doc.createElement("p");
+      errorEl.className = "argocd-dialog-error";
+      errorEl.hidden = true;
+      body.append(textarea, errorEl);
+      const finish = bindModalDismiss(doc, backdrop, resolve, options.signal);
+      footer.append(
+        makeButton(doc, "Cancel", "argocd-btn", () => finish(null)),
+        makeButton(doc, options.confirmLabel ?? "Submit", "argocd-btn argocd-btn-primary", () => {
+          try {
+            const parsed = parse(textarea.value, { maxAliasCount: 32 });
+            if (options.mode === "patch") {
+              if (patchType === "json" ? !Array.isArray(parsed) : !parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+                throw new Error("Invalid patch structure");
+              }
+              finish({ patch: JSON.stringify(parsed), patchType });
+            } else {
+              if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Expected YAML/JSON object");
+              finish({ object: parsed, ...options.allowUpsert !== false ? { upsert } : {} });
+            }
+          } catch {
+            errorEl.textContent = t("Invalid JSON or YAML content.");
+            errorEl.hidden = false;
+          }
+        })
+      );
+    });
+  }
+  var PROPAGATION_POLICY_OPTIONS = [
+    { value: "foreground", label: "Foreground" },
+    { value: "background", label: "Background" }
+  ];
+
   // src/panel/resources.ts
   function element2(root2, tag, text2 = "") {
     const node = root2.ownerDocument.createElement(tag);
@@ -9588,8 +17982,16 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
     let visible = false;
     let generation = 0;
     let selectionVersion = 0;
+    let selectedNodeVersion = 0;
     let section = "tree";
     let detailTab = "overview";
+    let trackedEpoch = "";
+    let dialogController = new AbortController();
+    const resetDialogs = () => {
+      dialogController.abort();
+      dialogController = new AbortController();
+    };
+    const resolveEpoch = () => options.getEpoch?.() || trackedEpoch;
     let pendingState = options.initialState ? structuredClone(options.initialState) : void 0;
     if (pendingState) section = pendingState.section;
     let tree;
@@ -9673,6 +18075,8 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
       split2.setHeader();
       columns.dataset.selected = "false";
       selectionVersion++;
+      selectedNodeVersion++;
+      resetDialogs();
       cancelSelected();
       selected = void 0;
       live = void 0;
@@ -9707,6 +18111,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
         const response2 = await queryTask(request, { operation: "resourceTree", context, ...app }, controller.signal);
         if (!usable() || version !== generation || controller.signal.aborted) return;
         treeStatus.replaceChildren();
+        if (response2.identityEpoch) trackedEpoch = response2.identityEpoch;
         if (!response2.ok) {
           if (["AUTH_REQUIRED", "FORBIDDEN", "CONTEXT_NOT_FOUND", "RESOURCE_CHANGED"].includes(response2.error.code)) {
             clearSelection();
@@ -9863,6 +18268,145 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
         else void activateDetail(true);
       } });
       detailDisposers.push(() => reload.dispose());
+      if (!options.readOnlySurface) {
+        const actionBar = document2.createElement("div");
+        actionBar.className = "argocd-action-bar";
+        actionBar.setAttribute("role", "toolbar");
+        actionBar.setAttribute("aria-label", t("Resource actions"));
+        const actionStatus = document2.createElement("p");
+        actionStatus.className = "argocd-action-status";
+        actionStatus.setAttribute("role", "status");
+        actionStatus.hidden = true;
+        selection2.insertBefore(actionBar, detailNav);
+        selection2.insertBefore(actionStatus, detailNav);
+        const ref = reference(node);
+        const localNode = selectedNodeVersion;
+        const stillSelected = () => !disposed && localNode === selectedNodeVersion;
+        const requireEpoch = () => {
+          if (!stillSelected()) return null;
+          const epoch = resolveEpoch();
+          if (!epoch) {
+            actionStatus.hidden = false;
+            actionStatus.textContent = t("Session identity unavailable. Reload applications first.");
+            return null;
+          }
+          return epoch;
+        };
+        const runResourceMutation = async (path2, expectedEpoch, body, pendingText, doneText, reloadTree = true) => {
+          if (!stillSelected()) return;
+          if (resolveEpoch() !== expectedEpoch) {
+            actionStatus.hidden = false;
+            actionStatus.textContent = t("Session identity unavailable. Reload applications first.");
+            return;
+          }
+          actionStatus.hidden = false;
+          actionStatus.textContent = t(pendingText);
+          try {
+            const res = await request(path2, void 0, { method: "POST", body: { context, identityEpoch: expectedEpoch, ...app, ...body } });
+            if (!stillSelected()) return;
+            if (res.identityEpoch) trackedEpoch = res.identityEpoch;
+            if (!res.ok) {
+              actionStatus.textContent = `${res.error.code}: ${res.error.message}`;
+              return;
+            }
+            actionStatus.textContent = t(doneText);
+            if (reloadTree) void loadTree();
+            else void activateDetail(true);
+          } catch {
+            if (stillSelected()) actionStatus.textContent = t("Action failed.");
+          }
+        };
+        const syncResBtn = mountButton2(actionBar, { label: "Sync", variant: "secondary", onClick: () => {
+          const epoch = requireEpoch();
+          if (!epoch) return;
+          resetDialogs();
+          void openSyncDialog(document2, `${app.appNamespace}/${app.name}`, [{ group: node.group, kind: node.kind, name: node.name, ...node.namespace ? { namespace: node.namespace } : {} }], { signal: dialogController.signal }).then((opts) => {
+            if (!opts || !stillSelected()) return;
+            void runResourceMutation("/v1/actions/sync", epoch, opts, "Syncing resource\u2026", "Resource sync requested.");
+          });
+        } });
+        const patchResBtn = mountButton2(actionBar, { label: "Patch", variant: "ghost", onClick: () => {
+          const epoch = requireEpoch();
+          if (!epoch) return;
+          resetDialogs();
+          void openEditorDialog(document2, { title: "Patch resource", targetLabel: `${node.kind} ${node.namespace || "(cluster)"}/${node.name}`, initialText: '{\n  "metadata": {\n    "annotations": {}\n  }\n}', mode: "patch", confirmLabel: "Apply patch", signal: dialogController.signal }).then((edited) => {
+            if (!edited?.patch || !edited.patchType || !stillSelected()) return;
+            void runResourceMutation("/v1/actions/resource-patch", epoch, { resource: ref, patch: edited.patch, patchType: edited.patchType }, "Patching resource\u2026", "Resource patched.", false);
+          });
+        } });
+        const deleteResBtn = mountButton2(actionBar, { label: "Delete", variant: "ghost", onClick: () => {
+          const epoch = requireEpoch();
+          if (!epoch) return;
+          resetDialogs();
+          void openConfirmDialog(document2, {
+            title: "Delete resource",
+            description: "Delete this Kubernetes resource from the cluster?",
+            targetLabel: `${node.kind} ${node.namespace || "(cluster)"}/${node.name}`,
+            confirmLabel: "Delete",
+            danger: true,
+            checkboxes: [{ id: "force", label: "Force delete", checked: false }, { id: "orphan", label: "Orphan dependents", checked: false }],
+            signal: dialogController.signal
+          }).then((ok) => {
+            if (!ok || !stillSelected()) return;
+            void runResourceMutation("/v1/actions/resource-delete", epoch, { resource: ref, force: Boolean(ok.flags.force), orphan: Boolean(ok.flags.orphan) }, "Deleting resource\u2026", "Resource deleted.");
+          });
+        } });
+        const loadActionsBtn = mountButton2(actionBar, { label: "Resource actions", variant: "secondary", onClick: () => {
+          loadActionsBtn.update({ loading: true });
+          void request("/v1/resource-actions", {
+            context,
+            name: app.name,
+            appNamespace: app.appNamespace,
+            group: node.group,
+            version: node.version,
+            kind: node.kind,
+            namespace: node.namespace,
+            resourceName: node.name,
+            uid: node.uid
+          }).then((res) => {
+            if (!stillSelected()) return;
+            loadActionsBtn.update({ loading: false });
+            if (res.identityEpoch) trackedEpoch = res.identityEpoch;
+            if (!res.ok) {
+              actionStatus.hidden = false;
+              actionStatus.textContent = `${res.error.code}: ${res.error.message}`;
+              return;
+            }
+            loadActionsBtn.dispose();
+            if (!res.data.actions.length) {
+              actionStatus.hidden = false;
+              actionStatus.textContent = t("No resource actions available.");
+              return;
+            }
+            for (const item of res.data.actions) {
+              const btn = mountButton2(actionBar, { label: item.displayName || item.name, variant: "secondary", disabled: item.disabled, onClick: () => {
+                const epoch = requireEpoch();
+                if (!epoch) return;
+                resetDialogs();
+                if (item.params.length) {
+                  void openResourceActionDialog(document2, `${node.kind}/${node.name}`, item, dialogController.signal).then((parameters) => {
+                    if (!parameters || !stillSelected()) return;
+                    void runResourceMutation("/v1/actions/resource-action", epoch, { resource: ref, action: item.name, parameters }, "Running resource action\u2026", "Resource action completed.");
+                  });
+                } else {
+                  void openConfirmDialog(document2, { title: "Run resource action", description: "Execute this Argo CD resource action?", targetLabel: `${node.kind}/${node.name} \xB7 ${item.displayName || item.name}`, confirmLabel: "Run action", signal: dialogController.signal }).then((ok) => {
+                    if (!ok || !stillSelected()) return;
+                    void runResourceMutation("/v1/actions/resource-action", epoch, { resource: ref, action: item.name }, "Running resource action\u2026", "Resource action completed.");
+                  });
+                }
+              } });
+              detailDisposers.push(() => btn.dispose());
+            }
+          }).catch(() => {
+            if (stillSelected()) {
+              loadActionsBtn.update({ loading: false });
+              actionStatus.hidden = false;
+              actionStatus.textContent = t("Action failed.");
+            }
+          });
+        } });
+        detailDisposers.push(() => syncResBtn.dispose(), () => patchResBtn.dispose(), () => deleteResBtn.dispose(), () => loadActionsBtn.dispose());
+      }
       if (node.kind === "Deployment" && node.group === "apps") {
         const toggle = mountSwitch2(metadata, { label: "Include related resource events", checked: true, onChange: (value) => {
           includeRelated = value;
@@ -10040,6 +18584,7 @@ ${node.parents.length} ${t("Related parents")}${node.unresolvedParents ? ` \xB7 
         treeController?.abort();
         extraController?.abort();
         clearSelection();
+        dialogController.abort();
         disposed = true;
         clearInterval(ticker);
         navigation.dispose();
@@ -10397,10 +18942,47 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       root2.replaceChildren();
     } };
   }
+  function editableProjectPayload(item) {
+    return {
+      metadata: {
+        name: item.name,
+        ...item.namespace ? { namespace: item.namespace } : {}
+      },
+      spec: {
+        description: item.description,
+        sourceRepos: item.sourceRepos,
+        ...item.sourceNamespaces.length ? { sourceNamespaces: item.sourceNamespaces } : {},
+        destinations: item.destinations.map((d) => ({
+          ...d.name ? { name: d.name } : {},
+          ...d.server ? { server: d.server } : {},
+          ...d.namespace ? { namespace: d.namespace } : {}
+        })),
+        ...item.rules.clusterAllow.length ? { clusterResourceWhitelist: item.rules.clusterAllow } : {},
+        ...item.rules.clusterDeny.length ? { clusterResourceBlacklist: item.rules.clusterDeny } : {},
+        ...item.rules.namespaceAllow.length ? { namespaceResourceWhitelist: item.rules.namespaceAllow } : {},
+        ...item.rules.namespaceDeny.length ? { namespaceResourceBlacklist: item.rules.namespaceDeny } : {},
+        ...item.roles.length ? { roles: item.roles } : {},
+        ...item.syncWindows.length ? {
+          syncWindows: item.syncWindows.map((w) => ({
+            kind: w.kind,
+            schedule: w.schedule,
+            duration: w.duration,
+            ...w.timeZone ? { timeZone: w.timeZone } : {},
+            ...w.applications.length ? { applications: w.applications } : {},
+            ...w.namespaces.length ? { namespaces: w.namespaces } : {},
+            ...w.clusters.length ? { clusters: w.clusters } : {},
+            ...w.manualSync !== null ? { manualSync: w.manualSync } : {},
+            ...w.andOperator !== null ? { andOperator: w.andOperator } : {}
+          }))
+        } : {}
+      }
+    };
+  }
   function mountManagement(root2, request, options = {}) {
     const document2 = root2.ownerDocument;
     let context = "";
     let enabled = false;
+    let connectionGeneration = 0;
     let generation = 0;
     let selectionGeneration = 0;
     let disposed = false;
@@ -10409,6 +18991,17 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     let domain = "applicationSets";
     let namespace = "";
     let rows = [];
+    let currentEpoch = "";
+    let createDialogController = new AbortController();
+    let detailDialogController = new AbortController();
+    const resetCreateDialogs = () => {
+      createDialogController.abort();
+      createDialogController = new AbortController();
+    };
+    const resetDetailDialogs = () => {
+      detailDialogController.abort();
+      detailDialogController = new AbortController();
+    };
     const controllers = /* @__PURE__ */ new Set();
     const selectedControllers = /* @__PURE__ */ new Set();
     const detailDisposers = [];
@@ -10416,7 +19009,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     let extraController;
     const disposers2 = [];
     const hidden = () => document2.hidden || !intersecting || !active2;
-    element4(root2, "h2", "Read-only management");
+    element4(root2, "h2", "Management");
     element4(root2, "p", "Modules load independently on demand. Denied or unsupported modules do not block applications. Generator values, template expressions, connection-error bodies and authentication settings are withheld.").className = "description";
     const controls = element4(root2, "div");
     controls.className = "filter-grid";
@@ -10425,6 +19018,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       select2.update({ value });
       reset();
       namespaceField.update({ disabled: domain !== "applicationSets" });
+      createBtn.update({ disabled: !enabled || !context || !["applicationSets", "projects"].includes(domain) });
     } });
     const namespaceField = mountTextField2(controls, { label: "ApplicationSet Namespace (blank means server default, not all Namespaces)", value: "", onChange: (value) => {
       namespace = value;
@@ -10438,12 +19032,16 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     const button2 = mountButton2(controls, { label: "Read management data", disabled: true, onClick: () => {
       void load();
     } });
+    const createBtn = mountButton2(controls, { label: "Create", disabled: true, variant: "secondary", onClick: () => {
+      void runCreate();
+    } });
     const list = mountList2(listRoot, { ariaLabel: "Management entries", items: [], emptyText: "No management data loaded", onSelect: (id2) => {
       void pick(id2);
     } });
-    disposers2.push(() => select2.dispose(), () => namespaceField.dispose(), () => button2.dispose(), () => list.dispose());
+    disposers2.push(() => createDialogController.abort(), () => detailDialogController.abort(), () => select2.dispose(), () => namespaceField.dispose(), () => button2.dispose(), () => createBtn.dispose(), () => list.dispose());
     function clearDetail() {
       selectionGeneration++;
+      resetDetailDialogs();
       for (const item of selectedControllers) {
         item.abort();
         controllers.delete(item);
@@ -10460,6 +19058,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       button2.update({ loading: false });
     }
     function reset() {
+      resetCreateDialogs();
       cancel();
       clearDetail();
       rows = [];
@@ -10467,8 +19066,8 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       status.replaceChildren();
       element4(status, "p", t`Context: ${context || t("Not selected")}; click to query, no automatic connection.`);
     }
-    function current(version, controller, selection2) {
-      return !disposed && !hidden() && !controller.signal.aborted && version === generation && (selection2 === void 0 || selection2 === selectionGeneration);
+    function current(version, controller, selection2, conn = connectionGeneration) {
+      return !disposed && !hidden() && !controller.signal.aborted && conn === connectionGeneration && version === generation && (selection2 === void 0 || selection2 === selectionGeneration);
     }
     function start(selected = false) {
       const controller = new AbortController();
@@ -10480,31 +19079,90 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       const mounted = mountButton2(parent, { label, variant: "secondary", onClick: action });
       (extra ? extraDisposers : detailDisposers).push(() => mounted.dispose());
     }
+    function captureBinding(selection2) {
+      if (disposed || !enabled || !context) return null;
+      if (!currentEpoch) {
+        status.replaceChildren();
+        element4(status, "p", "Session identity unavailable. Read management data first.");
+        return null;
+      }
+      return { conn: connectionGeneration, context, epoch: currentEpoch, ...selection2 !== void 0 ? { selection: selection2 } : {} };
+    }
+    function validBinding(expected) {
+      if (disposed || expected.conn !== connectionGeneration || context !== expected.context) return false;
+      if (expected.selection !== void 0 && expected.selection !== selectionGeneration) return false;
+      if (currentEpoch !== expected.epoch) {
+        status.replaceChildren();
+        element4(status, "p", "Session identity unavailable. Read management data first.");
+        return false;
+      }
+      return true;
+    }
+    async function execManagementAction(expected, payload, doneText, reloadAfter = true) {
+      if (!validBinding(expected)) return;
+      status.replaceChildren();
+      element4(status, "p", "Running management action\u2026");
+      try {
+        const res = await request("/v1/actions/management", void 0, { method: "POST", body: { context: expected.context, identityEpoch: expected.epoch, ...payload } });
+        if (disposed || expected.conn !== connectionGeneration || context !== expected.context) return;
+        if (res.identityEpoch) currentEpoch = res.identityEpoch;
+        status.replaceChildren();
+        if (!res.ok) {
+          element4(status, "p", `${res.error.code}: ${res.error.message}`);
+          return;
+        }
+        element4(status, "p", doneText);
+        if (reloadAfter) void load();
+      } catch {
+        if (!disposed && expected.conn === connectionGeneration && context === expected.context) {
+          status.replaceChildren();
+          element4(status, "p", "Action failed.");
+        }
+      }
+    }
+    async function runCreate() {
+      if (!enabled || !context || !["applicationSets", "projects"].includes(domain)) return;
+      const binding = captureBinding();
+      if (!binding) return;
+      resetCreateDialogs();
+      const isAppSet = domain === "applicationSets";
+      const template = isAppSet ? JSON.stringify({ metadata: { name: "my-appset", namespace: namespace || "argocd" }, spec: { generators: [], template: {} } }, null, 2) : JSON.stringify({ metadata: { name: "my-project" }, spec: { description: "", sourceRepos: ["*"], destinations: [{ server: "*", namespace: "*" }] } }, null, 2);
+      const edited = await openEditorDialog(document2, { title: isAppSet ? "Create ApplicationSet" : "Create Project", initialText: template, mode: "object", confirmLabel: "Create", signal: createDialogController.signal });
+      if (!edited?.object || !validBinding(binding)) return;
+      await execManagementAction(
+        binding,
+        isAppSet ? { operation: "createApplicationSet", applicationSet: edited.object, upsert: Boolean(edited.upsert) } : { operation: "createProject", project: edited.object, upsert: Boolean(edited.upsert) },
+        isAppSet ? "ApplicationSet created." : "Project created."
+      );
+    }
     async function load() {
       if (!enabled || !context || hidden() || disposed) return;
       reset();
+      const conn = connectionGeneration;
+      const capturedContext = context;
       const version = generation;
       const controller = start();
       button2.update({ loading: true });
       status.replaceChildren();
       element4(status, "p", "Reading management data\u2026");
-      const command = domain === "applicationSets" ? { operation: domain, context, ...namespace ? { appsetNamespace: namespace } : {} } : { operation: domain, context };
+      const command = domain === "applicationSets" ? { operation: domain, context: capturedContext, ...namespace ? { appsetNamespace: namespace } : {} } : { operation: domain, context: capturedContext };
       try {
         const result = await queryTask(request, command, controller.signal);
-        if (!current(version, controller)) return;
+        if (!current(version, controller, void 0, conn)) return;
         status.replaceChildren();
+        if (result.identityEpoch) currentEpoch = result.identityEpoch;
         if (!response(status, result)) return;
         rows = result.data.items;
         if (domain === "applicationSets") element4(status, "p", t`ApplicationSet scope: ${result.data.namespaceScope ?? t("Unknown")}; the default scope is not a global list.`);
         list.update({ emptyText: "No management entries in the visible scope; not proof of no global configuration", items: rows.map((item) => ({ id: item.id, title: "repo" in item ? item.repo : "server" in item ? item.name || item.server : "generators" in item ? `${item.namespace}/${item.name}` : item.name, meta: "connection" in item ? `${item.connection.status} \xB7 ${t(item.connection.summary)}` : "generators" in item ? `${item.generators.map((generator) => generator.type).join(", ")} \xB7 ${item.conditions.length} Conditions` : `${item.roles.length} roles \xB7 ${item.syncWindows.length} windows` })) });
       } catch {
-        if (current(version, controller)) {
+        if (current(version, controller, void 0, conn)) {
           status.replaceChildren();
           element4(status, "p", "Management read failed; this is not an empty success. Applications remain available.");
         }
       } finally {
         controllers.delete(controller);
-        if (version === generation) button2.update({ loading: false });
+        if (version === generation && conn === connectionGeneration) button2.update({ loading: false });
       }
     }
     async function pick(id2) {
@@ -10512,54 +19170,131 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       if (!row || hidden()) return;
       clearDetail();
       list.update({ selectedId: id2 });
+      const conn = connectionGeneration;
+      const capturedContext = context;
       const version = generation;
       const selection2 = selectionGeneration;
       let selected = row;
       if ("generators" in row || "roles" in row) {
         const controller = start(true);
         try {
-          const command = "generators" in row ? { operation: "applicationSet", context, name: row.name, appsetNamespace: row.namespace } : { operation: "project", context, project: row.name };
+          const command = "generators" in row ? { operation: "applicationSet", context: capturedContext, name: row.name, appsetNamespace: row.namespace } : { operation: "project", context: capturedContext, project: row.name };
           const result = await queryTask(request, command, controller.signal);
-          if (!current(version, controller, selection2) || !response(detail, result)) return;
+          if (!current(version, controller, selection2, conn)) return;
+          if (result.identityEpoch) currentEpoch = result.identityEpoch;
+          if (!response(detail, result)) return;
           selected = result.data;
         } catch {
-          if (current(version, controller, selection2)) element4(detail, "p", "Management details failed to load; the previous record will not be displayed.");
+          if (current(version, controller, selection2, conn)) element4(detail, "p", "Management details failed to load; the previous record will not be displayed.");
           return;
         } finally {
           controllers.delete(controller);
           selectedControllers.delete(controller);
         }
       }
-      if (version !== generation || selection2 !== selectionGeneration) return;
+      if (conn !== connectionGeneration || version !== generation || selection2 !== selectionGeneration) return;
       const item = selected;
       const display = "connection" in item ? { ...item, connection: { ...item.connection, summary: t(item.connection.summary) } } : "generators" in item ? { ...item, conditions: item.conditions.map((condition) => ({ ...condition, summary: t(condition.summary) })) } : item;
       element4(detail, "pre", JSON.stringify(display, null, 2));
       const actions = element4(detail, "div");
+      actions.className = "argocd-action-bar";
       const extra = element4(detail, "section");
-      if ("repo" in item) addButton(actions, "Show applications for this repository", () => options.applications?.({ repo: item.repo }));
-      else if ("server" in item) addButton(actions, "Show applications for this cluster", () => options.applications?.({ cluster: item.server || item.name }));
-      else if ("roles" in item) {
+      if ("repo" in item) {
+        addButton(actions, "Show applications for this repository", () => options.applications?.({ repo: item.repo }));
+        addButton(actions, "Validate access", () => {
+          const binding = captureBinding(selection2);
+          if (!binding) return;
+          void execManagementAction(binding, {
+            operation: "validateRepository",
+            repo: item.repo,
+            ...item.type ? { type: item.type } : {},
+            ...item.project ? { project: item.project } : {}
+          }, "Repository access validated.", false);
+        });
+        addButton(actions, "Delete", () => {
+          const binding = captureBinding(selection2);
+          if (!binding) return;
+          resetDetailDialogs();
+          void openConfirmDialog(document2, { title: "Delete repository", description: "Remove this repository configuration from Argo CD?", targetLabel: item.repo, confirmLabel: "Delete", danger: true, signal: detailDialogController.signal }).then((ok) => {
+            if (ok && validBinding(binding)) void execManagementAction(binding, {
+              operation: "deleteRepository",
+              repo: item.repo,
+              ...item.project ? { appProject: item.project } : {}
+            }, "Repository deleted.");
+          });
+        });
+      } else if ("server" in item) {
+        const clusterTarget = item.server || item.name;
+        const idType = item.server ? void 0 : "name";
+        addButton(actions, "Show applications for this cluster", () => options.applications?.({ cluster: clusterTarget }));
+        addButton(actions, "Invalidate cache", () => {
+          const binding = captureBinding(selection2);
+          if (!binding) return;
+          void execManagementAction(binding, {
+            operation: "invalidateClusterCache",
+            server: clusterTarget,
+            ...idType ? { idType } : {}
+          }, "Cluster cache invalidated.", false);
+        });
+        addButton(actions, "Delete", () => {
+          const binding = captureBinding(selection2);
+          if (!binding) return;
+          resetDetailDialogs();
+          void openConfirmDialog(document2, { title: "Delete cluster", description: "Remove this cluster registration from Argo CD?", targetLabel: clusterTarget, confirmLabel: "Delete", danger: true, requireInput: clusterTarget, signal: detailDialogController.signal }).then((ok) => {
+            if (ok && validBinding(binding)) void execManagementAction(binding, {
+              operation: "deleteCluster",
+              server: clusterTarget,
+              ...idType ? { idType } : {}
+            }, "Cluster deleted.");
+          });
+        });
+      } else if ("roles" in item) {
         addButton(actions, "Show applications for this Project", () => options.applications?.({ project: item.name }));
         addButton(actions, "Read active Project sync windows", () => {
-          void extraQuery({ operation: "projectWindows", context, project: item.name }, extra, renderWindowState, version, selection2);
+          void extraQuery({ operation: "projectWindows", context: capturedContext, project: item.name }, extra, renderWindowState, version, selection2, conn);
+        });
+        addButton(actions, "Edit", () => {
+          const binding = captureBinding(selection2);
+          if (!binding) return;
+          resetDetailDialogs();
+          const template = JSON.stringify(editableProjectPayload(item), null, 2);
+          void openEditorDialog(document2, { title: "Update Project", targetLabel: item.name, initialText: template, mode: "object", allowUpsert: false, confirmLabel: "Save", signal: detailDialogController.signal }).then((edited) => {
+            if (edited?.object && validBinding(binding)) void execManagementAction(binding, { operation: "updateProject", name: item.name, project: edited.object }, "Project updated.");
+          });
+        });
+        addButton(actions, "Delete", () => {
+          const binding = captureBinding(selection2);
+          if (!binding) return;
+          resetDetailDialogs();
+          void openConfirmDialog(document2, { title: "Delete Project", description: "Permanently delete this Argo CD Project?", targetLabel: item.name, confirmLabel: "Delete", danger: true, requireInput: item.name, signal: detailDialogController.signal }).then((ok) => {
+            if (ok && validBinding(binding)) void execManagementAction(binding, { operation: "deleteProject", name: item.name }, "Project deleted.");
+          });
         });
       } else {
         const appset = item;
         element4(detail, "p", "Only generator structure/type and counts are shown; expressions and values are withheld. applicationStatus without Namespace is metadata only, not a navigation target.");
         addButton(actions, "Read generated-application links", () => {
-          void extraQuery({ operation: "applicationSetChildren", context, name: appset.name, appsetNamespace: appset.namespace }, extra, (parent, data) => {
+          void extraQuery({ operation: "applicationSetChildren", context: capturedContext, name: appset.name, appsetNamespace: appset.namespace }, extra, (parent, data) => {
             element4(parent, "p", t`${t(data.note)} · ${data.unresolved} references with incomplete Namespace/name were not linked`);
             if (!data.items.length) element4(parent, "p", "Server links are empty or incomplete; this does not prove applications were never generated.");
             for (const item2 of data.items) addButton(parent, t`View application ${item2.appNamespace}/${item2.name}`, () => options.application?.(item2), true);
-          }, version, selection2);
+          }, version, selection2, conn);
         });
         addButton(actions, "Read ApplicationSet events (optional API)", () => {
-          void extraQuery({ operation: "applicationSetEvents", context, name: appset.name, appsetNamespace: appset.namespace }, extra, renderEvents, version, selection2);
+          void extraQuery({ operation: "applicationSetEvents", context: capturedContext, name: appset.name, appsetNamespace: appset.namespace }, extra, renderEvents, version, selection2, conn);
+        });
+        addButton(actions, "Delete", () => {
+          const binding = captureBinding(selection2);
+          if (!binding) return;
+          resetDetailDialogs();
+          void openConfirmDialog(document2, { title: "Delete ApplicationSet", description: "Permanently delete this ApplicationSet?", targetLabel: `${appset.namespace}/${appset.name}`, confirmLabel: "Delete", danger: true, requireInput: appset.name, signal: detailDialogController.signal }).then((ok) => {
+            if (ok && validBinding(binding)) void execManagementAction(binding, { operation: "deleteApplicationSet", name: appset.name, appsetNamespace: appset.namespace }, "ApplicationSet deleted.");
+          });
         });
       }
     }
-    async function extraQuery(command, parent, render, version, selection2) {
-      if (hidden() || disposed) return;
+    async function extraQuery(command, parent, render, version, selection2, conn) {
+      if (hidden() || disposed || conn !== connectionGeneration) return;
       extraController?.abort();
       for (const dispose of extraDisposers.splice(0)) dispose();
       parent.replaceChildren();
@@ -10569,11 +19304,12 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       element4(section, "p", "Reading additional information\u2026");
       try {
         const result = await queryTask(request, command, controller.signal);
-        if (!current(version, controller, selection2)) return;
+        if (!current(version, controller, selection2, conn)) return;
+        if (result.identityEpoch) currentEpoch = result.identityEpoch;
         section.replaceChildren();
         if (response(section, result)) render(section, result.data);
       } catch {
-        if (current(version, controller, selection2)) {
+        if (current(version, controller, selection2, conn)) {
           section.replaceChildren();
           element4(section, "p", "Additional information unavailable; main details remain available. Do not infer an empty result.");
         }
@@ -10607,13 +19343,17 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       active2 = value;
       visibility();
     }, setConnection(next, networkEnabled) {
+      connectionGeneration++;
       context = next;
       enabled = networkEnabled;
+      currentEpoch = "";
       reset();
       button2.update({ disabled: !context || !enabled });
+      createBtn.update({ disabled: !context || !enabled || !["applicationSets", "projects"].includes(domain) });
     }, dispose() {
       if (disposed) return;
       disposed = true;
+      connectionGeneration++;
       cancel();
       clearDetail();
       for (const dispose of disposers2) dispose();
@@ -10886,8 +19626,10 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     const disposers2 = [];
     let context = "";
     let enabled = false;
+    let connectionGeneration = 0;
     let generation = 0;
-    let detailGeneration = 0;
+    let detailLoadGeneration = 0;
+    let detailSelectionGeneration = 0;
     let applications = [];
     let selected = "";
     let snapshot = null;
@@ -10904,6 +19646,8 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     let automatic = false;
     let lastAttemptAt = 0;
     let activeTask;
+    let createDialogController = new AbortController();
+    let detailDialogController = new AbortController();
     let intersecting = true;
     let disposed = false;
     let pendingContextLoad = false;
@@ -10911,12 +19655,32 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     let pendingNavigation;
     let selectedReference = null;
     let openingNavigation;
+    let currentEpoch = "";
+    let detailActionDisposers = [];
+    let opWatchTimer;
     const hidden = () => document2.hidden || !intersecting || !active2;
     const now = options.now ?? Date.now;
     const filters = {};
     const filterUpdates = /* @__PURE__ */ new Map();
+    const stopOpWatch = () => {
+      if (opWatchTimer) {
+        clearTimeout(opWatchTimer);
+        opWatchTimer = void 0;
+      }
+    };
+    const resetCreateDialogs = () => {
+      createDialogController.abort();
+      createDialogController = new AbortController();
+    };
+    const resetDetailDialogs = () => {
+      detailDialogController.abort();
+      detailDialogController = new AbortController();
+    };
     const queryButton = mountIconButton(actions, { icon: "reload", label: "Reload applications", tooltip: "Read applications again without requesting an Argo refresh", disabled: true, onClick: () => {
       void load(false, true);
+    } });
+    const createButton = options.readOnlySurface ? null : mountButton2(actions, { label: "New application", disabled: true, variant: "secondary", onClick: () => {
+      void runCreateApplication();
     } });
     const backgroundButton = mountButton2(advancedActions, { label: "Query applications in background", disabled: true, variant: "secondary", onClick: () => {
       void load(true);
@@ -10959,7 +19723,52 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       paint();
       options.changed?.();
     } });
-    disposers2.push(() => queryButton.dispose(), () => backgroundButton.dispose(), () => cancelButton.dispose(), () => autoSwitch.dispose(), () => autoButton.dispose(), () => clearButton.dispose(), () => list.dispose(), () => split2.dispose(), () => advanced.remove());
+    disposers2.push(() => stopOpWatch(), () => createDialogController.abort(), () => detailDialogController.abort(), () => queryButton.dispose(), () => createButton?.dispose(), () => backgroundButton.dispose(), () => cancelButton.dispose(), () => autoSwitch.dispose(), () => autoButton.dispose(), () => clearButton.dispose(), () => list.dispose(), () => split2.dispose(), () => advanced.remove());
+    async function runCreateApplication() {
+      if (!enabled || !context || options.readOnlySurface) return;
+      if (!currentEpoch) {
+        status.hidden = false;
+        status.textContent = t("Session identity unavailable. Reload applications first.");
+        return;
+      }
+      const capturedConn = connectionGeneration;
+      const capturedContext = context;
+      const capturedEpoch = currentEpoch;
+      resetCreateDialogs();
+      const template = JSON.stringify({
+        metadata: { name: "my-app", namespace: "argocd" },
+        spec: {
+          project: "default",
+          source: { repoURL: "https://github.com/org/repo.git", path: ".", targetRevision: "HEAD" },
+          destination: { server: "https://kubernetes.default.svc", namespace: "default" }
+        }
+      }, null, 2);
+      const edited = await openEditorDialog(document2, { title: "Create application", initialText: template, mode: "object", confirmLabel: "Create", signal: createDialogController.signal });
+      if (!edited?.object || disposed || capturedConn !== connectionGeneration || context !== capturedContext) return;
+      if (currentEpoch !== capturedEpoch) {
+        status.hidden = false;
+        status.textContent = t("Session identity unavailable. Reload applications first.");
+        return;
+      }
+      status.hidden = false;
+      status.textContent = t("Creating application\u2026");
+      try {
+        const res = await request("/v1/actions/application-create", void 0, {
+          method: "POST",
+          body: { context: capturedContext, identityEpoch: capturedEpoch, application: edited.object, upsert: Boolean(edited.upsert), validate: true }
+        });
+        if (disposed || capturedConn !== connectionGeneration || context !== capturedContext) return;
+        if (res.identityEpoch) currentEpoch = res.identityEpoch;
+        if (!res.ok) {
+          status.textContent = `${res.error.code}: ${res.error.message}`;
+          return;
+        }
+        status.textContent = t("Application created.");
+        void load(false, true);
+      } catch {
+        if (!disposed && capturedConn === connectionGeneration && context === capturedContext) status.textContent = t("Action failed.");
+      }
+    }
     const searchRoot = element5("div", "", root2);
     searchRoot.className = "application-search";
     root2.insertBefore(searchRoot, filterRoot);
@@ -11018,7 +19827,8 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       }
     }
     function clear() {
-      detailGeneration++;
+      detailLoadGeneration++;
+      detailSelectionGeneration++;
       applications = [];
       selected = "";
       split2.reset();
@@ -11033,6 +19843,10 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       clearDetail();
     }
     function clearDetail() {
+      detailSelectionGeneration++;
+      stopOpWatch();
+      resetDetailDialogs();
+      for (const dispose of detailActionDisposers.splice(0)) dispose();
       split2.setHeader();
       split2.setDetailOnly(false);
       root2.dataset.resourceFocus = "false";
@@ -11057,7 +19871,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       try {
         visible = filterApplications(applications, filters);
       } catch {
-        detailGeneration++;
+        detailLoadGeneration++;
         selected = "";
         clearDetail();
         list.update({ items: [], selectedId: null, emptyText: "Invalid label selector" });
@@ -11067,7 +19881,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       }
       if (!(reconcile ? applications : visible).some((app) => app.id === selected)) {
         selected = "";
-        detailGeneration++;
+        detailLoadGeneration++;
         clearDetail();
         split2.reset();
       }
@@ -11099,6 +19913,8 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     }
     async function load(background = false, navigation = false) {
       if (!enabled || !context || (navigation ? document2.hidden : hidden()) || busy) return;
+      const capturedConn = connectionGeneration;
+      const capturedContext = context;
       const version = ++generation;
       busy = true;
       lastAttemptAt = now();
@@ -11111,8 +19927,9 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       status.textContent = t("Reading applications; no forced Argo refresh.");
       status.hidden = false;
       try {
-        const response2 = background ? await queryTask(request, { operation: "applications", context, filters: {} }, activeTask.signal) : await request("/v1/applications", { context });
-        if (version !== generation) return;
+        const response2 = background ? await queryTask(request, { operation: "applications", context: capturedContext, filters: {} }, activeTask.signal) : await request("/v1/applications", { context: capturedContext });
+        if (version !== generation || capturedConn !== connectionGeneration || context !== capturedContext) return;
+        if (response2.identityEpoch) currentEpoch = response2.identityEpoch;
         if (!response2.ok) {
           if (invalidateSensitive(response2.error.code)) clear();
           status.textContent = `${response2.error.code}: ${response2.error.message}${t("(no new valid snapshot)")}`;
@@ -11127,7 +19944,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
         paint(true);
         restoreSelection();
       } catch {
-        if (version === generation) status.textContent = t("Query failed. Check host connection/authorization; application health is unknown.");
+        if (version === generation && capturedConn === connectionGeneration) status.textContent = t("Query failed. Check host connection/authorization; application health is unknown.");
       } finally {
         if (version === generation) {
           busy = false;
@@ -11139,38 +19956,198 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
         }
       }
     }
-    async function detail(id2, reference2, navigation = false, restore) {
+    function captureCurrentNavigation() {
+      return {
+        filters: { ...filters },
+        selected: selectedReference ? { ...selectedReference } : pendingNavigation?.selected ?? null,
+        detailTab: pendingNavigation?.detailTab ?? detailTab,
+        split: split2.captureState(),
+        resources: resourceView?.captureNavigation() ?? openingNavigation?.resources ?? pendingNavigation?.resources ?? null
+      };
+    }
+    function scheduleOpWatch(id2, appRef, watchConn, watchContext, remaining = 15) {
+      stopOpWatch();
+      if (remaining <= 0 || disposed || hidden() || selected !== id2 || watchConn !== connectionGeneration || context !== watchContext) return;
+      opWatchTimer = setTimeout(() => {
+        if (disposed || hidden() || selected !== id2 || watchConn !== connectionGeneration || context !== watchContext) return;
+        void request("/v1/application", { context: watchContext, name: appRef.name, appNamespace: appRef.appNamespace }).then((res) => {
+          if (disposed || selected !== id2 || watchConn !== connectionGeneration || context !== watchContext || !res.ok) return;
+          if (res.identityEpoch) currentEpoch = res.identityEpoch;
+          if (res.data.operation?.phase === "Running") scheduleOpWatch(id2, appRef, watchConn, watchContext, remaining - 1);
+          else {
+            void detail(id2, appRef, true, captureCurrentNavigation(), true);
+            void load(false, true);
+          }
+        }).catch(() => {
+        });
+      }, 2e3);
+    }
+    async function detail(id2, reference2, navigation = false, restore, forceReload = false) {
       const app = applications.find((item) => item.id === id2) ?? (reference2 ? { ...reference2, id: id2 } : void 0);
       if (!app || !enabled || (navigation ? document2.hidden : hidden())) return;
-      if (selected === id2 && detailTabs && !restore) {
+      if (selected === id2 && detailTabs && !restore && !forceReload) {
         split2.openDetail();
         return;
       }
       selected = id2;
       list.update({ selectedId: id2 });
       split2.openDetail();
-      const version = ++detailGeneration;
+      const capturedConn = connectionGeneration;
+      const capturedContext = context;
+      const loadVersion = ++detailLoadGeneration;
       clearDetail();
+      const selectionVersion = detailSelectionGeneration;
       element5("p", "Reading details\u2026", detailRoot);
       selectedReference = { name: app.name, appNamespace: app.appNamespace };
       openingNavigation = restore;
       detailTab = restore?.detailTab ?? "overview";
       if (restore) split2.restoreState(restore.split);
       options.changed?.();
-      options.evidence?.reset(context, { name: app.name, appNamespace: app.appNamespace });
+      options.evidence?.reset(capturedContext, { name: app.name, appNamespace: app.appNamespace });
       try {
-        const response2 = await request("/v1/application", { context, name: app.name, appNamespace: app.appNamespace });
-        if (version !== detailGeneration) return;
+        const response2 = await request("/v1/application", { context: capturedContext, name: app.name, appNamespace: app.appNamespace });
+        if (loadVersion !== detailLoadGeneration || selectionVersion !== detailSelectionGeneration || capturedConn !== connectionGeneration || context !== capturedContext) return;
+        if (response2.identityEpoch) currentEpoch = response2.identityEpoch;
         detailRoot.replaceChildren();
         if (!response2.ok) {
           element5("p", `${response2.error.code}: ${response2.error.message}`, detailRoot);
           return;
         }
+        const appData = response2.data;
+        const appRef = { name: app.name, appNamespace: app.appNamespace };
         const header = element5("header", "", detailRoot);
         header.className = "application-detail-header";
         const title = element5("h2", `${app.appNamespace}/${app.name}`, header);
         title.className = "application-current-title";
         title.title = title.textContent;
+        if (!options.readOnlySurface) {
+          const actionBar = element5("div", "", header);
+          actionBar.className = "argocd-action-bar";
+          actionBar.setAttribute("role", "toolbar");
+          actionBar.setAttribute("aria-label", t("Application actions"));
+          const actionStatus = element5("p", "", detailRoot);
+          actionStatus.className = "argocd-action-status";
+          actionStatus.setAttribute("role", "status");
+          actionStatus.hidden = true;
+          const showActionStatus = (text2) => {
+            actionStatus.hidden = false;
+            actionStatus.textContent = text2;
+          };
+          const stillMounted = () => !disposed && selectionVersion === detailSelectionGeneration && capturedConn === connectionGeneration && context === capturedContext;
+          const requireEpoch = () => {
+            if (!stillMounted()) return null;
+            if (!currentEpoch) {
+              showActionStatus(t("Session identity unavailable. Reload applications first."));
+              return null;
+            }
+            return currentEpoch;
+          };
+          const execAction = async (path, expectedEpoch, body, pendingText, doneText, watchAfter = false, deleted = false) => {
+            if (!stillMounted()) return;
+            if (currentEpoch !== expectedEpoch) {
+              showActionStatus(t("Session identity unavailable. Reload applications first."));
+              return;
+            }
+            showActionStatus(t(pendingText));
+            try {
+              const res = await request(path, void 0, { method: "POST", body: { context: capturedContext, identityEpoch: expectedEpoch, ...body } });
+              if (!stillMounted()) return;
+              if (res.identityEpoch) currentEpoch = res.identityEpoch;
+              if (!res.ok) {
+                showActionStatus(`${res.error.code}: ${res.error.message}`);
+                return;
+              }
+              showActionStatus(t(doneText));
+              if (deleted) {
+                selected = "";
+                clearDetail();
+                void load(false, true);
+                return;
+              }
+              void detail(id2, appRef, true, captureCurrentNavigation(), true);
+              void load(false, true);
+              if (watchAfter) scheduleOpWatch(id2, appRef, capturedConn, capturedContext);
+            } catch {
+              if (stillMounted()) showActionStatus(t("Action failed."));
+            }
+          };
+          const syncBtn = mountButton2(actionBar, { label: "Sync", variant: "default", onClick: () => {
+            const epoch = requireEpoch();
+            if (!epoch) return;
+            resetDetailDialogs();
+            void openSyncDialog(document2, `${app.appNamespace}/${app.name}`, void 0, {
+              signal: detailDialogController.signal,
+              multipleSources: appData.multipleSources,
+              sourceCount: appData.sources.length
+            }).then((opts) => {
+              if (!opts || !stillMounted()) return;
+              void execAction("/v1/actions/sync", epoch, { name: app.name, appNamespace: app.appNamespace, ...opts }, "Syncing application\u2026", "Sync requested.", true);
+            });
+          } });
+          const refreshBtn = mountButton2(actionBar, { label: "Refresh", variant: "secondary", onClick: () => {
+            const epoch = requireEpoch();
+            if (!epoch) return;
+            void execAction("/v1/actions/refresh", epoch, { name: app.name, appNamespace: app.appNamespace, mode: "normal" }, "Refreshing application\u2026", "Application refreshed.");
+          } });
+          const hardRefreshBtn = mountButton2(actionBar, { label: "Hard refresh", variant: "ghost", onClick: () => {
+            const epoch = requireEpoch();
+            if (!epoch) return;
+            void execAction("/v1/actions/refresh", epoch, { name: app.name, appNamespace: app.appNamespace, mode: "hard" }, "Hard refreshing application\u2026", "Application hard refreshed.");
+          } });
+          const terminateBtn = mountButton2(actionBar, { label: "Terminate", variant: "secondary", disabled: appData.operation?.phase !== "Running", onClick: () => {
+            const epoch = requireEpoch();
+            if (!epoch) return;
+            resetDetailDialogs();
+            void openConfirmDialog(document2, { title: "Terminate operation", description: "Terminate the currently running operation for this application?", targetLabel: `${app.appNamespace}/${app.name}`, confirmLabel: "Terminate", danger: true, signal: detailDialogController.signal }).then((ok) => {
+              if (!ok || !stillMounted()) return;
+              void execAction("/v1/actions/terminate", epoch, { name: app.name, appNamespace: app.appNamespace }, "Terminating operation\u2026", "Operation termination requested.", true);
+            });
+          } });
+          const rollbackBtn = mountButton2(actionBar, { label: "Rollback", variant: "secondary", disabled: !appData.history.length, onClick: () => {
+            const epoch = requireEpoch();
+            if (!epoch) return;
+            resetDetailDialogs();
+            void openRollbackDialog(document2, `${app.appNamespace}/${app.name}`, appData.history, void 0, detailDialogController.signal).then((opts) => {
+              if (!opts || !stillMounted()) return;
+              void execAction("/v1/actions/rollback", epoch, { name: app.name, appNamespace: app.appNamespace, ...opts }, "Rolling back application\u2026", "Rollback requested.", true);
+            });
+          } });
+          const patchBtn = mountButton2(actionBar, { label: "Patch", variant: "ghost", onClick: () => {
+            const epoch = requireEpoch();
+            if (!epoch) return;
+            resetDetailDialogs();
+            void openEditorDialog(document2, { title: "Patch application", targetLabel: `${app.appNamespace}/${app.name}`, initialText: '{\n  "metadata": {\n    "labels": {}\n  }\n}', mode: "patch", patchTypes: ["merge", "json"], confirmLabel: "Apply patch", signal: detailDialogController.signal }).then((edited) => {
+              if (!edited?.patch || !edited.patchType || !stillMounted()) return;
+              void execAction("/v1/actions/application-patch", epoch, { name: app.name, appNamespace: app.appNamespace, patch: edited.patch, patchType: edited.patchType }, "Patching application\u2026", "Application patched.");
+            });
+          } });
+          const deleteBtn = mountButton2(actionBar, { label: "Delete", variant: "ghost", onClick: () => {
+            const epoch = requireEpoch();
+            if (!epoch) return;
+            resetDetailDialogs();
+            void openConfirmDialog(document2, {
+              title: "Delete application",
+              description: "This permanently deletes the Argo CD application.",
+              targetLabel: `${app.appNamespace}/${app.name}`,
+              confirmLabel: "Delete",
+              danger: true,
+              requireInput: app.name,
+              checkboxes: [{ id: "cascade", label: "Cascade delete managed resources", checked: true }],
+              selects: [{ id: "propagationPolicy", label: "Propagation policy", value: "foreground", options: PROPAGATION_POLICY_OPTIONS, disabledWhenUnchecked: "cascade" }],
+              signal: detailDialogController.signal
+            }).then((ok) => {
+              if (!ok || !stillMounted()) return;
+              const cascade = Boolean(ok.flags.cascade);
+              void execAction("/v1/actions/application-delete", epoch, {
+                name: app.name,
+                appNamespace: app.appNamespace,
+                cascade,
+                ...cascade ? { propagationPolicy: ok.selects.propagationPolicy } : {}
+              }, "Deleting application\u2026", "Application deleted.", false, true);
+            });
+          } });
+          detailActionDisposers.push(() => syncBtn.dispose(), () => refreshBtn.dispose(), () => hardRefreshBtn.dispose(), () => terminateBtn.dispose(), () => rollbackBtn.dispose(), () => patchBtn.dispose(), () => deleteBtn.dispose());
+        }
         split2.setHeader(header);
         const nav = element5("nav", "", detailRoot);
         nav.className = "application-tabs";
@@ -11179,14 +20156,14 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
         const resources = element5("section", "", detailRoot);
         const manifests = element5("section", "", detailRoot);
         const windows = element5("section", "", detailRoot);
-        renderApplicationDetail(overview, response2.data, { heading: false });
+        renderApplicationDetail(overview, appData, { heading: false });
         options.evidence?.app(response2);
         detailSnapshot = { sampledAt: response2.sampledAt, expiresAt: response2.expiresAt ?? new Date(Date.parse(response2.sampledAt) + 15e3).toISOString(), source: response2.source ?? "argo-api" };
         detailAgeNode = element5("p", "", detailRoot);
         paintSnapshot();
-        resourceView = mountResources(resources, request, context, { name: app.name, appNamespace: app.appNamespace }, response2.data.project, { ...options.copy ? { copy: options.copy } : {}, ...options.evidence ? { evidence: options.evidence } : {}, ...restore?.resources ? { initialState: restore.resources } : {}, changed: () => options.changed?.() });
-        manifestView = mountManifests(manifests, request, context, response2.data, options.evidence);
-        windowView = mountWindowStatus(windows, request, { operation: "applicationWindows", context, name: app.name, appNamespace: app.appNamespace });
+        resourceView = mountResources(resources, request, capturedContext, appRef, appData.project, { ...options.copy ? { copy: options.copy } : {}, ...options.evidence ? { evidence: options.evidence } : {}, ...restore?.resources ? { initialState: restore.resources } : {}, changed: () => options.changed?.(), getEpoch: () => currentEpoch, readOnlySurface: Boolean(options.readOnlySurface) });
+        manifestView = mountManifests(manifests, request, capturedContext, appData, options.evidence);
+        windowView = mountWindowStatus(windows, request, { operation: "applicationWindows", context: capturedContext, name: app.name, appNamespace: app.appNamespace });
         openingNavigation = void 0;
         detailTabs = mountSections(nav, [{ id: "overview", label: "Application overview", pane: overview }, { id: "resources", label: "Resources / Events / Logs", pane: resources }, { id: "manifests", label: "Manifest / Diff", pane: manifests }, { id: "windows", label: "Sync windows", pane: windows }], detailTab, (id3) => {
           detailTab = id3;
@@ -11195,7 +20172,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
         });
         syncDetailVisibility();
       } catch {
-        if (version === detailGeneration) {
+        if (loadVersion === detailLoadGeneration && selectionVersion === detailSelectionGeneration) {
           split2.setHeader();
           detailRoot.replaceChildren();
           element5("p", "Could not read details. Data from the previous application will not be shown.", detailRoot);
@@ -11216,12 +20193,18 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       const paused = document2.hidden || !active2;
       if (paused && !wasPaused) {
         split2.stopResize();
+        stopOpWatch();
         generation++;
-        detailGeneration++;
+        detailLoadGeneration++;
         activeTask?.abort();
         activeTask = void 0;
         busy = false;
         forceStale = true;
+        if (selected && !detailTabs) {
+          selected = "";
+          clearDetail();
+          list.update({ selectedId: null });
+        }
         queryButton.update({ loading: false });
         backgroundButton.update({ loading: false });
         cancelButton.update({ disabled: true });
@@ -11288,7 +20271,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
         }
       },
       captureNavigation() {
-        return { filters: { ...filters }, selected: selectedReference ? { ...selectedReference } : pendingNavigation?.selected ?? null, detailTab: pendingNavigation?.detailTab ?? detailTab, split: split2.captureState(), resources: resourceView?.captureNavigation() ?? openingNavigation?.resources ?? pendingNavigation?.resources ?? null };
+        return captureCurrentNavigation();
       },
       captureState() {
         return structuredClone({ applications, filters, snapshot, forceStale });
@@ -11337,6 +20320,8 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       },
       setConnection(nextContext, networkEnabled, loadApplications = false, restore) {
         pendingNavigation = void 0;
+        connectionGeneration++;
+        resetCreateDialogs();
         for (const key of Object.keys(filters)) delete filters[key];
         for (const update of filterUpdates.values()) update("");
         generation++;
@@ -11346,9 +20331,11 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
         clear();
         context = nextContext;
         enabled = networkEnabled;
+        currentEpoch = "";
         setAutomatic(false);
         pendingContextLoad = false;
         queryButton.update({ disabled: !enabled || !context, loading: false });
+        createButton?.update({ disabled: !enabled || !context });
         backgroundButton.update({ disabled: !enabled || !context, loading: false });
         cancelButton.update({ disabled: true });
         autoSwitch.update({ disabled: !enabled || !context, checked: false });
@@ -11364,8 +20351,10 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
       dispose() {
         if (disposed) return;
         disposed = true;
+        connectionGeneration++;
         generation++;
-        detailGeneration++;
+        detailLoadGeneration++;
+        detailSelectionGeneration++;
         activeTask?.abort();
         resourceView?.dispose();
         manifestView?.dispose();
@@ -11820,7 +20809,6 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     const heading = element6("header");
     heading.className = "observer-heading";
     element6("h1", "Argo CD", heading);
-    element6("span", "Read only", heading).className = "read-only-label";
     const more = document2.createElement("details");
     more.className = "workspace-more";
     heading.append(more);
@@ -11867,7 +20855,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     }) : void 0;
     const densityRoot = element6("div", "", diagnostic);
     let activeTab = "applications";
-    const applicationBrowser = mountApplications(applications, request, { copy: (text2) => host2.writeClipboard(text2), evidence: store, toolbar: applicationActions, diagnosticRoot: diagnostic, changed: persistNavigation });
+    const applicationBrowser = mountApplications(applications, request, { copy: (text2) => host2.writeClipboard(text2), evidence: store, toolbar: applicationActions, diagnosticRoot: diagnostic, changed: persistNavigation, readOnlySurface: statusSurface });
     const managementBrowser = mountManagement(management, request, {
       applications: (filters) => {
         tabs.select("applications");
@@ -12079,7 +21067,7 @@ ${item.changedPaths.map((path) => path || "(root)").join("\n")}` : t(item.status
     };
     more.addEventListener("keydown", closeMore);
     disposers2.push(() => more.removeEventListener("keydown", closeMore));
-    disposers2.push(() => summaryBrowser.dispose(), () => applicationBrowser.dispose(), () => managementBrowser.dispose(), () => tabs.dispose(), () => density.dispose(), () => select2.dispose(), () => notice.dispose(), () => loadButton.dispose(), () => checkButton.dispose(), nameFields(root2));
+    disposers2.push(() => closeAllDialogs(document2), () => summaryBrowser.dispose(), () => applicationBrowser.dispose(), () => managementBrowser.dispose(), () => tabs.dispose(), () => density.dispose(), () => select2.dispose(), () => notice.dispose(), () => loadButton.dispose(), () => checkButton.dispose(), nameFields(root2));
     return { flushPersistence() {
       return navigation?.flush() ?? Promise.resolve();
     }, captureState() {

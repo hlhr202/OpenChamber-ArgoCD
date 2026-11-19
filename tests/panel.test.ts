@@ -1146,7 +1146,7 @@ test('English host locale localizes chrome, keeps API data opaque, and switches 
   assert.equal(document.documentElement.lang, 'zh-CN'); assert.match(root.textContent!, /当前筛选 2/); assert.equal(selectTrigger(root, 'Project').textContent, 'platform'); assert.equal(calls.length, 2);
   assert.ok(saved.every((item) => item.key === 'observer.view.v1' || item.key === navigationKey(ready.directory!)));
   assert.ok(saved.filter((item) => item.key === 'observer.view.v1').every((item) => !JSON.stringify(item.value).includes('primary')));
-  workspace.setHostLocale('fr-FR'); assert.equal(document.documentElement.lang, 'fr'); assert.ok(root.textContent!.includes(translate("Read only")));
+  workspace.setHostLocale('fr-FR'); assert.equal(document.documentElement.lang, 'fr'); assert.ok(root.textContent!.includes(translate("Applications")));
   workspace.setHostLocale('not-a-known-locale'); assert.equal(document.documentElement.lang, 'en'); assert.equal(calls.length, 2);
   root.querySelector<HTMLElement>('[aria-label="Argo CD applications"] [role="option"]')!.click(); await setImmediate(); assert.match(root.querySelector('[aria-label="Application details"]')!.textContent!, /Sources and configuration/);
   assert.doesNotMatch(root.querySelector('[aria-label="Application details"]')!.textContent!, /\p{Script=Han}/u);
@@ -1172,7 +1172,7 @@ test('all host languages apply live, ignore legacy language preferences and pers
   for (const locale of LANGUAGES) {
     workspace.setHostLocale(locale); await setImmediate();
     assert.equal(document.documentElement.lang, locale); assert.equal(document.documentElement.dir, directionFor(locale));
-    assert.ok(root.textContent!.includes(translate("Read only"))); assert.equal(root.dataset.density, 'comfortable'); assert.equal(calls, 1);
+    assert.ok(root.textContent!.includes(translate("Applications"))); assert.equal(root.dataset.density, 'comfortable'); assert.equal(calls, 1);
   }
   workspace.setHostLocale('unknown-language'); assert.equal(document.documentElement.lang, 'en'); assert.equal(document.documentElement.dir, 'ltr');
 });
@@ -1288,3 +1288,165 @@ test('offline end-to-end workspace traverses real Service/tasks/log stream and c
   assert.match(composed[0]!, /REDACTED/); assert.doesNotMatch(composed[0]!, /synthetic-original|private-env|private-command|private-annotation|hidden-values/); assert.equal(root.querySelector('img'), null);
   workspace.dispose(); gateway.invalidate(); await delay(30); const stopped = hostReads; await delay(650); assert.equal(hostReads, stopped);
 });
+
+test('panel UI operational actions (Sync dialog & Delete name confirmation) run end-to-end against in-repo Mock Argo CD server', async (t) => {
+  const { startMockArgoServer } = await import('./argocd-server-fixture.js');
+  const argo = await startMockArgoServer(t);
+  const svc = await argo.createHostService('synthetic-panel-actions-token');
+  const root = dom(t);
+  const transport: PanelRequest = async <T>(path: string, query?: Record<string, string>, options?: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown }) => {
+    const qs = query ? `?${new URLSearchParams(query)}` : '';
+    const res = await svc.request<Envelope<T>>(`${path}${qs}`, { method: options?.method ?? 'GET', ...(options?.body !== undefined ? { body: options.body } : {}) });
+    return res.body;
+  };
+  const gateway = new ServiceGateway(transport, () => assert.fail('No boundary change expected'));
+  const host: WorkspaceHost = { storage: { get: async () => undefined, set: async () => {}, delete: async () => {}, keys: async () => [] }, writeClipboard: async () => {}, compose: async () => {} };
+  const workspace = mountWorkspace(root, gateway.bind(), host, { ...hostReady(), locale: 'en-US' });
+  cleanup(root, () => workspace.dispose());
+  const until = async (condition: () => boolean) => { for (let i = 0; i < 300; i++) { if (condition()) return; await delay(10); } assert.fail('Expected UI state not reached'); };
+
+  resourceButton(root, 'Load contexts').click();
+  await until(() => Boolean(root.querySelector('[aria-label="Argo CD applications"] [role="option"]')));
+  root.querySelector<HTMLElement>('[aria-label="Argo CD applications"] [role="option"]')!.click();
+  await until(() => Boolean(root.querySelector('[aria-label="Application actions"]')));
+
+  // Open Sync dialog, enable Prune, submit
+  resourceButton(root.querySelector('[aria-label="Application actions"]')!, 'Sync').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog')));
+  const pruneCheck = [...document.querySelectorAll<HTMLLabelElement>('.argocd-dialog-check')].find((el) => el.textContent?.includes('Prune'))!.querySelector('input')!;
+  pruneCheck.checked = true; pruneCheck.dispatchEvent(new Event('change'));
+  document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-primary')!.click();
+  await until(() => argo.requests.some((r) => r.method === 'POST' && r.path === '/api/v1/applications/demo/sync'));
+  const syncReq = argo.requests.find((r) => r.method === 'POST' && r.path === '/api/v1/applications/demo/sync')!;
+  assert.equal((syncReq.body as Record<string, unknown>).prune, true);
+
+  // Open Delete dialog, verify confirmation disabled until exact name typed
+  await until(() => Boolean(root.querySelector('[aria-label="Application actions"]')));
+  resourceButton(root.querySelector('[aria-label="Application actions"]')!, 'Delete').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog-danger')));
+  const confirmDel = document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-danger')!;
+  assert.equal(confirmDel.disabled, true);
+  const nameInput = document.querySelector<HTMLInputElement>('.argocd-dialog input[type="text"]')!;
+  nameInput.value = 'demo'; nameInput.dispatchEvent(new Event('input'));
+  assert.equal(confirmDel.disabled, false);
+  confirmDel.click();
+  await until(() => !argo.state.applications.has('argocd/demo'));
+  workspace.dispose(); gateway.invalidate();
+});
+
+test('tab and visibility switches keep Application & Resource actions alive, Project Edit preserves full spec, and module/dispose changes abort open dialogs', async (t) => {
+  const { startMockArgoServer } = await import('./argocd-server-fixture.js');
+  const argo = await startMockArgoServer(t);
+  const svc = await argo.createHostService('synthetic-panel-regression-token');
+  const root = dom(t);
+  const transport: PanelRequest = async <T>(path: string, query?: Record<string, string>, options?: { method?: 'GET' | 'POST' | 'DELETE'; body?: unknown }) => {
+    const qs = query ? `?${new URLSearchParams(query)}` : '';
+    const res = await svc.request<Envelope<T>>(`${path}${qs}`, { method: options?.method ?? 'GET', ...(options?.body !== undefined ? { body: options.body } : {}) });
+    return res.body;
+  };
+  const gateway = new ServiceGateway(transport, () => assert.fail('No boundary change expected'));
+  const host: WorkspaceHost = { storage: { get: async () => undefined, set: async () => {}, delete: async () => {}, keys: async () => [] }, writeClipboard: async () => {}, compose: async () => {} };
+  const workspace = mountWorkspace(root, gateway.bind(), host, { ...hostReady(), locale: 'en-US' });
+  cleanup(root, () => workspace.dispose());
+  const until = async (condition: () => boolean) => { for (let i = 0; i < 300; i++) { if (condition()) return; await delay(10); } assert.fail('Expected UI state not reached'); };
+
+  resourceButton(root, 'Load contexts').click();
+  await until(() => Boolean(root.querySelector('[aria-label="Argo CD applications"] [role="option"]')));
+  root.querySelector<HTMLElement>('[aria-label="Argo CD applications"] [role="option"]')!.click();
+  await until(() => Boolean(root.querySelector('[aria-label="Application actions"]')));
+
+  // 1. Switch workspace tabs (Applications -> Management -> Applications) and toggle document.hidden
+  const navTabs = [...root.querySelectorAll<HTMLElement>('.workspace-navigation [role="tab"]')];
+  navTabs.find((el) => el.textContent === 'Management')!.click();
+  navTabs.find((el) => el.textContent === 'Applications')!.click();
+  Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+  document.dispatchEvent(new Event('visibilitychange'));
+  Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+  document.dispatchEvent(new Event('visibilitychange'));
+
+  // Application Refresh button must still work after visibility/tab round-trip
+  const preRefreshToolbar = root.querySelector<HTMLElement>('[aria-label="Application actions"]')!;
+  resourceButton(preRefreshToolbar, 'Refresh').click();
+  await until(() => {
+    const nextToolbar = root.querySelector('[aria-label="Application actions"]');
+    return Boolean(nextToolbar && nextToolbar !== preRefreshToolbar)
+      && argo.requests.some((r) => r.method === 'GET' && r.path === '/api/v1/applications/demo' && r.query.refresh?.[0] === 'normal');
+  });
+
+  // 2. Open Resources sub-tab, select Deployment, switch sub-tabs (Resources -> Overview -> Resources), then run Resource actions -> Restart
+  const clickAppTab = (label: string) => [...root.querySelectorAll<HTMLElement>('.application-tabs [role="tab"]')].find((el) => el.textContent === translate(label))!.click();
+  clickAppTab('Resources / Events / Logs');
+  await until(() => Boolean(root.querySelector('[role="treeitem"][data-kind="Deployment"]')));
+  root.querySelector<HTMLElement>('[role="treeitem"][data-kind="Deployment"]')!.click();
+  await until(() => Boolean(root.querySelector('[aria-label="Resource actions"]')));
+  clickAppTab('Application overview');
+  clickAppTab('Resources / Events / Logs');
+
+  const resToolbar = root.querySelector<HTMLElement>('[aria-label="Resource actions"]')!;
+  resourceButton(resToolbar, 'Resource actions').click();
+  await until(() => [...resToolbar.querySelectorAll('button')].some((b) => b.textContent === 'Restart'));
+  resourceButton(resToolbar, 'Restart').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog')));
+  document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-primary')!.click();
+  await until(() => argo.requests.some((r) => r.method === 'POST' && r.path === '/api/v1/applications/demo/resource/actions/v2')
+    && root.textContent!.includes('Resource action completed.'));
+
+  // 3. Switch to Management -> Project -> Edit 'default' -> verify full spec round-trip preserves jwtTokens & resourceVersion
+  navTabs.find((el) => el.textContent === 'Management')!.click();
+  selectTrigger(root, 'Management module').click();
+  selectOptions().find((el) => el.textContent === 'Project')!.click();
+  resourceButton(root, 'Read management data').click();
+  await until(() => Boolean(root.querySelector('[aria-label="Management entries"] [role="option"]')));
+  root.querySelector<HTMLElement>('[aria-label="Management entries"] [role="option"]')!.click();
+  await until(() => [...root.querySelectorAll('[aria-label="Management details"] button')].some((b) => b.textContent === 'Edit'));
+
+  const projListsBeforeSave = argo.requests.filter((r) => r.method === 'GET' && r.path === '/api/v1/projects').length;
+  resourceButton(root.querySelector('[aria-label="Management details"]')!, 'Edit').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog-editor')));
+  const textarea = document.querySelector<HTMLTextAreaElement>('.argocd-dialog-editor')!;
+  const initialDraft = JSON.parse(textarea.value) as { spec: Record<string, unknown> };
+  assert.ok(Array.isArray(initialDraft.spec.roles) && initialDraft.spec.roles.length === 1);
+  assert.ok(Array.isArray(initialDraft.spec.syncWindows) && initialDraft.spec.syncWindows.length === 1);
+  initialDraft.spec.description = 'Edited via Management UI';
+  textarea.value = JSON.stringify(initialDraft, null, 2);
+  document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-primary')!.click();
+  await until(() => argo.requests.some((r) => r.method === 'PUT' && r.path === '/api/v1/projects/default')
+    && argo.requests.filter((r) => r.method === 'GET' && r.path === '/api/v1/projects').length > projListsBeforeSave
+    && Boolean(root.querySelector('[aria-label="Management entries"] [role="option"]')));
+  const updatedProj = argo.state.projects.get('default')!;
+  assert.equal((updatedProj.spec as Record<string, unknown>).description, 'Edited via Management UI');
+  assert.deepEqual((((updatedProj.spec as Record<string, unknown>).roles as Array<Record<string, unknown>>)[0]!).jwtTokens, [{ id: 'jwt-keep-1', iat: 1700000000 }]);
+
+  // 4. Open Delete Project dialog, then switch Management module -> open dialog must abort and close immediately
+  root.querySelector<HTMLElement>('[aria-label="Management entries"] [role="option"]')!.click();
+  await until(() => [...root.querySelectorAll('[aria-label="Management details"] button')].some((b) => b.textContent === 'Delete'));
+  resourceButton(root.querySelector('[aria-label="Management details"]')!, 'Delete').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog-backdrop')));
+  selectTrigger(root, 'Management module').click();
+  selectOptions().find((el) => el.textContent === 'Cluster')!.click();
+  await setImmediate();
+  assert.equal(document.querySelector('.argocd-dialog-backdrop'), null);
+  assert.equal(argo.state.projects.has('default'), true);
+
+  // 5. Back on Applications: non-cascading Delete disables propagation policy select and omits propagationPolicy query param
+  navTabs.find((el) => el.textContent === 'Applications')!.click();
+  await until(() => Boolean(root.querySelector('[aria-label="Application actions"]')));
+  resourceButton(root.querySelector('[aria-label="Application actions"]')!, 'Delete').click();
+  await until(() => Boolean(document.querySelector('.argocd-dialog-danger')));
+  const cascadeCheckbox = document.querySelector<HTMLInputElement>('.argocd-dialog-check input[type="checkbox"]')!;
+  const policySelect = document.querySelector<HTMLSelectElement>('.argocd-dialog select')!;
+  assert.equal(policySelect.disabled, false);
+  cascadeCheckbox.checked = false; cascadeCheckbox.dispatchEvent(new Event('change'));
+  assert.equal(policySelect.disabled, true);
+  const confirmInput = document.querySelector<HTMLInputElement>('.argocd-dialog input[type="text"]')!;
+  confirmInput.value = 'demo'; confirmInput.dispatchEvent(new Event('input'));
+  document.querySelector<HTMLButtonElement>('.argocd-dialog-footer .argocd-btn-danger')!.click();
+  await until(() => !argo.state.applications.has('argocd/demo') && root.querySelector('[aria-label="Application actions"]') === null);
+  const delReq = [...argo.requests].reverse().find((r) => r.method === 'DELETE' && r.path === '/api/v1/applications/demo')!;
+  assert.equal(delReq.query.cascade?.[0], 'false');
+  assert.equal(delReq.query.propagationPolicy, undefined);
+
+  workspace.dispose(); gateway.invalidate();
+});
+
+

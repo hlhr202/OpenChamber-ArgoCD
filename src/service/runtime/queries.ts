@@ -3,7 +3,7 @@ import { LIMITS, type QuerySnapshot } from '../../shared/contracts.js';
 import { ServiceError } from '../security/errors.js';
 
 interface Entry {
-  scope: string; key: string; controller: AbortController; waiters: number; started: boolean; settled: boolean;
+  scope: string; revision: number; key: string; controller: AbortController; waiters: number; started: boolean; settled: boolean;
   load: (signal: AbortSignal) => Promise<unknown>;
   promise: Promise<QuerySnapshot<unknown>>;
   resolve: (value: QuerySnapshot<unknown>) => void;
@@ -24,6 +24,7 @@ export class QueryCoordinator {
   private readonly cache = new Map<string, CacheEntry>();
   private readonly failures = new Map<string, Failure>();
   private readonly inflight = new Map<string, Entry>();
+  private readonly revisions = new Map<string, number>();
   private readonly queue: Entry[] = [];
   private active = 0;
   private bytes = 0;
@@ -37,6 +38,8 @@ export class QueryCoordinator {
     this.now = options.now ?? Date.now;
   }
 
+  private scopeRevision(scope: string): number { return this.revisions.get(scope) ?? 0; }
+
   async run<T>(scope: string, key: string, load: (signal: AbortSignal) => Promise<T>, signal: AbortSignal): Promise<QuerySnapshot<T>> {
     if (this.closed || signal.aborted) throw new ServiceError('CANCELLED', 499);
     const id = JSON.stringify([scope, key]);
@@ -48,12 +51,13 @@ export class QueryCoordinator {
     }
     const failure = this.failures.get(id);
     if (failure && this.now() < failure.until) throw failure.error;
+    const currentRevision = this.scopeRevision(scope);
     let entry = this.inflight.get(id);
-    if (!entry || entry.controller.signal.aborted) {
+    if (!entry || entry.controller.signal.aborted || entry.revision !== currentRevision) {
       if (this.queue.filter((item) => !item.controller.signal.aborted).length >= (this.options.maxQueued ?? 16)) throw new ServiceError('BUSY', 429);
       let resolve!: Entry['resolve']; let reject!: Entry['reject'];
       const promise = new Promise<QuerySnapshot<unknown>>((done, fail) => { resolve = done; reject = fail; });
-      entry = { scope, key: id, controller: new AbortController(), waiters: 0, started: false, settled: false, load, promise, resolve, reject };
+      entry = { scope, revision: currentRevision, key: id, controller: new AbortController(), waiters: 0, started: false, settled: false, load, promise, resolve, reject };
       const created = entry;
       created.controller.signal.addEventListener('abort', () => {
         if (!created.started) {
@@ -107,12 +111,14 @@ export class QueryCoordinator {
       const snapshot: QuerySnapshot<unknown> = {
         data, sampledAt: new Date(sampledAt).toISOString(), expiresAt: new Date(sampledAt + this.ttlMs).toISOString(), stale: false, source: 'argo-api',
       };
-      this.failures.delete(entry.key);
-      this.cache.set(entry.key, { scope: entry.scope, bytes, snapshot: structuredClone(snapshot) }); this.bytes += bytes;
-      while (this.cache.size > (this.options.maxEntries ?? 32) || this.bytes > (this.options.maxCacheBytes ?? 4_000_000)) this.removeCache(this.cache.keys().next().value!);
+      if (entry.revision === this.scopeRevision(entry.scope)) {
+        this.failures.delete(entry.key);
+        this.cache.set(entry.key, { scope: entry.scope, bytes, snapshot: structuredClone(snapshot) }); this.bytes += bytes;
+        while (this.cache.size > (this.options.maxEntries ?? 32) || this.bytes > (this.options.maxCacheBytes ?? 4_000_000)) this.removeCache(this.cache.keys().next().value!);
+      }
       this.settle(entry, undefined, snapshot);
     } catch (error) {
-      if (!entry.controller.signal.aborted && error instanceof ServiceError && ['UPSTREAM_UNAVAILABLE', 'TIMEOUT'].includes(error.code)) {
+      if (!entry.controller.signal.aborted && entry.revision === this.scopeRevision(entry.scope) && error instanceof ServiceError && ['UPSTREAM_UNAVAILABLE', 'TIMEOUT'].includes(error.code)) {
         const count = Math.min((this.failures.get(entry.key)?.count ?? 0) + 1, 5);
         if (this.failures.size >= 64) this.failures.delete(this.failures.keys().next().value!);
         this.failures.set(entry.key, { scope: entry.scope, count, until: this.now() + Math.min(500 * 2 ** (count - 1), 5000), error });
@@ -135,6 +141,10 @@ export class QueryCoordinator {
     for (const [key, entry] of this.cache) if (Date.parse(entry.snapshot.expiresAt) <= this.now()) this.removeCache(key);
   }
   invalidateScope(scope: string): void {
+    const next = (this.revisions.get(scope) ?? 0) + 1;
+    this.revisions.delete(scope);
+    if (this.revisions.size >= 256) this.revisions.delete(this.revisions.keys().next().value!);
+    this.revisions.set(scope, next);
     for (const [key, entry] of this.cache) if (entry.scope === scope) this.removeCache(key);
     for (const [key, entry] of this.failures) if (entry.scope === scope) this.failures.delete(key);
     // In-flight consumers recheck their identity snapshot before receiving
@@ -145,6 +155,6 @@ export class QueryCoordinator {
     this.closed = true;
     for (const entry of this.inflight.values()) entry.controller.abort();
     for (const entry of this.queue.splice(0)) this.settle(entry, new ServiceError('CANCELLED', 499));
-    this.cache.clear(); this.bytes = 0; this.failures.clear();
+    this.cache.clear(); this.bytes = 0; this.failures.clear(); this.revisions.clear();
   }
 }

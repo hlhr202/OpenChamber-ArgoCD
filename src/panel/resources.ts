@@ -10,6 +10,8 @@ import { mountSplitView } from './split-view.js';
 import { mountSections } from './sections.js';
 import { mountIconButton } from './icon-button.js';
 import type { ResourceNavigationState } from './navigation-state.js';
+import type { ActionResult, ResourceActionList } from '../shared/actions.js';
+import { openConfirmDialog, openEditorDialog, openResourceActionDialog, openSyncDialog } from './action-dialogs.js';
 
 function element<K extends keyof HTMLElementTagNameMap>(root: HTMLElement, tag: K, text = ''): HTMLElementTagNameMap[K] {
   const node = root.ownerDocument.createElement(tag); node.textContent = tag === 'pre' ? text : t(text); root.append(node); return node;
@@ -100,9 +102,13 @@ function renderPodOverview(root: HTMLElement, value: LiveResource): void {
 
 /** Lazy, bounded resource browser. No requests at mount; entering a tab is the
  * read action. Deployment diagnostics inspect a bounded descendant subtree. */
-export function mountResources(root: HTMLElement, request: PanelRequest, context: string, app: ApplicationReference, project: string, options: { copy?: (text: string) => Promise<void>; evidence?: EvidenceStore; initialState?: ResourceNavigationState; changed?: () => void } = {}) {
+export function mountResources(root: HTMLElement, request: PanelRequest, context: string, app: ApplicationReference, project: string, options: { copy?: (text: string) => Promise<void>; evidence?: EvidenceStore; initialState?: ResourceNavigationState; changed?: () => void; getEpoch?: () => string; readOnlySurface?: boolean } = {}) {
   const document = root.ownerDocument; root.classList.add('resource-workspace');
-  let disposed = false; let visible = false; let generation = 0; let selectionVersion = 0; let section = 'tree'; let detailTab = 'overview';
+  let disposed = false; let visible = false; let generation = 0; let selectionVersion = 0; let selectedNodeVersion = 0; let section = 'tree'; let detailTab = 'overview';
+  let trackedEpoch = '';
+  let dialogController = new AbortController();
+  const resetDialogs = () => { dialogController.abort(); dialogController = new AbortController(); };
+  const resolveEpoch = () => options.getEpoch?.() || trackedEpoch;
   let pendingState = options.initialState ? structuredClone(options.initialState) : undefined;
   if (pendingState) section = pendingState.section;
   let tree: ResourceTree | undefined; let selected: ResourceNode | undefined; let treeStarted = false; let treeExpires = 0;
@@ -135,7 +141,7 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
   function cancelSelected(): void { liveController?.abort(); liveController = undefined; eventController?.abort(); eventController = undefined; logView?.setVisible(false); }
   function clearSelection(): void {
     split.setHeader(); columns.dataset.selected = 'false';
-    selectionVersion++; cancelSelected(); selected = undefined; live = undefined; events = undefined;
+    selectionVersion++; selectedNodeVersion++; resetDialogs(); cancelSelected(); selected = undefined; live = undefined; events = undefined;
     logView?.dispose(); logView = undefined; detailTabs?.dispose(); detailTabs = undefined;
     for (const dispose of detailDisposers.splice(0)) dispose(); options.evidence?.clearResource(); selection.replaceChildren(); split.reset();
   }
@@ -151,6 +157,7 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
     try {
       const response = await queryTask<ResourceTree>(request, { operation: 'resourceTree', context, ...app }, controller.signal);
       if (!usable() || version !== generation || controller.signal.aborted) return; treeStatus.replaceChildren();
+      if (response.identityEpoch) trackedEpoch = response.identityEpoch;
       if (!response.ok) { if (['AUTH_REQUIRED', 'FORBIDDEN', 'CONTEXT_NOT_FOUND', 'RESOURCE_CHANGED'].includes(response.error.code)) { clearSelection(); tree = undefined; navigation.clear(); options.evidence?.clearResources(); } error(treeStatus, response); return; }
       tree = response.data; treeExpires = response.stale ? 0 : Date.parse(response.expiresAt ?? response.sampledAt); navigation.setTree(tree); options.evidence?.tree(response);
       if (selected) {
@@ -209,6 +216,97 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
     eventPane = element(selection, 'section'); eventPane.setAttribute('aria-label', t("Resource events"));
     manifest = element(selection, 'section'); manifest.setAttribute('aria-label', 'Live Manifest'); logs = element(selection, 'section');
     const reload = mountIconButton(identity, { icon: 'reload', label: "Reload resource details", onClick: () => { if (detailTab === 'logs') logView?.reload(); else void activateDetail(true); } }); detailDisposers.push(() => reload.dispose());
+    if (!options.readOnlySurface) {
+      const actionBar = document.createElement('div'); actionBar.className = 'argocd-action-bar'; actionBar.setAttribute('role', 'toolbar'); actionBar.setAttribute('aria-label', t('Resource actions'));
+      const actionStatus = document.createElement('p'); actionStatus.className = 'argocd-action-status'; actionStatus.setAttribute('role', 'status'); actionStatus.hidden = true;
+      selection.insertBefore(actionBar, detailNav);
+      selection.insertBefore(actionStatus, detailNav);
+      const ref = reference(node);
+      const localNode = selectedNodeVersion;
+      const stillSelected = () => !disposed && localNode === selectedNodeVersion;
+      const requireEpoch = (): string | null => {
+        if (!stillSelected()) return null;
+        const epoch = resolveEpoch();
+        if (!epoch) { actionStatus.hidden = false; actionStatus.textContent = t('Session identity unavailable. Reload applications first.'); return null; }
+        return epoch;
+      };
+      const runResourceMutation = async (path: string, expectedEpoch: string, body: Record<string, unknown>, pendingText: string, doneText: string, reloadTree = true) => {
+        if (!stillSelected()) return;
+        if (resolveEpoch() !== expectedEpoch) { actionStatus.hidden = false; actionStatus.textContent = t('Session identity unavailable. Reload applications first.'); return; }
+        actionStatus.hidden = false; actionStatus.textContent = t(pendingText);
+        try {
+          const res = await request<ActionResult>(path, undefined, { method: 'POST', body: { context, identityEpoch: expectedEpoch, ...app, ...body } });
+          if (!stillSelected()) return;
+          if (res.identityEpoch) trackedEpoch = res.identityEpoch;
+          if (!res.ok) { actionStatus.textContent = `${res.error.code}: ${res.error.message}`; return; }
+          actionStatus.textContent = t(doneText);
+          if (reloadTree) void loadTree();
+          else void activateDetail(true);
+        } catch { if (stillSelected()) actionStatus.textContent = t('Action failed.'); }
+      };
+      const syncResBtn = mountButton(actionBar, { label: 'Sync', variant: 'secondary', onClick: () => {
+        const epoch = requireEpoch(); if (!epoch) return;
+        resetDialogs();
+        void openSyncDialog(document, `${app.appNamespace}/${app.name}`, [{ group: node.group, kind: node.kind, name: node.name, ...(node.namespace ? { namespace: node.namespace } : {}) }], { signal: dialogController.signal }).then((opts) => {
+          if (!opts || !stillSelected()) return;
+          void runResourceMutation('/v1/actions/sync', epoch, opts as unknown as Record<string, unknown>, 'Syncing resource…', 'Resource sync requested.');
+        });
+      } });
+      const patchResBtn = mountButton(actionBar, { label: 'Patch', variant: 'ghost', onClick: () => {
+        const epoch = requireEpoch(); if (!epoch) return;
+        resetDialogs();
+        void openEditorDialog(document, { title: 'Patch resource', targetLabel: `${node.kind} ${node.namespace || '(cluster)'}/${node.name}`, initialText: '{\n  "metadata": {\n    "annotations": {}\n  }\n}', mode: 'patch', confirmLabel: 'Apply patch', signal: dialogController.signal }).then((edited) => {
+          if (!edited?.patch || !edited.patchType || !stillSelected()) return;
+          void runResourceMutation('/v1/actions/resource-patch', epoch, { resource: ref, patch: edited.patch, patchType: edited.patchType }, 'Patching resource…', 'Resource patched.', false);
+        });
+      } });
+      const deleteResBtn = mountButton(actionBar, { label: 'Delete', variant: 'ghost', onClick: () => {
+        const epoch = requireEpoch(); if (!epoch) return;
+        resetDialogs();
+        void openConfirmDialog(document, {
+          title: 'Delete resource', description: 'Delete this Kubernetes resource from the cluster?',
+          targetLabel: `${node.kind} ${node.namespace || '(cluster)'}/${node.name}`, confirmLabel: 'Delete', danger: true,
+          checkboxes: [{ id: 'force', label: 'Force delete', checked: false }, { id: 'orphan', label: 'Orphan dependents', checked: false }],
+          signal: dialogController.signal,
+        }).then((ok) => {
+          if (!ok || !stillSelected()) return;
+          void runResourceMutation('/v1/actions/resource-delete', epoch, { resource: ref, force: Boolean(ok.flags.force), orphan: Boolean(ok.flags.orphan) }, 'Deleting resource…', 'Resource deleted.');
+        });
+      } });
+      const loadActionsBtn = mountButton(actionBar, { label: 'Resource actions', variant: 'secondary', onClick: () => {
+        loadActionsBtn.update({ loading: true });
+        void request<ResourceActionList>('/v1/resource-actions', {
+          context, name: app.name, appNamespace: app.appNamespace,
+          group: node.group, version: node.version, kind: node.kind, namespace: node.namespace, resourceName: node.name, uid: node.uid,
+        }).then((res) => {
+          if (!stillSelected()) return;
+          loadActionsBtn.update({ loading: false });
+          if (res.identityEpoch) trackedEpoch = res.identityEpoch;
+          if (!res.ok) { actionStatus.hidden = false; actionStatus.textContent = `${res.error.code}: ${res.error.message}`; return; }
+          loadActionsBtn.dispose();
+          if (!res.data.actions.length) { actionStatus.hidden = false; actionStatus.textContent = t('No resource actions available.'); return; }
+          for (const item of res.data.actions) {
+            const btn = mountButton(actionBar, { label: item.displayName || item.name, variant: 'secondary', disabled: item.disabled, onClick: () => {
+              const epoch = requireEpoch(); if (!epoch) return;
+              resetDialogs();
+              if (item.params.length) {
+                void openResourceActionDialog(document, `${node.kind}/${node.name}`, item, dialogController.signal).then((parameters) => {
+                  if (!parameters || !stillSelected()) return;
+                  void runResourceMutation('/v1/actions/resource-action', epoch, { resource: ref, action: item.name, parameters }, 'Running resource action…', 'Resource action completed.');
+                });
+              } else {
+                void openConfirmDialog(document, { title: 'Run resource action', description: 'Execute this Argo CD resource action?', targetLabel: `${node.kind}/${node.name} · ${item.displayName || item.name}`, confirmLabel: 'Run action', signal: dialogController.signal }).then((ok) => {
+                  if (!ok || !stillSelected()) return;
+                  void runResourceMutation('/v1/actions/resource-action', epoch, { resource: ref, action: item.name }, 'Running resource action…', 'Resource action completed.');
+                });
+              }
+            } });
+            detailDisposers.push(() => btn.dispose());
+          }
+        }).catch(() => { if (stillSelected()) { loadActionsBtn.update({ loading: false }); actionStatus.hidden = false; actionStatus.textContent = t('Action failed.'); } });
+      } });
+      detailDisposers.push(() => syncResBtn.dispose(), () => patchResBtn.dispose(), () => deleteResBtn.dispose(), () => loadActionsBtn.dispose());
+    }
     if (node.kind === 'Deployment' && node.group === 'apps') {
       const toggle = mountSwitch(metadata, { label: 'Include related resource events', checked: true, onChange: (value) => { includeRelated = value; toggle.update({ checked: value }); events = undefined; void activateDetail(true); } }); detailDisposers.push(() => toggle.dispose());
     }
@@ -291,6 +389,6 @@ export function mountResources(root: HTMLElement, request: PanelRequest, context
       if (!value) { generation++; selectionVersion++; treeController?.abort(); treeController = undefined; if (!tree) treeStarted = false; extraController?.abort(); extraController = undefined; cancelSelected(); split.stopResize(); refresh.update({ loading: false }); paintAges(root, false); }
       else activate();
     },
-    dispose(): void { if (disposed) return; visible = false; generation++; treeController?.abort(); extraController?.abort(); clearSelection(); disposed = true; clearInterval(ticker); navigation.dispose(); split.dispose(); tabs.dispose(); refresh.dispose(); auto.dispose(); root.replaceChildren(); },
+    dispose(): void { if (disposed) return; visible = false; generation++; treeController?.abort(); extraController?.abort(); clearSelection(); dialogController.abort(); disposed = true; clearInterval(ticker); navigation.dispose(); split.dispose(); tabs.dispose(); refresh.dispose(); auto.dispose(); root.replaceChildren(); },
   };
 }

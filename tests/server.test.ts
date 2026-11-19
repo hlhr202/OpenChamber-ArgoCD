@@ -30,7 +30,7 @@ test('returns bounded diagnostic envelope without touching Argo CD', async (t) =
   assert.equal(response.headers.get('cache-control'), 'no-store');
   const result = await response.json();
   assert.equal(result.ok, true);
-  assert.equal(result.data.readOnly, true);
+  assert.equal(result.data.readOnly, false);
   assert.equal(result.data.argoConnection, 'not-attempted');
   assert.equal(result.stale, false);
   assert.ok(Date.parse(result.sampledAt));

@@ -108,3 +108,31 @@ test('deadline rejects waiters even if a loader ignores cancellation, without fr
   await setImmediate(); assert.equal(started, false);
   source.resolve('late'); assert.equal((await second).data, 'next');
 });
+
+test('invalidateScope detaches in-flight reads and blocks stale pre-invalidation results from entering cache', async (t) => {
+  const queue = new QueryCoordinator(); t.after(() => queue.close());
+  const staleTree = deferred<{ uid: string }>();
+  const preRead = queue.run('scope', 'tree', () => staleTree.promise, signal());
+  queue.invalidateScope('scope');
+
+  const postRead = await queue.run('scope', 'tree', async () => ({ uid: 'fresh' }), signal());
+  assert.equal(postRead.source, 'argo-api');
+  assert.equal(postRead.data.uid, 'fresh');
+
+  staleTree.resolve({ uid: 'stale' });
+  assert.equal((await preRead).data.uid, 'stale');
+
+  const cachedAfter = await queue.run<{ uid: string }>('scope', 'tree', async () => assert.fail('Expected post-invalidation fresh cache entry'), signal());
+  assert.equal(cachedAfter.source, 'cache');
+  assert.equal(cachedAfter.data.uid, 'fresh');
+
+  const staleOnly = deferred<{ rev: string }>();
+  const preOnly = queue.run('scope', 'app', () => staleOnly.promise, signal());
+  queue.invalidateScope('scope');
+  staleOnly.resolve({ rev: 'old' });
+  assert.equal((await preOnly).data.rev, 'old');
+  const reloaded = await queue.run('scope', 'app', async () => ({ rev: 'new' }), signal());
+  assert.equal(reloaded.source, 'argo-api');
+  assert.equal(reloaded.data.rev, 'new');
+});
+

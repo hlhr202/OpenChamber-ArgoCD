@@ -26,7 +26,7 @@ export function windowState(value: unknown, scope: 'project' | 'application'): W
   if (scope === 'application' && typeof input.canSync !== 'boolean') throw new ServiceError('UPSTREAM_INVALID', 502);
   if (scope === 'project' && input.windows === undefined && Object.keys(input).length) throw new ServiceError('UPSTREAM_INVALID', 502);
   return { scope, active: array(scope === 'project' ? input.windows : input.activeWindows).map(syncWindow), assigned: scope === 'application' ? array(input.assignedWindows).map(syncWindow) : null, canSync: scope === 'application' ? input.canSync as boolean : null,
-    note: "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission. This extension cannot sync." };
+    note: "Only this server response is shown; cron is not recalculated using the browser clock. Active Project windows do not prove an application can sync. Official v3.1.8 canSync uses manual-sync window evaluation, not automatic-sync or RBAC permission." };
 }
 export function project(value: unknown): Project {
   const input = object(value); const metadata = object(input.metadata); const spec = object(input.spec); const name = text(metadata.name);

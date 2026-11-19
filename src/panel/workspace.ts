@@ -13,6 +13,7 @@ import { mountIconButton } from './icon-button.js';
 import { t, setLanguage, languageFor, directionFor } from './i18n.js';
 import { navigationState, type NavigationState, type ApplicationNavigationState } from './navigation-state.js';
 import { navigationStorage } from './navigation-storage.js';
+import { closeAllDialogs } from './action-dialogs.js';
 
 type WorkspaceState = { contexts: ContextList; selectedContext: string; applications: ReturnType<ReturnType<typeof mountApplications>['captureState']>; tab: string; density: ViewPreferences['density'] };
 
@@ -38,7 +39,7 @@ function mountWorkspaceView(root: HTMLElement, request: PanelRequest, host: Work
   let session: SessionSnapshot | null = ready.session; let preferencesVersion = 0; const preferences: ViewPreferences = { density: 'compact', module: 'applications' };
   let navigationRevision = 0; let suppressNavigation = false; let pendingRestore: NavigationState | undefined; let pendingInitialLoad = false;
   const statusSurface = ready.surface === 'status'; const storageOptions = { scope: ready.features?.deviceStorage ? 'device' as const : 'instance' as const };
-  const heading = element('header'); heading.className = 'observer-heading'; element('h1', 'Argo CD', heading); element('span', "Read only", heading).className = 'read-only-label';
+  const heading = element('header'); heading.className = 'observer-heading'; element('h1', 'Argo CD', heading);
   const more = document.createElement('details'); more.className = 'workspace-more'; heading.append(more);
   const moreLabel = element('summary', 'Applications', more);
   const nav = element('nav', '', more); nav.className = 'workspace-navigation'; nav.setAttribute('aria-label', t("Argo CD navigation"));
@@ -59,7 +60,7 @@ function mountWorkspaceView(root: HTMLElement, request: PanelRequest, host: Work
   const navigation = !statusSurface && ready.directory ? navigationStorage(host.storage, ready.directory, Boolean(ready.features?.deviceStorage), () => { if (!disposed) contextStatus.textContent = t("Preferences could not be saved. Using in-memory settings."); }) : undefined;
   const densityRoot = element('div', '', diagnostic);
   let activeTab = 'applications';
-  const applicationBrowser = mountApplications(applications, request, { copy: (text) => host.writeClipboard(text), evidence: store, toolbar: applicationActions, diagnosticRoot: diagnostic, changed: persistNavigation });
+  const applicationBrowser = mountApplications(applications, request, { copy: (text) => host.writeClipboard(text), evidence: store, toolbar: applicationActions, diagnosticRoot: diagnostic, changed: persistNavigation, readOnlySurface: statusSurface });
   const managementBrowser = mountManagement(management, request, {
     applications: (filters) => { tabs.select('applications'); applicationBrowser.search(filters); },
     application: (reference) => { tabs.select('applications'); applicationBrowser.openReference(reference); },
@@ -153,6 +154,6 @@ function mountWorkspaceView(root: HTMLElement, request: PanelRequest, host: Work
   document.addEventListener('visibilitychange', resumeRestore); disposers.push(() => document.removeEventListener('visibilitychange', resumeRestore));
   const closeMore = (event: KeyboardEvent): void => { if (event.key === 'Escape' && more.open) { more.open = false; moreLabel.focus(); } };
   more.addEventListener('keydown', closeMore); disposers.push(() => more.removeEventListener('keydown', closeMore));
-  disposers.push(() => summaryBrowser.dispose(), () => applicationBrowser.dispose(), () => managementBrowser.dispose(), () => tabs.dispose(), () => density.dispose(), () => select.dispose(), () => notice.dispose(), () => loadButton.dispose(), () => checkButton.dispose(), nameFields(root));
+  disposers.push(() => closeAllDialogs(document), () => summaryBrowser.dispose(), () => applicationBrowser.dispose(), () => managementBrowser.dispose(), () => tabs.dispose(), () => density.dispose(), () => select.dispose(), () => notice.dispose(), () => loadButton.dispose(), () => checkButton.dispose(), nameFields(root));
   return { flushPersistence(): Promise<void> { return navigation?.flush() ?? Promise.resolve(); }, captureState(): WorkspaceState { return { contexts: structuredClone(contexts), selectedContext, applications: applicationBrowser.captureState(), tab: activeTab, density: preferences.density }; }, setSession(next: SessionSnapshot | null): void { if (next?.id !== session?.id) { summaryBrowser.invalidate(); void navigation?.flush(); } session = next; }, dispose(): void { if (disposed) return; navigation?.close(); disposed = true; revision++; diagnosticRevision++; for (const dispose of disposers) dispose(); store.reset(); root.replaceChildren(); } };
 }

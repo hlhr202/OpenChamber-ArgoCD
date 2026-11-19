@@ -3,7 +3,7 @@ export type ErrorCode =
   | 'BUSY' | 'TIMEOUT' | 'RESPONSE_TOO_LARGE' | 'INTERNAL'
   | 'CONFIG_MISSING' | 'CONFIG_INVALID' | 'CONTEXT_NOT_FOUND' | 'UNSUPPORTED'
   | 'NETWORK_DISABLED' | 'AUTH_REQUIRED' | 'FORBIDDEN' | 'UPSTREAM_UNAVAILABLE' | 'UPSTREAM_INVALID'
-  | 'CANCELLED' | 'EXPIRED' | 'RESOURCE_CHANGED' | 'CAPABILITY_UNAVAILABLE';
+  | 'CANCELLED' | 'EXPIRED' | 'RESOURCE_CHANGED' | 'CAPABILITY_UNAVAILABLE' | 'CONFLICT';
 
 export type Envelope<T> = (
   | { ok: true; data: T; sampledAt: string; stale: boolean; truncated: false; expiresAt?: string; source?: 'service' | 'argo-api' | 'cache' }
@@ -12,7 +12,7 @@ export type Envelope<T> = (
 
 export interface Diagnostics {
   service: 'ready';
-  readOnly: true;
+  readOnly: boolean;
   runtime: string;
   platform: string;
   argoConnection: 'not-attempted';
